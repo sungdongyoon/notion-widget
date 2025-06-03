@@ -2,4 +2,5 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "./reset.scss";
+@import "./_reset.scss";
+@import "./layout";
