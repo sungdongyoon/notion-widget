@@ -76,40 +76,35 @@ const Timer = () => {
   const progressPercent = initialTime === 0 ? 0 : (time / initialTime) * 100;
 
   return (
-    <div className="pageContainer">
-      <h3 className="widgetTitle">Timer</h3>
-      <div className="widgetView">
-        <div className={style.timer}>
-          <div>dot</div>
-          <div className={style.time}>{formatTime(time)}</div>
-          <div className={style.progressBar}>
-            <div
-              className={style.progress}
-              style={{
-                width: `${Math.min(100, Math.max(0, progressPercent))}%`,
-              }}
-            ></div>
-          </div>
-          <div className={style.buttonControl}>
-            <button className={style.button} onClick={handleTimeDecrease}>
-              <FaMinus color="#999" />
-            </button>
-            <button
-              className={style.button}
-              onClick={handleStartPause}
-              disabled={time === 0}
-            >
-              {running ? "Pause" : "Start"}
-            </button>
-            <button className={style.button} onClick={handleTimeIncrease}>
-              <FaPlus color="#999" />
-            </button>
-          </div>
-          <p className={style.cancel} onClick={handleCancel}>
-            Cancel
-          </p>
-        </div>
+    <div className={style.timer}>
+      <div>dot</div>
+      <div className={style.time}>{formatTime(time)}</div>
+      <div className={style.progressBar}>
+        <div
+          className={style.progress}
+          style={{
+            width: `${Math.min(100, Math.max(0, progressPercent))}%`,
+          }}
+        ></div>
       </div>
+      <div className={style.buttonControl}>
+        <button className={style.button} onClick={handleTimeDecrease}>
+          <FaMinus color="#999" />
+        </button>
+        <button
+          className={style.button}
+          onClick={handleStartPause}
+          disabled={time === 0}
+        >
+          {running ? "Pause" : "Start"}
+        </button>
+        <button className={style.button} onClick={handleTimeIncrease}>
+          <FaPlus color="#999" />
+        </button>
+      </div>
+      <p className={style.cancel} onClick={handleCancel}>
+        Cancel
+      </p>
     </div>
   );
 };
