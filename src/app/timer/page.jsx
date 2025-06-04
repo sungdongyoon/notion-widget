@@ -96,7 +96,7 @@ const Timer = () => {
           onClick={handleStartPause}
           disabled={time === 0}
         >
-          {running ? "Pause" : "Start"}
+          {running ? "Pause!" : "Start!"}
         </button>
         <button className={style.button} onClick={handleTimeIncrease}>
           <FaPlus color="#999" />
