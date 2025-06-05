@@ -83,7 +83,7 @@ const Timer = () => {
   return (
     <>
       <div className={style.timer}>
-        <div>dots</div>
+        <div>dot</div>
         <div className={style.time}>{formatTime(time)}</div>
         <div className={style.progressBar}>
           <div
