@@ -20,7 +20,7 @@
   border-radius: 30px;
   padding: 10px;
   .time {
-    font-size: 40px;
+    font-size: clamp(24px, 5vw, 40px);
     font-weight: 400;
   }
   .progressBar {
@@ -40,7 +40,7 @@
     width: 100%;
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: clamp(5px, 2vw, 10px);
     .button {
       &:disabled {
         opacity: 0.3;
@@ -48,15 +48,28 @@
       }
       &:nth-child(2) {
         background-color: #ddd;
-        width: 100px;
-        padding: 6px 0px;
+        width: clamp(80px, 30vw, 100px);
+        padding: clamp(4px, 1vw, 6px) 0px;
         border-radius: 30px;
+        font-size: clamp(12px, 3vw, 16px);
       }
     }
   }
   .cancel {
-    font-size: 14px;
+    font-size: clamp(12px, 2.5vw, 14px);
     color: #aeaeae;
     cursor: pointer;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .timer {
+    max-width: 150px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .timer {
+    max-width: 120px;
   }
 }
