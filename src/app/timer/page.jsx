@@ -81,7 +81,7 @@ const Timer = () => {
   const progressPercent = initialTime === 0 ? 0 : (time / initialTime) * 100;
 
   return (
-    <>
+    <div className={style.container}>
       <div className={style.timer}>
         <div>dot</div>
         <div className={style.time}>{formatTime(time)}</div>
@@ -112,7 +112,7 @@ const Timer = () => {
           Cancel
         </p>
       </div>
-    </>
+    </div>
   );
 };
 
