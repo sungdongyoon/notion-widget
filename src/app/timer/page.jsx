@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import style from "./timer.module.scss";
-import { FaMinus, FaPlus } from "react-icons/fa";
+import { FaMinus, FaPlus, FaQuestionCircle, FaTimes } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
@@ -19,6 +19,8 @@ const Timer = () => {
   const [stopwatchMilliseconds, setStopwatchMilliseconds] = useState(0);
   const [stopwatchRunning, setStopwatchRunning] = useState(false);
   const stopwatchRef = useRef(null);
+
+  const [helpOpen, setHelpOpen] = useState(false);
 
   // 타이머 useEffect
   useEffect(() => {
@@ -150,6 +152,43 @@ const Timer = () => {
   return (
     <div className="container">
       <div className={style.timerContainer}>
+        <div
+          className={style.help}
+          onClick={() => setHelpOpen(!helpOpen)}
+          style={{ cursor: helpOpen ? "default" : "pointer" }}
+        >
+          {helpOpen ? (
+            <FaTimes color="#999" />
+          ) : (
+            <FaQuestionCircle color="#999" />
+          )}
+        </div>
+        <div
+          className={style.helpContainer}
+          style={{ display: helpOpen ? "block" : "none" }}
+        >
+          <div className={style.helpContent}>
+            <div className={style.helpItem}>
+              <h3>Timer</h3>
+              <div>
+                <p>Timer 설명 1</p>
+                <p>timer 설명 2</p>
+                <p>timer 설명 3</p>
+              </div>
+            </div>
+            <div className={style.helpItem}>
+              <h3>Stopwatch</h3>
+              <div>
+                <p>Stopwatch 설명 1</p>
+                <p>Stopwatch 설명 2</p>
+                <p>Stopwatch 설명 3</p>
+              </div>
+            </div>
+          </div>
+          <div className={style.helpFooter}>
+            <p>ⓒ 2025 dong. All rights reserved.</p>
+          </div>
+        </div>
         <Swiper
           modules={[Navigation, Pagination, Scrollbar, A11y]}
           pagination={true}
