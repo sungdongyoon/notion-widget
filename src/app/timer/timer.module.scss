@@ -142,6 +142,27 @@
         width: 3vmin;
         text-align: center;
         display: inline-block;
+        justify-content: center;
+      }
+
+      .timeInputContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .timeInput {
+        width: 20vmin;
+        font-size: 15vmin;
+        font-weight: 400;
+        line-height: 1;
+        font-family: monospace;
+        text-align: center;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid #000;
+        outline: none;
+        padding: 0;
       }
     }
     .progressBar {

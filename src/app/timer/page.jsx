@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import style from "./timer.module.scss";
 import { FaMinus, FaPlus, FaQuestionCircle, FaTimes } from "react-icons/fa";
+import { HiOutlineDotsVertical } from "react-icons/hi";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
@@ -21,6 +22,25 @@ const Timer = () => {
   const stopwatchRef = useRef(null);
 
   const [helpOpen, setHelpOpen] = useState(false);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editMinutes, setEditMinutes] = useState("");
+  const [editSeconds, setEditSeconds] = useState("");
+
+  const applyTimeValue = () => {
+    const minutes = Number(editMinutes);
+    const seconds = Number(editSeconds);
+    if (!isNaN(minutes) && !isNaN(seconds) && minutes < 60 && seconds < 60) {
+      const newTime = minutes * 60 + seconds;
+      if (newTime >= 0) {
+        setTime(newTime);
+        if (!running && isFirstStart.current) {
+          setInitialTime(newTime);
+        }
+      }
+    }
+    setIsEditing(false);
+  };
 
   // 타이머 useEffect
   useEffect(() => {
@@ -77,12 +97,72 @@ const Timer = () => {
   const formatTimerSpan = (seconds) => {
     const min = String(Math.floor(seconds / 60)).padStart(2, "0");
     const sec = String(seconds % 60).padStart(2, "0");
+
+    if (isEditing) {
+      return (
+        <div className={style.timeInputContainer}>
+          <input
+            type="text"
+            value={editMinutes}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === "" || /^\d{0,2}$/.test(value)) {
+                setEditMinutes(value);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                applyTimeValue();
+              } else if (e.key === "Escape") {
+                setIsEditing(false);
+              }
+            }}
+            className={style.timeInput}
+            autoFocus
+            placeholder="00"
+            maxLength={2}
+          />
+          <span className={style.timeSeparator}>:</span>
+          <input
+            type="text"
+            value={editSeconds}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === "" || /^\d{0,2}$/.test(value)) {
+                setEditSeconds(value);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                applyTimeValue();
+              } else if (e.key === "Escape") {
+                setIsEditing(false);
+              }
+            }}
+            onBlur={() => applyTimeValue()}
+            className={style.timeInput}
+            placeholder="00"
+            maxLength={2}
+          />
+        </div>
+      );
+    }
+
     return (
-      <>
+      <div
+        onClick={() => {
+          if (!running) {
+            setIsEditing(true);
+            setEditMinutes(min);
+            setEditSeconds(sec);
+          }
+        }}
+        style={{ cursor: running ? "default" : "text" }}
+      >
         <span className={style.timeUnit}>{min}</span>
         <span className={style.timeSeparator}>:</span>
         <span className={style.timeUnit}>{sec}</span>
-      </>
+      </div>
     );
   };
 
