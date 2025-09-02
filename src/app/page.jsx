@@ -13,7 +13,7 @@ export default function Home() {
             <Link href="/timer">Timer</Link>
           </div>
           <div className={style.widgetItem}>
-            <Link href="/timer">Timer</Link>
+            <Link href="/quotes">Quotes</Link>
           </div>
           <div className={style.widgetItem}>
             <Link href="/timer">Timer</Link>
