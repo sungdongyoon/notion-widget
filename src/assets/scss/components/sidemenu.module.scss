@@ -1,0 +1,62 @@
+.side_container {
+  width: 200px;
+  height: 100dvh;
+  flex: 0 0 200px;
+  background-color: #000;
+
+  .side_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 70px;
+
+    .side_logo {
+      color: #fff;
+      position: relative;
+      width: 100px;
+      aspect-ratio: 6/1;
+      cursor: pointer;
+
+      image {
+        object-fit: contain;
+      }
+    }
+
+    .side_fold_btn {
+      color: #fff;
+      cursor: pointer;
+    }
+  }
+
+  .side_body {
+    .side_category {
+      margin-bottom: 20px;
+
+      .category_title {
+        font-size: 0.8rem;
+        padding: 10px 20px;
+        color: #5a5a5a;
+      }
+
+      .category_list {
+        display: flex;
+        flex-direction: column;
+
+        .menu_item {
+          color: #fff;
+          cursor: pointer;
+
+          a {
+            display: block;
+            padding: 15px 20px;
+          }
+
+          &:hover {
+            background-color: #222;
+          }
+        }
+      }
+    }
+  }
+}
