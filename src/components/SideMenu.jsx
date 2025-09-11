@@ -2,6 +2,7 @@ import React from "react";
 import style from "@/assets/scss/components/sidemenu.module.scss";
 import Image from "next/image";
 import Link from "next/link";
+import ModeToggle from "./ModeToggle";
 
 const SideMenu = () => {
   return (
@@ -12,6 +13,7 @@ const SideMenu = () => {
             <Image src="/logo/notion_widget_logo_white.png" fill alt="로고" />
           </Link>
         </div>
+        <ModeToggle />
         <div className={style["side_fold_btn"]}>-</div>
       </div>
       <div className={style["side_body"]}>

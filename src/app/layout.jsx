@@ -1,4 +1,5 @@
 import "@/assets/scss/globals.scss";
+import { ThemeProvider } from "@/components/theme-provider";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -10,9 +11,16 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        <div className="root_container">{children}</div>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="root_container">{children}</div>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -230,7 +230,7 @@ const Timer = () => {
   const progressPercent = initialTime === 0 ? 0 : (time / initialTime) * 100;
 
   return (
-    <div className="container">
+    <div className="widget_container">
       <div className={style.timerContainer}>
         <div
           className={style.help}

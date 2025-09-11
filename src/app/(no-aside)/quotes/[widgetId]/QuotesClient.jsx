@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import style from "./quotes.module.scss";
 import { IoReloadCircle } from "react-icons/io5";
 import axios from "axios";
 import Image from "next/image";
 
-const QuotesClient = ({ data, images, randomIndex }) => {
+const QuotesClient = ({ data, images, randomIndex, widgetId }) => {
   const [quotes, setQuotes] = useState(data[0]);
   const [imageIndex, setImageIndex] = useState(randomIndex);
 
@@ -25,23 +24,23 @@ const QuotesClient = ({ data, images, randomIndex }) => {
   };
 
   return (
-    <div className="container">
-      <div className={style["quotes-container"]}>
+    <div className="widget_container">
+      <div className={`quotes_container`} data-variant={widgetId}>
         <Image
           src={images[imageIndex]}
           fill
           priority
           sizes="(max-width: 500px) 100vw, 500px"
-          className={style["bg"]}
+          className="quotes_bg"
           alt="quotes_background"
         />
-        <div className={style["quotes-content"]}>
+        <div className="quotes_content">
           <p>{quotes?.quote ?? ""}</p>
         </div>
-        <div className={style["quotes-author"]}>
+        <div className="quotes_author">
           <p>{quotes?.author ?? ""}</p>
         </div>
-        <div className={style["quotes-refresh"]}>
+        <div className="quotes_refresh">
           <button onClick={reloadQuotes}>
             <IoReloadCircle />
           </button>

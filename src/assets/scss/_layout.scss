@@ -23,6 +23,15 @@
   gap: 1rem;
 }
 
+// 위젯 컨테이너
+.widget_container {
+  width: 100%;
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 // 위젯 타이틀
 .widgetTitle {
   font-size: 24px;

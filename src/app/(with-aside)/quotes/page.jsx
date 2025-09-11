@@ -9,10 +9,13 @@ const QuotesPage = () => {
         <h3 className="widget_title">Quotes</h3>
         <div className="widget_list">
           <div className="widget_item">
-            <Link href="/quotes/1">Quotes</Link>
+            <Link href="/quotes/typeA">Quotes Type A</Link>
           </div>
           <div className="widget_item">
-            <Link href="/quotes/1">Quotes</Link>
+            <Link href="/quotes/typeB">Quotes Type B</Link>
+          </div>
+          <div className="widget_item">
+            <Link href="/quotes/typeC">Quotes Type C</Link>
           </div>
         </div>
       </div>
