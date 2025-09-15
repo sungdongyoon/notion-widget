@@ -1,7 +1,7 @@
 import React from "react";
 import QuotesClient from "./QuotesClient";
-import { getApiQuotes } from "@/lib/quotes";
 import { notFound } from "next/navigation";
+import { getApiQuotes } from "@/lib/quotes";
 
 // 이미지 리스트
 const BG_IMAGE = {

@@ -1,0 +1,11 @@
+.weather_container {
+  /******************************
+  * typeA
+  *******************************/
+  &[data-variant="typeA"] {
+    border: 1px solid red;
+
+    inline-size: min(100%, 500px);
+    aspect-ratio: 1 / 1;
+  }
+}
