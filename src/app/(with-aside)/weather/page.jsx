@@ -8,7 +8,7 @@ const WeatherPage = () => {
         <h3 className="widget_title">Weather</h3>
         <div className="widget_list">
           <div className="widget_item">
-            <Link href="/weather/1">Weather</Link>
+            <Link href="/weather/typeA">Weather typeA</Link>
           </div>
         </div>
       </div>
