@@ -26,7 +26,7 @@
 // 위젯 컨테이너
 .widget_container {
   width: 100%;
-  height: 100dvh;
+  min-height: 100dvh;
   display: flex;
   justify-content: center;
   align-items: center;
