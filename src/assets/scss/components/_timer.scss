@@ -1,0 +1,43 @@
+.widget_container {
+  /***************************************************
+  * TIMER 01
+  **************************************************/
+  &[data-variant="timer01"] {
+  }
+
+  /***************************************************
+  * TIMER 02
+  ***************************************************/
+  &[data-variant="timer02"] {
+    .timer_container {
+      border: 1px solid red;
+
+      max-width: 100%;
+      height: 100%;
+      aspect-ratio: 1/1.5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+
+      .timer_clock {
+        border: 1px solid red;
+        max-width: 70%;
+        width: 100%;
+        aspect-ratio: 1/1;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .timer_timer {
+        border: 1px solid blue;
+        display: flex;
+        max-width: 70%;
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+  }
+}

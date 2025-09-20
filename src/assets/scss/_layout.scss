@@ -25,11 +25,12 @@
 
 // 위젯 컨테이너
 .widget_container {
-  width: 100%;
+  width: calc(100vw - 2rem);
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: transparent;
+  padding: 1rem;
 }
 
 // 위젯 타이틀
