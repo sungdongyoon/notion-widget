@@ -5,12 +5,16 @@ import { FaGear } from "react-icons/fa6";
 import { FaPlayCircle } from "react-icons/fa";
 import { FaPauseCircle } from "react-icons/fa";
 
-const INTERVAL = 1000;
+const INITIAL_TIME = 60 * 1000; // 초기 시간
+const INTERVAL = 1000; // INTERVAL초 마다 시간 줄어듦
 
 const Timer02 = () => {
-  const [time, setTime] = useState(3 * 60 * 1000);
+  // 시간
+  const [time, setTime] = useState(INITIAL_TIME);
+  // 타이머 진행 여부
   const [running, setRunning] = useState(false);
 
+  // 시, 분, 초
   const hour = String(Math.floor(time / (1000 * 60 * 60))).padStart(2, "0");
   const minutes = String(Math.floor((time / (1000 * 60)) % 60)).padStart(
     2,
@@ -18,6 +22,10 @@ const Timer02 = () => {
   );
   const second = String(Math.floor((time / 1000) % 60)).padStart(2, "0");
 
+  // 남은 시간 비율
+  const remainTimePercent = (time / INITIAL_TIME) * 100;
+
+  // INTERVAL 초 마다 시간 줄어들게 하는 이펙트
   useEffect(() => {
     if (!running) return;
 
@@ -27,7 +35,7 @@ const Timer02 = () => {
 
         if (next <= 0) {
           setRunning(false);
-          return 0;
+          return INITIAL_TIME;
         }
 
         return next;
@@ -39,11 +47,13 @@ const Timer02 = () => {
     };
   }, [running]);
 
+  // 타이머 시작 함수
   const startTime = () => {
     if (time <= 0) return;
     setRunning(true);
   };
 
+  // 타이머 일시정지 함수
   const pauseTime = () => {
     setRunning(false);
   };
@@ -55,7 +65,12 @@ const Timer02 = () => {
           <FaGear />
         </div>
         <div className="w-full flex-[2] flex justify-center items-center">
-          <div className="timer_clock"></div>
+          <div
+            className="timer_clock"
+            style={{
+              ["--remain"]: `${Math.max(0, Math.min(100, remainTimePercent))}%`,
+            }}
+          ></div>
         </div>
         <div className="w-full flex-1 flex justify-center items-center">
           <div className="bg-black max-w-[70%] w-full flex items-center justify-between py-4 px-8 rounded-xl shadow-xl">

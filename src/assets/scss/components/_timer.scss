@@ -18,7 +18,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: conic-gradient(black 70%, transparent 0);
+      background: conic-gradient(black var(--remain, 0%), transparent 0);
     }
   }
 }
