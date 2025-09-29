@@ -1,5 +1,6 @@
 "use client";
 
+import ModeToggle from "@/components/ModeToggle";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -32,7 +33,7 @@ export default function TimeOption({ value, onApply, disabled }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="cursor-pointer 2xs:text-[1.2rem] text-[0.8rem]">
+        <button className="cursor-pointer 2xs:text-[1.2rem] text-[0.8rem] text-timer-02-setting-btn">
           <FaGear />
         </button>
       </PopoverTrigger>
@@ -155,6 +156,15 @@ export default function TimeOption({ value, onApply, disabled }) {
             >
               적용하기
             </button>
+          </div>
+          <div className="space-y-2">
+            <h4 className="leading-none font-medium">Time Theme</h4>
+            <p className="text-muted-foreground text-sm">
+              타이머 테마를 설정해주세요.
+            </p>
+          </div>
+          <div>
+            <ModeToggle />
           </div>
         </div>
       </PopoverContent>

@@ -10,7 +10,7 @@
   ***************************************************/
   &[data-variant="timer02"] {
     .timer_clock {
-      border: 1px solid black;
+      border: 1px solid hsl(var(--timer-02-clock-bg));
       max-width: 85%;
       width: 100%;
       aspect-ratio: 1/1;
@@ -18,7 +18,10 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: conic-gradient(black var(--remain, 0%), transparent 0);
+      background: conic-gradient(
+        hsl(var(--timer-02-clock-bg)) var(--remain, 0%),
+        transparent 0
+      );
 
       @media (min-width: 480px) {
         max-width: 70%;
