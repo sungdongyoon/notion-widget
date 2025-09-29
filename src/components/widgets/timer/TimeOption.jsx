@@ -32,7 +32,7 @@ export default function TimeOption({ value, onApply, disabled }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="cursor-pointer">
+        <button className="cursor-pointer 2xs:text-[1.2rem] text-[0.8rem]">
           <FaGear />
         </button>
       </PopoverTrigger>
