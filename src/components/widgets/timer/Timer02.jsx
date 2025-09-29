@@ -68,7 +68,7 @@ const Timer02 = () => {
 
   return (
     <div className="widget_container" data-variant="timer02">
-      <div className="bg-timer-02-bg relative max-w-[500px] min-w-[300px] w-full aspect-[1/1.1] flex flex-col items-center justify-between rounded-3xl 2xs:p-6 p-8">
+      <div className="bg-timer-02-bg relative max-w-[500px] w-full aspect-[1/1.1] flex flex-col items-center justify-between rounded-3xl 2xs:p-6 p-8">
         <div className="absolute top-4 2xs:top-6 right-4 2xs:right-6">
           <TimeOption value={time} onApply={applyTime} disabled={running} />
         </div>
