@@ -66,6 +66,16 @@ const Timer02 = () => {
     setTime(ms);
   };
 
+  const [testWidth, setTestWidth] = useState(0);
+  useEffect(() => {
+    const update = () => setTestWidth(window.innerWidth);
+
+    update();
+
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
   return (
     <div className="widget_container" data-variant="timer02">
       <div className="bg-timer-02-bg relative max-w-[500px] w-full aspect-[1/1.1] flex flex-col items-center justify-between rounded-3xl 2xs:p-6 p-8">
@@ -80,6 +90,7 @@ const Timer02 = () => {
             }}
           ></div>
         </div>
+        <div className="text-black">{testWidth}</div>
         <div className="w-full flex-1 flex justify-center items-center">
           <div className="bg-timer-02-timer-bg 2xs:max-w-[70%] max-w-[85%] w-full flex items-center justify-between 2xs:py-4 py-3 2xs:px-8 px-5 rounded-xl shadow-xl">
             <div className="timer_time">
