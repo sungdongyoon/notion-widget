@@ -18,9 +18,9 @@ export default function TimeOption({ value, onApply, disabled }) {
   const initM = Math.floor((totalSec % 3600) / 60);
   const initS = totalSec % 60;
 
-  const [hour, setHour] = useState(initH);
-  const [minute, setMinute] = useState(initM);
-  const [second, setSecond] = useState(initS);
+  const [hour, setHour] = useState(String(initH));
+  const [minute, setMinute] = useState(String(initM));
+  const [second, setSecond] = useState(String(initS));
 
   useEffect(() => {
     setHour(initH);
@@ -28,78 +28,22 @@ export default function TimeOption({ value, onApply, disabled }) {
     setSecond(initS);
   }, [value]);
 
-  const clamp = (n, min, max) => Math.min(max, Math.max(min, isNaN(n) ? 0 : n));
+  const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+  const only2Digits = (v) => /^\d{0,2}$/.test(v); // 최대 2자리, 빈 문자열 허용
+  const onBlurClamp = (v, max) => String(clamp(Number(v || 0), 0, max));
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="cursor-pointer 2xs:text-[1.2rem] text-[0.8rem] text-timer-02-setting-btn">
+        <button
+          className={`2xs:text-[1.2rem] text-[0.8rem] text-timer-02-setting-btn ${
+            disabled ? "cursor-not-allowed opacity-30" : "cursor-pointer"
+          }`}
+          disabled={disabled}
+        >
           <FaGear />
         </button>
       </PopoverTrigger>
-      {disabled && (
-        <PopoverContent className="w-80">
-          <div className="grid gap-4">
-            <div className="space-y-2">
-              <h4 className="leading-none font-medium">Time Select</h4>
-              <p className="text-muted-foreground text-sm">
-                타이머 시간을 설정해주세요.
-              </p>
-            </div>
-            <div className="grid gap-2">
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="hour">hour</Label>
-                <Input
-                  id="hour"
-                  type="number"
-                  value={hour}
-                  onChange={(e) =>
-                    setHour(clamp(Number(e.target.value), 0, 23))
-                  }
-                  min={0}
-                  max={23}
-                  className="col-span-2 h-8"
-                />
-              </div>
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="minute">minute</Label>
-                <Input
-                  id="minute"
-                  type="number"
-                  value={minute}
-                  onChange={(e) =>
-                    setMinute(clamp(Number(e.target.value), 0, 59))
-                  }
-                  min={0}
-                  max={59}
-                  className="col-span-2 h-8"
-                />
-              </div>
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="second">second</Label>
-                <Input
-                  id="second"
-                  type="number"
-                  value={second}
-                  onChange={(e) =>
-                    setSecond(clamp(Number(e.target.value), 0, 59))
-                  }
-                  min={0}
-                  max={59}
-                  className="col-span-2 h-8"
-                />
-              </div>
-
-              <button
-                className="mt-2 h-8 rounded bg-black text-white text-sm"
-                onClick={() => onApply && onApply({ hour, minute, second })}
-              >
-                적용하기
-              </button>
-            </div>
-          </div>
-        </PopoverContent>
-      )}
       <PopoverContent className="w-80">
         <div className="grid gap-4">
           <div className="space-y-2">
@@ -113,11 +57,14 @@ export default function TimeOption({ value, onApply, disabled }) {
               <Label htmlFor="hour">hour</Label>
               <Input
                 id="hour"
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={hour}
-                onChange={(e) => setHour(clamp(Number(e.target.value), 0, 23))}
-                min={0}
-                max={23}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  if (only2Digits(v)) setHour(v);
+                }}
+                onBlur={() => setHour(onBlurClamp(hour, 23))}
                 className="col-span-2 h-8"
               />
             </div>
@@ -125,13 +72,14 @@ export default function TimeOption({ value, onApply, disabled }) {
               <Label htmlFor="minute">minute</Label>
               <Input
                 id="minute"
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={minute}
-                onChange={(e) =>
-                  setMinute(clamp(Number(e.target.value), 0, 59))
-                }
-                min={0}
-                max={59}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  if (only2Digits(v)) setMinute(v);
+                }}
+                onBlur={() => setMinute(onBlurClamp(minute, 59))}
                 className="col-span-2 h-8"
               />
             </div>
@@ -139,32 +87,30 @@ export default function TimeOption({ value, onApply, disabled }) {
               <Label htmlFor="second">second</Label>
               <Input
                 id="second"
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={second}
-                onChange={(e) =>
-                  setSecond(clamp(Number(e.target.value), 0, 59))
-                }
-                min={0}
-                max={59}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  if (only2Digits(v)) setSecond(v);
+                }}
+                onBlur={() => setSecond(onBlurClamp(second, 59))}
                 className="col-span-2 h-8"
               />
             </div>
 
             <button
               className="mt-2 h-8 rounded bg-black text-white text-sm"
-              onClick={() => onApply && onApply({ hour, minute, second })}
+              onClick={() =>
+                onApply?.({
+                  hour: Number(hour || 0),
+                  minute: Number(minute || 0),
+                  second: Number(second || 0),
+                })
+              }
             >
               적용하기
             </button>
-          </div>
-          <div className="space-y-2">
-            <h4 className="leading-none font-medium">Time Theme</h4>
-            <p className="text-muted-foreground text-sm">
-              타이머 테마를 설정해주세요.
-            </p>
-          </div>
-          <div>
-            <ModeToggle />
           </div>
         </div>
       </PopoverContent>
