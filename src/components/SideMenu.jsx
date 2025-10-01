@@ -13,7 +13,7 @@ const SideMenu = () => {
             <Image src="/logo/notion_widget_logo_white.png" fill alt="로고" />
           </Link>
         </div>
-        <ModeToggle />
+        <ModeToggle position="fixed bottom-10 right-10" />
         <div className={style["side_fold_btn"]}>-</div>
       </div>
       <div className={style["side_body"]}>

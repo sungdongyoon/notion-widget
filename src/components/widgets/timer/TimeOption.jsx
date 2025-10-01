@@ -44,7 +44,12 @@ export default function TimeOption({ value, onApply, disabled }) {
           <FaGear />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-80">
+      <PopoverContent
+        side="bottom"
+        sideOffset={10}
+        align="end"
+        className="max-w-[300px] 4xs:w-full 6xs:w-60 7xs:w-56 w-52 flex flex-col gap-4"
+      >
         <div className="grid gap-4">
           <div className="space-y-2">
             <h4 className="leading-none font-medium">Time Select</h4>
@@ -111,6 +116,17 @@ export default function TimeOption({ value, onApply, disabled }) {
             >
               적용하기
             </button>
+          </div>
+        </div>
+        <div className="grid gap-4">
+          <div className="space-y-2">
+            <h4 className="leading-none font-medium">Time Theme</h4>
+            <p className="text-muted-foreground text-sm">
+              타이머 테마를 설정해주세요.
+            </p>
+          </div>
+          <div>
+            <ModeToggle />
           </div>
         </div>
       </PopoverContent>
