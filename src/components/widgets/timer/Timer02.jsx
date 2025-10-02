@@ -6,7 +6,7 @@ import { FaPauseCircle } from "react-icons/fa";
 import TimeOption from "./TimeOption";
 
 const DEFAULT_INITIAL = 60 * 1000; // 초기 시간
-const INTERVAL = 100; // INTERVAL초 마다 시간 줄어듦
+const INTERVAL = 10; // INTERVAL초 마다 시간 줄어듦
 
 const Timer02 = () => {
   const [initialTime, setInitialTime] = useState(DEFAULT_INITIAL);
