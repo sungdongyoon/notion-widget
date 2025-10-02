@@ -1,10 +1,3 @@
-// timer-02 시계 효과
-@property --remain {
-  syntax: "<percentage>";
-  inherits: false;
-  initial-value: 0%;
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -96,4 +89,11 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+// timer-02 시계 효과
+@property --remain {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
 }
