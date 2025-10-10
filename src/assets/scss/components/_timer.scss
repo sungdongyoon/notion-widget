@@ -18,40 +18,16 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
       background: conic-gradient(
         hsl(var(--timer-02-clock-bg)) var(--remain, 0%),
         transparent 0
       );
       transition: --remain 1000ms linear;
+      container-type: size;
 
       @media (min-width: 480px) {
-        max-width: 70%;
-      }
-    }
-
-    .timer_canvas {
-      color: hsl(var(--timer-02-clock-bg));
-      display: block;
-    }
-
-    .timer_svg {
-      display: block;
-      color: hsl(var(--timer-02-clock-bg)); /* 다크/라이트 토큰 */
-      transform: rotate(-90deg); /* 12시부터 시작 */
-
-      .ring-track {
-        fill: none;
-        stroke: hsl(var(--timer-02-clock-bg) / 0.18); /* 옅은 트랙 */
-        stroke-width: 10;
-      }
-      .ring-progress {
-        fill: none;
-        stroke: currentColor; /* 테마 색 자동 */
-        stroke-width: 10;
-        stroke-linecap: round;
-        stroke-dasharray: 283; /* 2πr (r=45) */
-        stroke-dashoffset: calc(283 * (1 - var(--pct, 0)));
-        transition: stroke-dashoffset 1000ms linear; /* 갱신 주기와 맞추기 */
+        max-width: 75%;
       }
     }
   }
