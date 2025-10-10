@@ -6,7 +6,7 @@ import { FaPauseCircle } from "react-icons/fa";
 import TimeOption from "./TimeOption";
 
 const DEFAULT_INITIAL = 60 * 1000; // 초기 시간
-const INTERVAL = 10; // INTERVAL초 마다 시간 줄어듦
+const INTERVAL = 10; // INTERVAL 밀리초 마다 시간 줄어듦
 
 const Timer02 = () => {
   const [initialTime, setInitialTime] = useState(DEFAULT_INITIAL);
@@ -68,7 +68,7 @@ const Timer02 = () => {
 
   return (
     <div className="widget_container" data-variant="timer02">
-      <div className="bg-timer-02-bg relative max-w-[500px] min-w-[240px] w-full aspect-[1/1.1] flex flex-col items-center justify-between rounded-3xl 2xs:p-6 p-8">
+      <div className="bg-timer-02-bg relative max-w-[500px] min-w-[240px] w-full aspect-[1/1.1] flex flex-col items-center justify-between rounded-xl 2xs:p-6 p-8">
         <div className="absolute top-4 2xs:top-6 right-4 2xs:right-6">
           <TimeOption value={time} onApply={applyTime} disabled={running} />
         </div>
@@ -80,8 +80,18 @@ const Timer02 = () => {
             }}
           ></div>
         </div>
+        {/* <svg
+          viewBox="0 0 100 100"
+          className="timer_svg w-[85%] 2xs:w-[70%] aspect-square"
+          style={{ ["--pct"]: 1 - time / (initialTime || 1) }}
+          aria-label="남은 시간 타이머"
+          role="img"
+        >
+          <circle className="ring-track" cx="50" cy="50" r="45" />
+          <circle className="ring-progress" cx="50" cy="50" r="45" />
+        </svg> */}
         <div className="w-full flex-1 flex justify-center items-center">
-          <div className="bg-timer-02-timer-bg 2xs:max-w-[70%] max-w-[85%] w-full flex items-center justify-between 2xs:py-4 3xs:py-3 7xs:py-2 2xs:px-8 3xs:px-7 7xs:px-4 py-2 px-4 rounded-xl shadow-xl">
+          <div className="bg-timer-02-timer-bg 2xs:max-w-[70%] max-w-[75%] w-full flex items-center justify-between 2xs:py-4 3xs:py-3 7xs:py-2 2xs:px-8 3xs:px-7 7xs:px-4 py-2 px-4 rounded-md shadow-xl">
             <div className="timer_time">
               <p className="text-timer-02-timer-text 2xs:text-[1.5rem] 5xs:text-[1.2rem] 6xs:text-[1rem] 7xs:text-[0.8rem] text-[0.8rem]">
                 <span>{hour}</span>:<span>{minute}</span>:<span>{second}</span>
