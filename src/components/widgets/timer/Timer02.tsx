@@ -2,19 +2,32 @@
 
 import React, { useEffect, useState } from "react";
 import { FaPlayCircle } from "react-icons/fa";
-import { FaPauseCircle } from "react-icons/fa";
 import TimeOption from "./TimeOption";
-import { FaArrowRotateLeft } from "react-icons/fa6";
+import { LuTimerReset } from "react-icons/lu";
+import { FaRegPlayCircle, FaRegPauseCircle } from "react-icons/fa";
+
+// ===== 타입 =====
+type ApplyTimeProps = {
+  hour: number;
+  minute: number;
+  second: number;
+};
+
+type TimeOptionProps = {
+  value: number;
+  onApply: (time: number) => void;
+  disabled: boolean;
+};
 
 const DEFAULT_INITIAL = 60 * 1000; // 초기 시간
 const INTERVAL = 10; // INTERVAL 밀리초 마다 시간 줄어듦
 
-const Timer02 = () => {
-  const [initialTime, setInitialTime] = useState(DEFAULT_INITIAL);
+const Timer02: React.FC = () => {
+  const [initialTime, setInitialTime] = useState<number>(DEFAULT_INITIAL);
   // 시간
-  const [time, setTime] = useState(DEFAULT_INITIAL);
+  const [time, setTime] = useState<number>(DEFAULT_INITIAL);
   // 타이머 진행 여부
-  const [running, setRunning] = useState(false);
+  const [running, setRunning] = useState<boolean>(false);
 
   const isInitial = !running && time === initialTime;
 
@@ -30,7 +43,7 @@ const Timer02 = () => {
   useEffect(() => {
     if (!running) return;
 
-    const timer = setInterval(() => {
+    const timer: number = window.setInterval(() => {
       setTime((prev) => {
         const next = prev - INTERVAL;
 
@@ -49,17 +62,24 @@ const Timer02 = () => {
   }, [running, initialTime]);
 
   // 타이머 시작 함수
-  const startTime = () => {
+  const startTime = (): void => {
     if (time <= 0) return;
     setRunning(true);
   };
 
   // 타이머 일시정지 함수
-  const pauseTime = () => {
+  const pauseTime = (): void => {
     setRunning(false);
   };
 
-  const applyTime = ({ hour, minute, second }) => {
+  // 타이머 리셋 함수
+  const resetTime = (): void => {
+    setRunning(false);
+    setInitialTime(DEFAULT_INITIAL);
+    setTime(DEFAULT_INITIAL);
+  };
+
+  const applyTime = ({ hour, minute, second }: ApplyTimeProps): void => {
     const h = Number(hour) || 0;
     const m = Number(minute) || 0;
     const s = Number(second) || 0;
@@ -74,7 +94,7 @@ const Timer02 = () => {
       <div className="bg-timer-02-bg relative max-w-[500px] min-w-[240px] w-full aspect-[1/1] flex flex-col items-center justify-between rounded-[50%]">
         <div className="w-full flex-[2] flex justify-center items-center relative">
           {!isInitial && (
-            <div className="absolute top-[5%] left-1/2 -translate-x-1/2 text-[clamp(0.6rem,5vmin,1.2rem)] text-white">
+            <div className="absolute top-[5%] left-1/2 -translate-x-1/2 text-[clamp(0.6rem,5vmin,1rem)] text-white">
               <span>{hour}</span>:<span>{minute}</span>:<span>{second}</span>
             </div>
           )}
@@ -84,16 +104,19 @@ const Timer02 = () => {
               <button
                 onClick={!running ? startTime : pauseTime}
                 aria-label={!running ? "시작" : "일시정지"}
-                className="inline-flex items-center justify-center text-[clamp(0.6rem,5vmin,1.2rem)] text-white"
+                className="inline-flex items-center justify-center text-[clamp(0.6rem,5vmin,1.5rem)] text-white"
               >
                 {!running ? (
-                  <FaPlayCircle aria-hidden="true" />
+                  <FaRegPlayCircle aria-hidden="true" />
                 ) : (
-                  <FaPauseCircle aria-hidden="true" />
+                  <FaRegPauseCircle aria-hidden="true" />
                 )}
               </button>
-              <button className="inline-flex items-center justify-center text-[clamp(0.6rem,5vmin,1.2rem)] text-white">
-                <FaArrowRotateLeft aria-hidden="true" />
+              <button
+                className="inline-flex items-center justify-center text-[clamp(0.6rem,5vmin,1.5rem)] text-white"
+                onClick={resetTime}
+              >
+                <LuTimerReset aria-hidden="true" />
               </button>
             </div>
           )}
@@ -101,7 +124,10 @@ const Timer02 = () => {
           <div
             className="timer_clock"
             style={{
-              ["--remain"]: `${Math.max(0, Math.min(100, remainTimePercent))}%`,
+              ["--remain" as string]: `${Math.max(
+                0,
+                Math.min(100, remainTimePercent)
+              )}%`,
             }}
           >
             {DEFAULT_INITIAL <= time && (
