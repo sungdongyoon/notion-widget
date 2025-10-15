@@ -8,10 +8,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Button } from "./ui/button";
-import { Moon, Sun } from "lucide-react";
 
-const ModeToggle = ({ position }) => {
+import { Moon, Sun } from "lucide-react";
+import { Button } from "./ui/button";
+
+const ModeToggle = ({ position }: { position?: string }) => {
   const { setTheme } = useTheme();
 
   return (

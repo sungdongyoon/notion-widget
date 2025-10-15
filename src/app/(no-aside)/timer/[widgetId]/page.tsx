@@ -1,17 +1,30 @@
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
+import { ComponentType } from "react";
 
-const WIDGETS = {
+// ===== 타입 =====
+type Params = { widgetId: string };
+
+type WidgetEntry = {
+  Comp: ComponentType<any>;
+  getProps?: (params: Params) => Promise<Record<string, any>>;
+};
+
+const WIDGETS: Record<string, WidgetEntry> = {
   1001: {
-    Comp: dynamic(() => import("@/components/widgets/timer/Timer01")),
+    Comp: dynamic(
+      () => import("@/components/widgets/timer/Timer01")
+    ) as ComponentType<any>,
     getProps: async () => ({ props: "test props" }),
   },
   1002: {
-    Comp: dynamic(() => import("@/components/widgets/timer/Timer02")),
+    Comp: dynamic(
+      () => import("@/components/widgets/timer/Timer02")
+    ) as ComponentType<any>,
   },
 };
 
-export default async function Timer({ params }) {
+export default async function Timer({ params }: { params: Params }) {
   const entry = WIDGETS[params.widgetId];
   if (!entry) return notFound();
 

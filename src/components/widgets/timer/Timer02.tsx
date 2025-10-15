@@ -22,7 +22,7 @@ type TimeOptionProps = {
 const DEFAULT_INITIAL = 60 * 1000; // 초기 시간
 const INTERVAL = 10; // INTERVAL 밀리초 마다 시간 줄어듦
 
-const Timer02: React.FC = () => {
+const Timer02 = () => {
   const [initialTime, setInitialTime] = useState<number>(DEFAULT_INITIAL);
   // 시간
   const [time, setTime] = useState<number>(DEFAULT_INITIAL);
