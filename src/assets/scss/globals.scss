@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 @import "./_reset.scss";
-@import "./layout";
-@import "./font";
-@import "./page";
+@import "./_layout";
+@import "./_font";
+@import "./_page";
 
 // 컴포넌트
 @import "./components/quotes";

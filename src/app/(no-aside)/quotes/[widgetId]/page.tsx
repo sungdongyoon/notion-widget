@@ -37,7 +37,7 @@ const BG_IMAGE = {
 // 위젯 아이디 타입 가드
 const isWidgetId = (id: string): id is keyof typeof BG_IMAGE => id in BG_IMAGE;
 
-export default async function Page({
+export default async function QuotesPage({
   params,
 }: {
   params: { widgetId: string };
