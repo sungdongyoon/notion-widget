@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 // 위젯 타입 화이트리스트
 const ALLOWED_TYPE = ["typeA"];
 
-export default async function Page({
+export default async function WeatherPage({
   params,
 }: {
   params: { widgetId: string };

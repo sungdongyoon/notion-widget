@@ -24,7 +24,7 @@ const WIDGETS: Record<string, WidgetEntry> = {
   },
 };
 
-export default async function Timer({ params }: { params: Params }) {
+export default async function TimerPage({ params }: { params: Params }) {
   const entry = WIDGETS[params.widgetId];
   if (!entry) return notFound();
 
