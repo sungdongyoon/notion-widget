@@ -1,7 +1,7 @@
 import SideMenu from "@/components/SideMenu";
 import React from "react";
 
-const layout = ({ children }) => {
+const layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <SideMenu />

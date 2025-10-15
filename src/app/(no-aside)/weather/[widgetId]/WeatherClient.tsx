@@ -3,18 +3,35 @@
 import Image from "next/image";
 import React, { useEffect } from "react";
 
-const WeatherClient = ({ data, widgetId }) => {
+type WeatherApiData = {
+  main: { temp: number };
+  name: string;
+  weather: { main: string }[];
+};
+
+type Props = {
+  data: WeatherApiData;
+  widgetId: string;
+};
+
+const WeatherClient = ({ data, widgetId }: Props) => {
   // 날씨에 따른 이미지 맵
   const WHEATHER_IMAGE_MAP = {
     Clear: "sun",
     Rain: "rainy",
     Clouds: "cloud",
-  };
+  } as const;
+
+  type WeatherKey = keyof typeof WHEATHER_IMAGE_MAP;
+  const isWeatherKey = (key: string): key is WeatherKey =>
+    key in WHEATHER_IMAGE_MAP;
 
   const weatherData = {
     temp: Math.round(data.main.temp),
     location: data.name,
-    image: WHEATHER_IMAGE_MAP[data.weather[0].main] ?? "sun",
+    image: isWeatherKey(data.weather[0].main)
+      ? WHEATHER_IMAGE_MAP[data.weather[0].main]
+      : "sun",
   };
 
   return (

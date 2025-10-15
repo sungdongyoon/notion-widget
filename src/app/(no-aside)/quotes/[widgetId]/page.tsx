@@ -32,17 +32,21 @@ const BG_IMAGE = {
     "/image/quotes/quotes_paper_bg7.png",
     "/image/quotes/quotes_paper_bg8.png",
   ],
-};
+} as const;
 
-// 위젯 타입 화이트리스트
-const ALLOWED_TYPE = new Set(Object.keys(BG_IMAGE));
+// 위젯 아이디 타입 가드
+const isWidgetId = (id: string): id is keyof typeof BG_IMAGE => id in BG_IMAGE;
 
-export default async function Page({ params }) {
+export default async function Page({
+  params,
+}: {
+  params: { widgetId: string };
+}) {
   // 위젯 아이디
   const widgetId = (params.widgetId ?? "").trim();
 
   // 화이트 리스트에 걸리지 않는 위젯 아이디는 not found 페이지로 이동
-  if (!ALLOWED_TYPE.has(widgetId)) {
+  if (!isWidgetId(widgetId)) {
     notFound();
   }
 

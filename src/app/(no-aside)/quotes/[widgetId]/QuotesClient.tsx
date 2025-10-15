@@ -5,9 +5,17 @@ import { IoReloadCircle } from "react-icons/io5";
 import axios from "axios";
 import Image from "next/image";
 
-const QuotesClient = ({ data, images, randomIndex, widgetId }) => {
-  const [quotes, setQuotes] = useState(data[0]);
-  const [imageIndex, setImageIndex] = useState(randomIndex);
+type Quote = { quote?: string; author?: string };
+type Props = {
+  data: Quote[];
+  images: readonly string[];
+  randomIndex: number;
+  widgetId: string;
+};
+
+const QuotesClient = ({ data, images, randomIndex, widgetId }: Props) => {
+  const [quotes, setQuotes] = useState<Quote | undefined>(data[0]);
+  const [imageIndex, setImageIndex] = useState<number>(randomIndex);
 
   // 인용구 새로고침
   const reloadQuotes = async () => {
