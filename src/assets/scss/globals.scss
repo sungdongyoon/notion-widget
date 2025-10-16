@@ -1,16 +1,16 @@
+@use "./_reset.scss" as *;
+@use "./_layout" as *;
+@use "./_font" as *;
+@use "./_page" as *;
+
+// 컴포넌트
+@use "./components/quotes" as *;
+@use "./components/weather" as *;
+@use "./components/timer" as *;
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@use "./_reset.scss";
-@use "./_layout";
-@use "./_font";
-@use "./_page";
-
-// 컴포넌트
-@use "./components/quotes";
-@use "./components/weather";
-@use "./components/timer";
 
 * {
   font-family: "Pretendard", sans-serif !important;
