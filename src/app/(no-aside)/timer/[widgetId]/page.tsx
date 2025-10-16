@@ -2,12 +2,9 @@ import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { ComponentType } from "react";
 
-// ===== 타입 =====
-type Params = { widgetId: string };
-
 type WidgetEntry = {
   Comp: ComponentType<any>;
-  getProps?: (params: Params) => Promise<Record<string, any>>;
+  getProps?: (params: { widgetId: string }) => Promise<Record<string, any>>;
 };
 
 const WIDGETS: Record<string, WidgetEntry> = {
@@ -24,7 +21,11 @@ const WIDGETS: Record<string, WidgetEntry> = {
   },
 };
 
-export default async function TimerPage({ params }: { params: Params }) {
+export default async function TimerPage({
+  params,
+}: {
+  params: { widgetId: string };
+}) {
   const entry = WIDGETS[params.widgetId];
   if (!entry) return notFound();
 
