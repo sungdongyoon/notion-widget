@@ -24,13 +24,14 @@ const WIDGETS: Record<string, WidgetEntry> = {
 export default async function TimerPage({
   params,
 }: {
-  params: { widgetId: string };
+  params: Promise<{ widgetId: string }>;
 }) {
-  const entry = WIDGETS[params.widgetId];
+  const { widgetId } = await params;
+  const entry = WIDGETS[widgetId];
   if (!entry) return notFound();
 
   const Comp = entry.Comp;
-  const props = entry.getProps ? await entry.getProps(params) : {};
+  const props = entry.getProps ? await entry.getProps({ widgetId }) : {};
 
   return <Comp {...props} />;
 }
