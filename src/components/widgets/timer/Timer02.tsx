@@ -13,6 +13,23 @@ type ApplyTimeProps = {
   second: number;
 };
 
+type PersistState =
+  | {
+      mode: "running";
+      deadline: number;
+      initialMs: number;
+    }
+  | {
+      mode: "paused";
+      remainMs: number;
+      initialMs: number;
+    }
+  | {
+      mode: "stopped";
+      remainMs: number;
+      initialMs: number;
+    };
+
 // type TimeOptionProps = {
 //   value: number;
 //   onApply: (time: number) => void;
@@ -21,6 +38,7 @@ type ApplyTimeProps = {
 
 const DEFAULT_INITIAL = 60 * 1000; // 초기 시간
 const INTERVAL = 10; // INTERVAL 밀리초 마다 시간 줄어듦
+const STORAGE_KEY = "timer02_state"; // 로컬 스토리지 키 값
 
 const Timer02 = () => {
   // 초기값
@@ -44,6 +62,63 @@ const Timer02 = () => {
   // 남은 시간 비율
   const remainTimePercent = initialTime ? (time / initialTime) * 100 : 0;
 
+  // 로컬 스토리지 상태 저장
+  const saveState = (state: PersistState) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch {}
+  };
+
+  // 로컬 스토리지 상태 불러오기
+  const loadState = () => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  // 타이머 시작 함수
+  const startTime = (): void => {
+    if (time <= 0) return;
+    setRunning(true);
+
+    const deadline = Date.now() + time;
+    saveState({ mode: "running", deadline, initialMs: initialTime });
+  };
+
+  // 타이머 일시정지 함수
+  const pauseTime = (): void => {
+    setRunning(false);
+    saveState({ mode: "paused", remainMs: time, initialMs: initialTime });
+  };
+
+  // 타이머 리셋 함수
+  const resetTime = (): void => {
+    setRunning(false);
+    setInitialTime(DEFAULT_INITIAL);
+    setTime(DEFAULT_INITIAL);
+    saveState({
+      mode: "stopped",
+      remainMs: DEFAULT_INITIAL,
+      initialMs: DEFAULT_INITIAL,
+    });
+  };
+
+  // 시간 적용
+  const applyTime = ({ hour, minute, second }: ApplyTimeProps): void => {
+    const h = Number(hour) || 0;
+    const m = Number(minute) || 0;
+    const s = Number(second) || 0;
+    const ms = (h * 3600 + m * 60 + s) * 1000;
+    setRunning(false);
+    setInitialTime(ms);
+    setTime(ms);
+    saveState({ mode: "stopped", remainMs: ms, initialMs: ms });
+  };
+
   // INTERVAL 초 마다 시간 줄어들게 하는 이펙트
   useEffect(() => {
     if (!running) return;
@@ -66,33 +141,26 @@ const Timer02 = () => {
     };
   }, [running, initialTime]);
 
-  // 타이머 시작 함수
-  const startTime = (): void => {
-    if (time <= 0) return;
-    setRunning(true);
-  };
+  // 마운트 시 복원
+  useEffect(() => {
+    const state = loadState();
+    if (!state) return;
 
-  // 타이머 일시정지 함수
-  const pauseTime = (): void => {
-    setRunning(false);
-  };
+    if (state.mode === "running") {
+      const remain = Math.max(0, state.deadline - Date.now());
+      setInitialTime(state.initialMs);
+      setTime(remain);
+      setRunning(remain > 0);
 
-  // 타이머 리셋 함수
-  const resetTime = (): void => {
-    setRunning(false);
-    setInitialTime(DEFAULT_INITIAL);
-    setTime(DEFAULT_INITIAL);
-  };
-
-  const applyTime = ({ hour, minute, second }: ApplyTimeProps): void => {
-    const h = Number(hour) || 0;
-    const m = Number(minute) || 0;
-    const s = Number(second) || 0;
-    const ms = (h * 3600 + m * 60 + s) * 1000;
-    setRunning(false);
-    setInitialTime(ms);
-    setTime(ms);
-  };
+      if (remain < 0) {
+        saveState({ mode: "stopped", remainMs: 0, initialMs: state.initialMs });
+      }
+    } else {
+      setInitialTime(state.initialMs);
+      setTime(state.remainMs);
+      setRunning(false);
+    }
+  }, []);
 
   return (
     <div className="widget_container" data-variant="timer02">
