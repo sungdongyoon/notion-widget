@@ -13,23 +13,28 @@ type ApplyTimeProps = {
   second: number;
 };
 
-type TimeOptionProps = {
-  value: number;
-  onApply: (time: number) => void;
-  disabled: boolean;
-};
+// type TimeOptionProps = {
+//   value: number;
+//   onApply: (time: number) => void;
+//   disabled: boolean;
+// };
 
 const DEFAULT_INITIAL = 60 * 1000; // 초기 시간
 const INTERVAL = 10; // INTERVAL 밀리초 마다 시간 줄어듦
 
 const Timer02 = () => {
+  // 초기값
   const [initialTime, setInitialTime] = useState<number>(DEFAULT_INITIAL);
   // 시간
   const [time, setTime] = useState<number>(DEFAULT_INITIAL);
   // 타이머 진행 여부
   const [running, setRunning] = useState<boolean>(false);
 
-  const isInitial = !running && time === initialTime;
+  const isFinished = time <= 0; // 종료 여부
+  const isInitial = !running && time === initialTime; // 초기 상태 판별
+  const showSetup = !running && isInitial; // 초기 ui(재생, 설정, 시간) 노출 여부
+  const showInProgressUI =
+    running || (!running && time < initialTime && time > 0); // 진행 ui 노출 여부
 
   // 시, 분, 초
   const hour = String(Math.floor(time / (1000 * 60 * 60))).padStart(2, "0");
@@ -93,13 +98,13 @@ const Timer02 = () => {
     <div className="widget_container" data-variant="timer02">
       <div className="bg-timer-02-bg relative max-w-[500px] min-w-[240px] w-full aspect-[1/1] flex flex-col items-center justify-between rounded-[50%]">
         <div className="w-full flex-[2] flex justify-center items-center relative">
-          {!isInitial && (
+          {showInProgressUI && (
             <div className="absolute top-[5%] left-1/2 -translate-x-1/2 text-[clamp(0.6rem,5vmin,1rem)] text-white">
               <span>{hour}</span>:<span>{minute}</span>:<span>{second}</span>
             </div>
           )}
 
-          {!isInitial && (
+          {showInProgressUI && (
             <div className="absolute bottom-[5%] left-1/2 -translate-x-1/2 flex gap-3">
               <button
                 onClick={!running ? startTime : pauseTime}
@@ -130,7 +135,7 @@ const Timer02 = () => {
               )}%`,
             }}
           >
-            {DEFAULT_INITIAL <= time && (
+            {showSetup && (
               <div>
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                   <button
@@ -141,7 +146,6 @@ const Timer02 = () => {
                   >
                     <FaPlayCircle aria-hidden="true" />
                   </button>
-
                   <p className="text-timer-02-timer-text 2xs:text-[1.5rem] 5xs:text-[1.2rem] 6xs:text-[1rem] 7xs:text-[0.8rem] text-[0.8rem]">
                     <span>{hour}</span>:<span>{minute}</span>:
                     <span>{second}</span>
