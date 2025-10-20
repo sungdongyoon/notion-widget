@@ -20,8 +20,8 @@
       align-items: center;
       position: relative;
       background: conic-gradient(
-        hsl(var(--timer-02-clock-bg)) var(--remain, 0%),
-        transparent 0
+        transparent 0 calc(100% - var(--remain, 0%)),
+        hsl(var(--timer-02-clock-bg)) 0
       );
       transition: --remain 1000ms linear;
       container-type: size;

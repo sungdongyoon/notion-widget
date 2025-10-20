@@ -179,16 +179,16 @@ const Timer02 = () => {
                   <span>{hour}</span>:<span>{minute}</span>:
                   <span>{second}</span>
                 </div>
-                <div className="w-full flex gap-1">
+                <div className="w-full flex">
                   <button
                     onClick={!running ? startTime : pauseTime}
                     aria-label={!running ? "시작" : "일시정지"}
-                    className="inline-flex items-center justify-center text-[clamp(0.5rem,2vmin,0.8rem)] text-timer-02-ring-text flex-1"
+                    className="inline-flex items-center justify-center text-[clamp(0.4rem,2vmin,0.8rem)] text-timer-02-ring-text flex-1"
                   >
                     {!running ? "play" : "pause"}
                   </button>
                   <button
-                    className="inline-flex items-center justify-center text-[clamp(0.5rem,2vmin,0.8rem)] text-timer-02-ring-text flex-1"
+                    className="inline-flex items-center justify-center text-[clamp(0.4rem,2vmin,0.8rem)] text-timer-02-ring-text flex-1"
                     onClick={resetTime}
                   >
                     reset

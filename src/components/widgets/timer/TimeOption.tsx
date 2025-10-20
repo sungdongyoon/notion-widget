@@ -38,6 +38,8 @@ export default function TimeOption({
   const [minute, setMinute] = useState<string>(String(initM));
   const [second, setSecond] = useState<string>(String(initS));
 
+  const [open, setOpen] = useState<boolean>(false);
+
   useEffect(() => {
     setHour(String(initH));
     setMinute(String(initM));
@@ -69,10 +71,11 @@ export default function TimeOption({
       minute: Number(minute || 0),
       second: Number(second || 0),
     });
+    setOpen(false);
   };
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
           className={`2xs:text-[1.2rem] text-[0.8rem] text-timer-02-setting-btn ${
@@ -87,7 +90,11 @@ export default function TimeOption({
         side="bottom"
         sideOffset={10}
         align="end"
-        className="max-w-[300px] 4xs:w-full 6xs:w-60 7xs:w-56 w-52 flex flex-col gap-4"
+        className="w-[clamp(16rem,92vw,22rem)]
+    max-h-[min(70vh,420px)]
+    overflow-auto
+    flex flex-col gap-4
+    p-4 sm:p-5"
       >
         <div className="grid gap-4">
           <div className="space-y-2">
