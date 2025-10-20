@@ -11,7 +11,7 @@
   &[data-variant="timer02"] {
     .timer_clock {
       border: 10px solid hsl(var(--timer-02-clock-bg));
-      max-width: 75%;
+      max-width: 85%;
       width: 100%;
       aspect-ratio: 1/1;
       border-radius: 50%;
@@ -27,7 +27,7 @@
       container-type: size;
 
       @media (min-width: 480px) {
-        max-width: 75%;
+        max-width: 85%;
       }
     }
   }

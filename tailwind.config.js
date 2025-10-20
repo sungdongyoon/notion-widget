@@ -16,6 +16,7 @@ module.exports = {
         "timer-02-clock-bg": "hsl(var(--timer-02-clock-bg))",
         "timer-02-timer-bg": "hsl(var(--timer-02-timer-bg))",
         "timer-02-timer-text": "hsl(var(--timer-02-timer-text))",
+        "timer-02-ring-text": "hsl(var(--timer-02-ring-text))",
         "timer-02-setting-btn": "hsl(var(--timer-02-setting-btn))",
         card: {
           DEFAULT: "hsl(var(--card))",

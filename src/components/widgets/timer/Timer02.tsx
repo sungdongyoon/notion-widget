@@ -166,18 +166,18 @@ const Timer02 = () => {
     <div className="widget_container" data-variant="timer02">
       <div className="bg-timer-02-bg relative max-w-[500px] min-w-[240px] w-full aspect-[1/1] flex flex-col items-center justify-between rounded-[50%]">
         <div className="w-full flex-[2] flex justify-center items-center relative">
-          {showInProgressUI && (
-            <div className="absolute top-[5%] left-1/2 -translate-x-1/2 text-[clamp(0.6rem,5vmin,1rem)] text-white">
+          {/* {showInProgressUI && (
+            <div className="absolute top-[2%] left-1/2 -translate-x-1/2 text-[clamp(0.6rem,5vmin,1rem)] text-timer-02-ring-text">
               <span>{hour}</span>:<span>{minute}</span>:<span>{second}</span>
             </div>
-          )}
+          )} */}
 
-          {showInProgressUI && (
-            <div className="absolute bottom-[5%] left-1/2 -translate-x-1/2 flex gap-3">
+          {/* {showInProgressUI && (
+            <div className="absolute bottom-[2%] left-1/2 -translate-x-1/2 flex gap-3">
               <button
                 onClick={!running ? startTime : pauseTime}
                 aria-label={!running ? "시작" : "일시정지"}
-                className="inline-flex items-center justify-center text-[clamp(0.6rem,5vmin,1.5rem)] text-white"
+                className="inline-flex items-center justify-center text-[clamp(0.6rem,5vmin,1.5rem)] text-timer-02-ring-text"
               >
                 {!running ? (
                   <FaRegPlayCircle aria-hidden="true" />
@@ -186,13 +186,13 @@ const Timer02 = () => {
                 )}
               </button>
               <button
-                className="inline-flex items-center justify-center text-[clamp(0.6rem,5vmin,1.5rem)] text-white"
+                className="inline-flex items-center justify-center text-[clamp(0.6rem,5vmin,1.5rem)] text-timer-02-ring-text"
                 onClick={resetTime}
               >
                 <LuTimerReset aria-hidden="true" />
               </button>
             </div>
-          )}
+          )} */}
 
           <div
             className="timer_clock"
@@ -203,14 +203,38 @@ const Timer02 = () => {
               )}%`,
             }}
           >
+            {showInProgressUI && (
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-black border-[10px] border-solid border-white w-[40%] min-w-[100px] aspect-square flex flex-col gap-2 justify-center items-center p-5">
+                <div className="text-[clamp(0.6rem,4vmin,1.2rem)] text-timer-02-ring-text">
+                  <span>{hour}</span>:<span>{minute}</span>:
+                  <span>{second}</span>
+                </div>
+                <div className="w-full flex gap-1">
+                  <button
+                    onClick={!running ? startTime : pauseTime}
+                    aria-label={!running ? "시작" : "일시정지"}
+                    className="inline-flex items-center justify-center text-[clamp(0.5rem,2vmin,0.8rem)] text-timer-02-ring-text flex-1"
+                  >
+                    {!running ? "play" : "pause"}
+                  </button>
+                  <button
+                    className="inline-flex items-center justify-center text-[clamp(0.5rem,2vmin,0.8rem)] text-timer-02-ring-text flex-1"
+                    onClick={resetTime}
+                  >
+                    reset
+                  </button>
+                </div>
+              </div>
+            )}
+
             {showSetup && (
-              <div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+              <>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-3">
                   <button
                     onClick={startTime}
                     aria-label="시작"
                     disabled={running}
-                    className=" inline-flex items-center justify-center text-[clamp(3rem,30cqi,10rem)] text-timer-02-timer-text text-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+                    className="inline-flex items-center justify-center text-[clamp(3rem,30cqi,10rem)] text-timer-02-timer-text text-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
                   >
                     <FaPlayCircle aria-hidden="true" />
                   </button>
@@ -226,7 +250,7 @@ const Timer02 = () => {
                     disabled={running}
                   />
                 </div>
-              </div>
+              </>
             )}
           </div>
         </div>
