@@ -3,8 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { FaPlayCircle } from "react-icons/fa";
 import TimeOption from "./TimeOption";
-import { LuTimerReset } from "react-icons/lu";
-import { FaRegPlayCircle, FaRegPauseCircle } from "react-icons/fa";
 
 // ===== 타입 =====
 type ApplyTimeProps = {
@@ -166,34 +164,6 @@ const Timer02 = () => {
     <div className="widget_container" data-variant="timer02">
       <div className="bg-timer-02-bg relative max-w-[500px] min-w-[240px] w-full aspect-[1/1] flex flex-col items-center justify-between rounded-[50%]">
         <div className="w-full flex-[2] flex justify-center items-center relative">
-          {/* {showInProgressUI && (
-            <div className="absolute top-[2%] left-1/2 -translate-x-1/2 text-[clamp(0.6rem,5vmin,1rem)] text-timer-02-ring-text">
-              <span>{hour}</span>:<span>{minute}</span>:<span>{second}</span>
-            </div>
-          )} */}
-
-          {/* {showInProgressUI && (
-            <div className="absolute bottom-[2%] left-1/2 -translate-x-1/2 flex gap-3">
-              <button
-                onClick={!running ? startTime : pauseTime}
-                aria-label={!running ? "시작" : "일시정지"}
-                className="inline-flex items-center justify-center text-[clamp(0.6rem,5vmin,1.5rem)] text-timer-02-ring-text"
-              >
-                {!running ? (
-                  <FaRegPlayCircle aria-hidden="true" />
-                ) : (
-                  <FaRegPauseCircle aria-hidden="true" />
-                )}
-              </button>
-              <button
-                className="inline-flex items-center justify-center text-[clamp(0.6rem,5vmin,1.5rem)] text-timer-02-ring-text"
-                onClick={resetTime}
-              >
-                <LuTimerReset aria-hidden="true" />
-              </button>
-            </div>
-          )} */}
-
           <div
             className="timer_clock"
             style={{
@@ -204,7 +174,7 @@ const Timer02 = () => {
             }}
           >
             {showInProgressUI && (
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-black border-[10px] border-solid border-white w-[40%] min-w-[100px] aspect-square flex flex-col gap-2 justify-center items-center p-5">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-timer-02-bg border-[10px] border-solid border-timer-02-clock-bg w-[40%] min-w-[100px] aspect-square flex flex-col gap-2 justify-center items-center p-5">
                 <div className="text-[clamp(0.6rem,4vmin,1.2rem)] text-timer-02-ring-text">
                   <span>{hour}</span>:<span>{minute}</span>:
                   <span>{second}</span>
