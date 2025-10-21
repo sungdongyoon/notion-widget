@@ -15,6 +15,7 @@ type PersistState =
   | {
       mode: "running";
       deadline: number;
+      remainMs?: number;
       initialMs: number;
     }
   | {
@@ -28,12 +29,6 @@ type PersistState =
       initialMs: number;
     };
 
-// type TimeOptionProps = {
-//   value: number;
-//   onApply: (time: number) => void;
-//   disabled: boolean;
-// };
-
 const DEFAULT_INITIAL = 60 * 1000; // 초기 시간
 const INTERVAL = 10; // INTERVAL 밀리초 마다 시간 줄어듦
 const STORAGE_KEY = "timer02_state"; // 로컬 스토리지 키 값
@@ -46,7 +41,7 @@ const Timer02 = () => {
   // 타이머 진행 여부
   const [running, setRunning] = useState<boolean>(false);
 
-  const isFinished = time <= 0; // 종료 여부
+  const isFinished = time === 0; // 종료 여부
   const isInitial = !running && time === initialTime; // 초기 상태 판별
   const showSetup = !running && isInitial; // 초기 ui(재생, 설정, 시간) 노출 여부
   const showInProgressUI =
@@ -84,7 +79,12 @@ const Timer02 = () => {
     setRunning(true);
 
     const deadline = Date.now() + time;
-    saveState({ mode: "running", deadline, initialMs: initialTime });
+    saveState({
+      mode: "running",
+      deadline,
+      remainMs: initialTime,
+      initialMs: initialTime,
+    });
   };
 
   // 타이머 일시정지 함수
@@ -95,13 +95,14 @@ const Timer02 = () => {
 
   // 타이머 리셋 함수
   const resetTime = (): void => {
+    const state = loadState();
     setRunning(false);
-    setInitialTime(DEFAULT_INITIAL);
-    setTime(DEFAULT_INITIAL);
+    setInitialTime(state.initialMs);
+    setTime(state.initialMs);
     saveState({
       mode: "stopped",
-      remainMs: DEFAULT_INITIAL,
-      initialMs: DEFAULT_INITIAL,
+      remainMs: state.initialMs,
+      initialMs: state.initialMs,
     });
   };
 
@@ -142,21 +143,35 @@ const Timer02 = () => {
   // 마운트 시 복원
   useEffect(() => {
     const state = loadState();
+
     if (!state) return;
 
+    const remain = Math.max(0, state.deadline - Date.now());
+
     if (state.mode === "running") {
-      const remain = Math.max(0, state.deadline - Date.now());
       setInitialTime(state.initialMs);
-      setTime(remain);
+      setTime(state.initialMs);
       setRunning(remain > 0);
 
-      if (remain < 0) {
-        saveState({ mode: "stopped", remainMs: 0, initialMs: state.initialMs });
+      if (remain === 0) {
+        saveState({
+          mode: "stopped",
+          remainMs: state.initialMs,
+          initialMs: state.initialMs,
+        });
       }
     } else {
       setInitialTime(state.initialMs);
       setTime(state.remainMs);
       setRunning(false);
+    }
+
+    if (time <= 10) {
+      saveState({
+        mode: "stopped",
+        remainMs: state.initialMs,
+        initialMs: state.initialMs,
+      });
     }
   }, []);
 
