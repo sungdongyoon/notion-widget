@@ -104,7 +104,7 @@ export default function TimeOption({
             </p>
           </div>
           <div className="grid gap-2">
-            <div className="grid grid-cols-3 items-center gap-4">
+            {/* <div className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="hour">hour</Label>
               <Input
                 id="hour"
@@ -115,7 +115,7 @@ export default function TimeOption({
                 onBlur={() => setHour(onBlurClamp(hour, 23))}
                 className="col-span-2 h-8"
               />
-            </div>
+            </div> */}
             <div className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="minute">minute</Label>
               <Input

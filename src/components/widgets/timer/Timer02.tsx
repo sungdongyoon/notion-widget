@@ -191,8 +191,7 @@ const Timer02 = () => {
             {showInProgressUI && (
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-timer-02-bg border-[10px] border-solid border-timer-02-clock-bg w-[40%] min-w-[100px] aspect-square flex flex-col gap-2 justify-center items-center p-5">
                 <div className="text-[clamp(0.6rem,4vmin,1.2rem)] text-timer-02-ring-text">
-                  <span>{hour}</span>:<span>{minute}</span>:
-                  <span>{second}</span>
+                  <span>{minute}</span>:<span>{second}</span>
                 </div>
                 <div className="w-full flex">
                   <button
@@ -224,8 +223,7 @@ const Timer02 = () => {
                     <FaPlayCircle aria-hidden="true" />
                   </button>
                   <p className="text-timer-02-timer-text 2xs:text-[1.5rem] 5xs:text-[1.2rem] 6xs:text-[1rem] 7xs:text-[0.8rem] text-[0.8rem]">
-                    <span>{hour}</span>:<span>{minute}</span>:
-                    <span>{second}</span>
+                    <span>{minute}</span>:<span>{second}</span>
                   </p>
                 </div>
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
