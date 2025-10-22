@@ -78,7 +78,7 @@ export default function TimeOption({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
-          className={`2xs:text-[1.2rem] text-[0.8rem] text-timer-02-setting-btn ${
+          className={`text-[clamp(0.6rem,5vmin,1.2rem)] text-timer-02-setting-btn ${
             disabled ? "cursor-not-allowed opacity-30" : "cursor-pointer"
           }`}
           disabled={disabled}

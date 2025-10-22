@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { FaPlayCircle } from "react-icons/fa";
 import TimeOption from "./TimeOption";
+import BreakPointView from "@/components/BreakPointView";
 
 // ===== 타입 =====
 type ApplyTimeProps = {
@@ -175,22 +176,11 @@ const Timer02 = () => {
     }
   }, []);
 
-  const [width, setWidth] = useState<number>(0);
-
-  useEffect(() => {
-    const update = () => {
-      setWidth(window.innerWidth);
-    };
-
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
-
   return (
     <div className="widget_container" data-variant="timer02">
-      <div className="fixed top-5 text-green-500 text-[30px]">{width}</div>
-      <div className="bg-timer-02-bg relative max-w-[500px] min-w-[240px] w-full aspect-[1/1] flex flex-col items-center justify-between rounded-[50%]">
+      <BreakPointView />
+
+      <div className="bg-timer-02-bg relative max-w-[500px] min-w-[150px] w-full aspect-[1/1] flex flex-col items-center justify-between rounded-[50%]">
         <div className="w-full flex-[2] flex justify-center items-center relative">
           <div
             className="timer_clock"
@@ -226,20 +216,20 @@ const Timer02 = () => {
 
             {showSetup && (
               <>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-3">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center ">
                   <button
                     onClick={startTime}
                     aria-label="시작"
                     disabled={running}
-                    className="inline-flex items-center justify-center text-[clamp(3rem,30cqi,10rem)] text-timer-02-timer-text text-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+                    className="inline-flex items-center justify-center text-[clamp(2.5rem,30cqi,10rem)] text-timer-02-timer-text text-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
                   >
                     <FaPlayCircle aria-hidden="true" />
                   </button>
-                  <p className="text-timer-02-timer-text 2xs:text-[1.5rem] 5xs:text-[1.2rem] 6xs:text-[1rem] 7xs:text-[0.8rem] text-[0.8rem]">
+                  <p className="text-timer-02-timer-text text-[clamp(0.8rem,6vmin,2rem)] font-bold">
                     <span>{minute}</span>:<span>{second}</span>
                   </p>
                 </div>
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
+                <div className="absolute bottom-[0] left-1/2 -translate-x-1/2">
                   <TimeOption
                     value={time}
                     onApply={applyTime}
