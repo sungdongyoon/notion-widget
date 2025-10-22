@@ -175,8 +175,21 @@ const Timer02 = () => {
     }
   }, []);
 
+  const [width, setWidth] = useState<number>(0);
+
+  useEffect(() => {
+    const update = () => {
+      setWidth(window.innerWidth);
+    };
+
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
   return (
     <div className="widget_container" data-variant="timer02">
+      <div className="fixed top-5 text-green-500 text-[30px]">{width}</div>
       <div className="bg-timer-02-bg relative max-w-[500px] min-w-[240px] w-full aspect-[1/1] flex flex-col items-center justify-between rounded-[50%]">
         <div className="w-full flex-[2] flex justify-center items-center relative">
           <div
