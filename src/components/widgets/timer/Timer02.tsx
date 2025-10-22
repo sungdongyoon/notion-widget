@@ -178,8 +178,6 @@ const Timer02 = () => {
 
   return (
     <div className="widget_container" data-variant="timer02">
-      <BreakPointView />
-
       <div className="bg-timer-02-bg relative max-w-[500px] min-w-[150px] w-full aspect-[1/1] flex flex-col items-center justify-between rounded-[50%]">
         <div className="w-full flex-[2] flex justify-center items-center relative">
           <div
@@ -216,7 +214,7 @@ const Timer02 = () => {
 
             {showSetup && (
               <>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center ">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1">
                   <button
                     onClick={startTime}
                     aria-label="시작"
