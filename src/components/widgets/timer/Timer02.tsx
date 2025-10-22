@@ -193,19 +193,19 @@ const Timer02 = () => {
           >
             {showInProgressUI && (
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-timer-02-bg border-[10px] border-solid border-timer-02-clock-bg w-[40%] min-w-[100px] aspect-square flex flex-col gap-2 justify-center items-center p-5">
-                <div className="text-[clamp(0.6rem,4vmin,1.2rem)] text-timer-02-ring-text">
+                <div className="text-[clamp(0.9rem,4vmin,1.5rem)] text-timer-02-ring-text font-bold">
                   <span>{minute}</span>:<span>{second}</span>
                 </div>
                 <div className="w-full flex">
                   <button
                     onClick={!running ? startTime : pauseTime}
                     aria-label={!running ? "시작" : "일시정지"}
-                    className="inline-flex items-center justify-center text-[clamp(0.4rem,2vmin,0.8rem)] text-timer-02-ring-text flex-1"
+                    className="inline-flex items-center justify-center text-[clamp(0.47rem,2.5vmin,0.8rem)] text-timer-02-ring-text flex-1 font-medium"
                   >
                     {!running ? "play" : "pause"}
                   </button>
                   <button
-                    className="inline-flex items-center justify-center text-[clamp(0.4rem,2vmin,0.8rem)] text-timer-02-ring-text flex-1"
+                    className="inline-flex items-center justify-center text-[clamp(0.47rem,2.5vmin,0.8rem)] text-timer-02-ring-text flex-1 font-medium"
                     onClick={resetTime}
                   >
                     reset
