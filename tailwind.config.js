@@ -18,6 +18,7 @@ module.exports = {
         "timer-02-timer-text": "hsl(var(--timer-02-timer-text))",
         "timer-02-ring-text": "hsl(var(--timer-02-ring-text))",
         "timer-02-setting-btn": "hsl(var(--timer-02-setting-btn))",
+        blackwhite: "hsl(var(--blackwhite))",
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",

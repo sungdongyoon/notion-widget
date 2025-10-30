@@ -332,9 +332,49 @@
 // export default Timer01;
 
 import React from "react";
+import { FaPlay, FaRedo } from "react-icons/fa";
+import { FaGear } from "react-icons/fa6";
 
 const Timer01 = () => {
-  return <div>timer 01</div>;
+  return (
+    <div className="widget_container" data-variant="timer01">
+      <div
+        className="bg-black/30 flex flex-col items-center justify-between p-10"
+        style={{
+          width: "min(100vw,100vh)",
+          height: "min(100vw,100vh)",
+          borderRadius: "calc(min(100vw,100vh) * 0.03)",
+        }}
+      >
+        <div className="w-[80%] h-full flex flex-col justify-between items-center">
+          <div className="test_border_blue w-full">
+            <div className="timer_circle w-full aspect-square rounded-[50%] flex justify-center items-center">
+              <div className="bg-gray-400 w-[90%] aspect-square rounded-[50%] flex flex-col justify-center items-center relative">
+                <span className="absolute top-10 left-1/2 -translate-x-1/2 text-[clamp(0.8rem,4vmin,1.2rem)] text-white">
+                  focus
+                </span>
+                <span className="text-[clamp(0.9rem,10vmin,20rem)] font-semibold text-white">
+                  15:30
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-between w-full test_border_red flex-1">
+            <button className="cursor-pointer text-[clamp(0.8rem,6vmin,2rem)]">
+              <FaRedo />
+            </button>
+            <button className="cursor-pointer text-[clamp(0.8rem,6vmin,2rem)]">
+              <FaPlay />
+            </button>
+            <button className="cursor-pointer text-[clamp(0.8rem,6vmin,2rem)]">
+              <FaGear />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Timer01;
