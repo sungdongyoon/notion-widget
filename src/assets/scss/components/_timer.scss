@@ -4,7 +4,10 @@
   **************************************************/
   &[data-variant="timer01"] {
     .timer_circle {
-      background: conic-gradient(rgb(206, 206, 206) 0 10%, black 0);
+      background: conic-gradient(
+        rgb(206, 206, 206) 0 calc(100% - var(--remain, 0%)),
+        black 0
+      );
     }
   }
 

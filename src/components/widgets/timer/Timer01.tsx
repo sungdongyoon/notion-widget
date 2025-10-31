@@ -1,5 +1,6 @@
 "use client";
 
+import BreakPointView from "@/components/BreakPointView";
 // import React, { useEffect, useRef, useState } from "react";
 // import style from "./timer.module.scss";
 // import { FaMinus, FaPlus, FaQuestionCircle, FaTimes } from "react-icons/fa";
@@ -331,13 +332,123 @@
 
 // export default Timer01;
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaPlay, FaRedo } from "react-icons/fa";
 import { FaGear } from "react-icons/fa6";
 
+// ===== 타입 =====
+type PersistState =
+  | {
+      mode: "running";
+      deadline: number;
+      remainMs?: number;
+      initialMs: number;
+    }
+  | {
+      mode: "paused";
+      remainMs: number;
+      initialMs: number;
+    }
+  | {
+      mode: "stopped";
+      remainMs: number;
+      initialMs: number;
+    };
+
+const DEFAULT_INITIAL = 60 * 1000; // 초기 시간
+const INTERVAL = 10; // INTERVAL 밀리초 마다 시간 줄어듦
+const STORAGE_KEY = "timer01_state"; // 로컬 스토리지 키 값
+
 const Timer01 = () => {
+  // 초기값
+  const [initialTime, setInitialTime] = useState<number>(DEFAULT_INITIAL);
+  // 시간
+  const [time, setTime] = useState<number>(DEFAULT_INITIAL);
+  // 타이머 진행 여부
+  const [running, setRunning] = useState<boolean>(false);
+
+  // 시, 분, 초
+  const hour = String(Math.floor(time / (1000 * 60 * 60))).padStart(2, "0");
+  const minute = String(Math.floor(time / (1000 * 60)) % 60).padStart(2, "0");
+  const second = String(Math.floor((time / 1000) % 60)).padStart(2, "0");
+
+  // 남은 시간 비율
+  const remainTimePercent = initialTime ? (time / initialTime) * 100 : 0;
+
+  // 로컬 스토리지 상태 저장
+  const saveState = (state: PersistState) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch {}
+  };
+
+  // 로컬 스토리지 상태 불러오기
+  const loadState = () => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  // 타이머 시작 함수
+  const startTime = (): void => {
+    if (time <= 0) return;
+    setRunning(true);
+
+    const deadline = Date.now() + time;
+    saveState({
+      mode: "running",
+      deadline,
+      remainMs: initialTime,
+      initialMs: initialTime,
+    });
+  };
+
+  // 타이머 일시정지 함수
+  const pauseTime = (): void => {
+    setRunning(false);
+    saveState({ mode: "paused", remainMs: time, initialMs: initialTime });
+  };
+
+  // 타이머 리셋 함수
+  const resetTime = (): void => {
+    const state = loadState();
+    setRunning(false);
+    setInitialTime(state.initialMs);
+    setTime(state.initialMs);
+    saveState({
+      mode: "stopped",
+      remainMs: state.initialMs,
+      initialMs: state.initialMs,
+    });
+  };
+
+  // INTERVAL 초 마다 시간 줄어들게 하기
+  useEffect(() => {
+    const timer: number = window.setInterval(() => {
+      setTime((prev) => {
+        const next = prev - INTERVAL;
+
+        if (next <= 0) {
+          setRunning(false);
+          return initialTime;
+        }
+
+        return next;
+      });
+    }, INTERVAL);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [running, initialTime]);
+
   return (
     <div className="widget_container" data-variant="timer01">
+      <BreakPointView />
       <div
         className="bg-black/30 flex flex-col items-center justify-between p-10"
         style={{
@@ -346,28 +457,43 @@ const Timer01 = () => {
           borderRadius: "calc(min(100vw,100vh) * 0.03)",
         }}
       >
-        <div className="w-[80%] h-full flex flex-col justify-between items-center">
-          <div className="test_border_blue w-full">
-            <div className="timer_circle w-full aspect-square rounded-[50%] flex justify-center items-center">
+        <div className="w-[75%] h-full flex flex-col justify-between items-center">
+          <div className="ff_blue w-full">
+            <div
+              className="timer_circle w-full aspect-square rounded-[50%] flex justify-center items-center"
+              style={{
+                ["--remain" as string]: `${Math.max(
+                  0,
+                  Math.min(100, remainTimePercent)
+                )}%`,
+              }}
+            >
               <div className="bg-gray-400 w-[90%] aspect-square rounded-[50%] flex flex-col justify-center items-center relative">
-                <span className="absolute top-10 left-1/2 -translate-x-1/2 text-[clamp(0.8rem,4vmin,1.2rem)] text-white">
+                <span className="absolute top-[10%] left-1/2 -translate-x-1/2 text-[clamp(0.8rem,4vmin,1.2rem)] text-white">
                   focus
                 </span>
-                <span className="text-[clamp(0.9rem,10vmin,20rem)] font-semibold text-white">
-                  15:30
-                </span>
+                <p className="text-[clamp(0.9rem,10vmin,20rem)] font-semibold text-white">
+                  <span>{hour}</span>:<span>{minute}</span>:
+                  <span>{second}</span>
+                </p>
               </div>
             </div>
           </div>
 
-          <div className="flex justify-between w-full test_border_red flex-1">
-            <button className="cursor-pointer text-[clamp(0.8rem,6vmin,2rem)]">
+          <div className="flex justify-between w-full ff_red flex-1">
+            <button
+              className="cursor-pointer text-[clamp(1rem,8vmin,3rem)]"
+              onClick={resetTime}
+            >
               <FaRedo />
             </button>
-            <button className="cursor-pointer text-[clamp(0.8rem,6vmin,2rem)]">
+            <button
+              className="cursor-pointer text-[clamp(1rem,8vmin,3rem)]"
+              onClick={startTime}
+            >
               <FaPlay />
             </button>
-            <button className="cursor-pointer text-[clamp(0.8rem,6vmin,2rem)]">
+            <button className="cursor-pointer text-[clamp(1rem,8vmin,3rem)]">
               <FaGear />
             </button>
           </div>
