@@ -333,10 +333,17 @@ import BreakPointView from "@/components/BreakPointView";
 // export default Timer01;
 
 import React, { useEffect, useState } from "react";
-import { FaPlay, FaRedo } from "react-icons/fa";
+import { FaPause, FaPlay, FaRedo } from "react-icons/fa";
 import { FaGear } from "react-icons/fa6";
+import TimeOption from "./TimeOption";
 
 // ===== 타입 =====
+type ApplyTimeProps = {
+  hour: number;
+  minute: number;
+  second: number;
+};
+
 type PersistState =
   | {
       mode: "running";
@@ -393,6 +400,9 @@ const Timer01 = () => {
     }
   };
 
+  // const test = loadState();
+  // console.log("time", test);
+
   // 타이머 시작 함수
   const startTime = (): void => {
     if (time <= 0) return;
@@ -426,8 +436,22 @@ const Timer01 = () => {
     });
   };
 
+  // 시간 적용
+  const applyTime = ({ hour, minute, second }: ApplyTimeProps): void => {
+    const h = Number(hour) || 0;
+    const m = Number(minute) || 0;
+    const s = Number(second) || 0;
+    const ms = (h * 3600 + m * 60 + s) * 1000;
+    setRunning(false);
+    setInitialTime(ms);
+    setTime(ms);
+    saveState({ mode: "stopped", remainMs: ms, initialMs: ms });
+  };
+
   // INTERVAL 초 마다 시간 줄어들게 하기
   useEffect(() => {
+    if (!running) return;
+
     const timer: number = window.setInterval(() => {
       setTime((prev) => {
         const next = prev - INTERVAL;
@@ -446,19 +470,59 @@ const Timer01 = () => {
     };
   }, [running, initialTime]);
 
+  useEffect(() => {
+    const state = loadState();
+
+    if (!state) return;
+    console.log("state", state);
+
+    const remain = state?.deadline
+      ? Math.max(0, state.deadline - Date.now())
+      : 0;
+
+    // 초기 화면 상태에 따른 조건
+    if (state.mode === "running") {
+      setInitialTime(state.initialMs);
+      setTime(state.remainMs);
+      setRunning(true);
+
+      // running인 상태인데 remain이 0이라면 stopped로 변경
+      if (remain === 0) {
+        saveState({
+          mode: "stopped",
+          remainMs: state.initialMs,
+          initialMs: state.initialMs,
+        });
+      }
+    } else {
+      // 작동 상태가 아닌 경우
+      setInitialTime(state.initialMs);
+      setTime(state.remainMs);
+      setRunning(false);
+    }
+
+    if (time <= 10) {
+      saveState({
+        mode: "stopped",
+        remainMs: state.initialMs,
+        initialMs: state.initialMs,
+      });
+    }
+  }, []);
+
   return (
     <div className="widget_container" data-variant="timer01">
       <BreakPointView />
       <div
-        className="bg-black/30 flex flex-col items-center justify-between p-10"
+        className="bg-notion-gray-bg flex flex-col items-center justify-between p-[clamp(1.3rem,10vmin,3rem)] aspect-square"
         style={{
           width: "min(100vw,100vh)",
           height: "min(100vw,100vh)",
           borderRadius: "calc(min(100vw,100vh) * 0.03)",
         }}
       >
-        <div className="w-[75%] h-full flex flex-col justify-between items-center">
-          <div className="ff_blue w-full">
+        <div className="w-[85%] h-full flex flex-col justify-between gap-2 items-center">
+          <div className="w-full">
             <div
               className="timer_circle w-full aspect-square rounded-[50%] flex justify-center items-center"
               style={{
@@ -468,11 +532,11 @@ const Timer01 = () => {
                 )}%`,
               }}
             >
-              <div className="bg-gray-400 w-[90%] aspect-square rounded-[50%] flex flex-col justify-center items-center relative">
-                <span className="absolute top-[10%] left-1/2 -translate-x-1/2 text-[clamp(0.8rem,4vmin,1.2rem)] text-white">
+              <div className="bg-notion-gray-bg w-[90%] aspect-square rounded-[50%] flex flex-col justify-center items-center relative">
+                <span className="absolute top-[15%] left-1/2 -translate-x-1/2 text-[clamp(0.4rem,4vmin,1.2rem)] text-blackwhite">
                   focus
                 </span>
-                <p className="text-[clamp(0.9rem,10vmin,20rem)] font-semibold text-white">
+                <p className="text-[clamp(0.9rem,10vmin,20rem)] font-semibold text-blackwhite">
                   <span>{hour}</span>:<span>{minute}</span>:
                   <span>{second}</span>
                 </p>
@@ -480,22 +544,25 @@ const Timer01 = () => {
             </div>
           </div>
 
-          <div className="flex justify-between w-full ff_red flex-1">
+          <div className="flex justify-between w-full">
             <button
-              className="cursor-pointer text-[clamp(1rem,8vmin,3rem)]"
+              className="cursor-pointer text-[clamp(1rem,6vmin,3rem)]"
               onClick={resetTime}
             >
               <FaRedo />
             </button>
             <button
-              className="cursor-pointer text-[clamp(1rem,8vmin,3rem)]"
-              onClick={startTime}
+              className="cursor-pointer text-[clamp(1rem,6vmin,3rem)]"
+              onClick={!running ? startTime : pauseTime}
             >
-              <FaPlay />
+              {!running ? <FaPlay /> : <FaPause />}
             </button>
-            <button className="cursor-pointer text-[clamp(1rem,8vmin,3rem)]">
-              <FaGear />
-            </button>
+            <TimeOption
+              value={time}
+              onApply={applyTime}
+              disabled={running}
+              style="text-[clamp(1rem,6vmin,3rem)]"
+            />
           </div>
         </div>
       </div>

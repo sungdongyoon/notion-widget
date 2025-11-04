@@ -22,12 +22,14 @@ type TimeOptionProps = {
   value: number;
   onApply?: (payload: ApplyTimePayload) => void;
   disabled?: boolean;
+  style?: string;
 };
 
 export default function TimeOption({
   value,
   onApply,
   disabled,
+  style,
 }: TimeOptionProps) {
   const totalSec = Math.floor((Number(value) || 0) / 1000);
   const initH = Math.floor(totalSec / 3600);
@@ -78,7 +80,7 @@ export default function TimeOption({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
-          className={`text-[clamp(0.6rem,5vmin,1.2rem)] text-timer-02-setting-btn ${
+          className={`${style} ${
             disabled ? "cursor-not-allowed opacity-30" : "cursor-pointer"
           }`}
           disabled={disabled}

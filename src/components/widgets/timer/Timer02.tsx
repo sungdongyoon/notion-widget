@@ -232,6 +232,7 @@ const Timer02 = () => {
                     value={time}
                     onApply={applyTime}
                     disabled={running}
+                    style="text-[clamp(0.6rem,5vmin,1.2rem)] text-timer-02-setting-btn"
                   />
                 </div>
               </>
