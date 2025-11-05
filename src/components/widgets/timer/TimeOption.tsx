@@ -23,14 +23,29 @@ type TimeOptionProps = {
   value: number;
   onApply?: (payload: ApplyTimePayload) => void;
   applyColor?: (payload: string) => void;
+  applyLabel?: (payload: string) => void;
   disabled?: boolean;
   style?: string;
 };
+
+// 색상 배열
+const COLOR_OPTIONS = [
+  { id: "default", label: "Defualt" },
+  { id: "brown", label: "Brown" },
+  { id: "orange", label: "Orange" },
+  { id: "yellow", label: "Yellow" },
+  { id: "green", label: "Green" },
+  { id: "blue", label: "Blue" },
+  { id: "purple", label: "Purple" },
+  { id: "pink", label: "Pink" },
+  { id: "red", label: "Red" },
+] as const;
 
 export default function TimeOption({
   value,
   onApply,
   applyColor,
+  applyLabel,
   disabled,
   style,
 }: TimeOptionProps) {
@@ -44,6 +59,7 @@ export default function TimeOption({
   const [second, setSecond] = useState<string>(String(initS));
 
   const [open, setOpen] = useState<boolean>(false);
+  const [timerLabel, setTimerLabel] = useState<string>("");
 
   useEffect(() => {
     setHour(String(initH));
@@ -76,6 +92,7 @@ export default function TimeOption({
       minute: Number(minute || 0),
       second: Number(second || 0),
     });
+
     setOpen(false);
   };
 
@@ -176,13 +193,17 @@ export default function TimeOption({
             <Input
               id="timer-label"
               type="text"
-              inputMode="numeric"
-              defaultValue="test"
-              // onChange={onSecondChange}
-              // onBlur={() => setSecond(onBlurClamp(second, 59))}
+              value={timerLabel}
+              onChange={(e) => setTimerLabel(e.target.value)}
               className="col-span-2 h-8"
             />
           </div>
+          <button
+            className="mt-2 h-8 rounded bg-black text-white text-sm"
+            onClick={() => applyLabel?.(timerLabel)}
+          >
+            적용하기
+          </button>
         </div>
         <div className="grid gap-4">
           <div className="space-y-2">
@@ -192,60 +213,18 @@ export default function TimeOption({
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button
-              className="bg-notion-default-bg text-notion-default-text"
-              onClick={() => applyColor?.("default")}
-            >
-              Default
-            </Button>
-            <Button
-              className="bg-notion-brown-bg text-notion-brown-text"
-              onClick={() => applyColor?.("brown")}
-            >
-              Brown
-            </Button>
-            <Button
-              className="bg-notion-orange-bg text-notion-orange-text"
-              onClick={() => applyColor?.("orange")}
-            >
-              Orange
-            </Button>
-            <Button
-              className="bg-notion-yellow-bg text-notion-yellow-text"
-              onClick={() => applyColor?.("yellow")}
-            >
-              Yellow
-            </Button>
-            <Button
-              className="bg-notion-green-bg text-notion-green-text"
-              onClick={() => applyColor?.("green")}
-            >
-              Green
-            </Button>
-            <Button
-              className="bg-notion-blue-bg text-notion-blue-text"
-              onClick={() => applyColor?.("blue")}
-            >
-              Blue
-            </Button>
-            <Button
-              className="bg-notion-purple-bg text-notion-purple-text"
-              onClick={() => applyColor?.("purple")}
-            >
-              Purple
-            </Button>
-            <Button
-              className="bg-notion-pink-bg text-notion-pink-text"
-              onClick={() => applyColor?.("pink")}
-            >
-              Pink
-            </Button>
-            <Button
-              className="bg-notion-red-bg text-notion-red-text"
-              onClick={() => applyColor?.("red")}
-            >
-              Red
-            </Button>
+            {COLOR_OPTIONS.map(({ id, label }) => {
+              return (
+                <Button
+                  key={id}
+                  type="button"
+                  onClick={() => applyColor?.(id)}
+                  className={`bg-notion-${id}-bg text-notion-${id}-text`}
+                >
+                  {label}
+                </Button>
+              );
+            })}
           </div>
         </div>
       </PopoverContent>

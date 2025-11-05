@@ -334,7 +334,6 @@ import BreakPointView from "@/components/BreakPointView";
 
 import React, { useEffect, useState } from "react";
 import { FaPause, FaPlay, FaRedo } from "react-icons/fa";
-import { FaGear } from "react-icons/fa6";
 import TimeOption from "./TimeOption";
 
 // ===== 타입 =====
@@ -375,6 +374,8 @@ const Timer01 = () => {
   const [running, setRunning] = useState<boolean>(false);
   // 메인 컬러 상태
   const [timerColor, setTimerColor] = useState<string>("default");
+  // 라벨
+  const [timerLabel, setTimerLabel] = useState<string>("FOCUS");
 
   // 시, 분, 초
   const hour = String(Math.floor(time / (1000 * 60 * 60))).padStart(2, "0");
@@ -401,9 +402,6 @@ const Timer01 = () => {
       return null;
     }
   };
-
-  // const test = loadState();
-  // console.log("time", test);
 
   // 타이머 시작 함수
   const startTime = (): void => {
@@ -452,8 +450,12 @@ const Timer01 = () => {
 
   // 메인 컬러 적용
   const applyColor = (color: string): void => {
-    console.log("color", color);
     setTimerColor(color);
+  };
+
+  // 라벨 적용
+  const applyLabel = (label: string): void => {
+    setTimerLabel(label);
   };
 
   // INTERVAL 초 마다 시간 줄어들게 하기
@@ -520,7 +522,7 @@ const Timer01 = () => {
 
   return (
     <div className="widget_container" data-variant="timer01">
-      <BreakPointView />
+      {/* <BreakPointView /> */}
       <div
         className={`bg-notion-${
           timerColor === "default" ? "gray" : timerColor
@@ -547,9 +549,9 @@ const Timer01 = () => {
                 className={`bg-notion-${timerColor}-bg w-[90%] aspect-square rounded-[50%] flex flex-col justify-center items-center relative`}
               >
                 <span
-                  className={`absolute top-[15%] left-1/2 -translate-x-1/2 text-[clamp(0.4rem,4vmin,1.2rem)] text-notion-${timerColor}-text`}
+                  className={`absolute top-[15%] left-1/2 -translate-x-1/2 text-[clamp(0.4rem,4vmin,1.2rem)] text-notion-${timerColor}-text font-semibold`}
                 >
-                  focus
+                  {timerLabel}
                 </span>
                 <p
                   className={`text-[clamp(0.9rem,10vmin,20rem)] font-semibold text-notion-${timerColor}-text`}
@@ -578,6 +580,7 @@ const Timer01 = () => {
               value={time}
               onApply={applyTime}
               applyColor={applyColor}
+              applyLabel={applyLabel}
               disabled={running}
               style={`text-[clamp(1rem,6vmin,3rem)] text-notion-${timerColor}-text`}
             />
