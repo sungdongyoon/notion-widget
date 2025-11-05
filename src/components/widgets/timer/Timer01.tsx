@@ -373,6 +373,8 @@ const Timer01 = () => {
   const [time, setTime] = useState<number>(DEFAULT_INITIAL);
   // 타이머 진행 여부
   const [running, setRunning] = useState<boolean>(false);
+  // 메인 컬러 상태
+  const [timerColor, setTimerColor] = useState<string>("default");
 
   // 시, 분, 초
   const hour = String(Math.floor(time / (1000 * 60 * 60))).padStart(2, "0");
@@ -448,6 +450,12 @@ const Timer01 = () => {
     saveState({ mode: "stopped", remainMs: ms, initialMs: ms });
   };
 
+  // 메인 컬러 적용
+  const applyColor = (color: string): void => {
+    console.log("color", color);
+    setTimerColor(color);
+  };
+
   // INTERVAL 초 마다 시간 줄어들게 하기
   useEffect(() => {
     if (!running) return;
@@ -514,7 +522,7 @@ const Timer01 = () => {
     <div className="widget_container" data-variant="timer01">
       <BreakPointView />
       <div
-        className="bg-notion-gray-bg flex flex-col items-center justify-between p-[clamp(1.3rem,10vmin,3rem)] aspect-square"
+        className={`bg-notion-${timerColor}-bg flex flex-col items-center justify-between p-[clamp(1.3rem,10vmin,3rem)] aspect-square`}
         style={{
           width: "min(100vw,100vh)",
           height: "min(100vw,100vh)",
@@ -532,11 +540,17 @@ const Timer01 = () => {
                 )}%`,
               }}
             >
-              <div className="bg-notion-gray-bg w-[90%] aspect-square rounded-[50%] flex flex-col justify-center items-center relative">
-                <span className="absolute top-[15%] left-1/2 -translate-x-1/2 text-[clamp(0.4rem,4vmin,1.2rem)] text-blackwhite">
+              <div
+                className={`bg-notion-${timerColor}-bg w-[90%] aspect-square rounded-[50%] flex flex-col justify-center items-center relative`}
+              >
+                <span
+                  className={`absolute top-[15%] left-1/2 -translate-x-1/2 text-[clamp(0.4rem,4vmin,1.2rem)] text-notion-${timerColor}-text`}
+                >
                   focus
                 </span>
-                <p className="text-[clamp(0.9rem,10vmin,20rem)] font-semibold text-blackwhite">
+                <p
+                  className={`text-[clamp(0.9rem,10vmin,20rem)] font-semibold text-notion-${timerColor}-text`}
+                >
                   <span>{hour}</span>:<span>{minute}</span>:
                   <span>{second}</span>
                 </p>
@@ -546,13 +560,13 @@ const Timer01 = () => {
 
           <div className="flex justify-between w-full">
             <button
-              className="cursor-pointer text-[clamp(1rem,6vmin,3rem)]"
+              className={`cursor-pointer text-[clamp(1rem,6vmin,3rem)] text-notion-${timerColor}-text`}
               onClick={resetTime}
             >
               <FaRedo />
             </button>
             <button
-              className="cursor-pointer text-[clamp(1rem,6vmin,3rem)]"
+              className={`cursor-pointer text-[clamp(1rem,6vmin,3rem)] text-notion-${timerColor}-text`}
               onClick={!running ? startTime : pauseTime}
             >
               {!running ? <FaPlay /> : <FaPause />}
@@ -560,8 +574,9 @@ const Timer01 = () => {
             <TimeOption
               value={time}
               onApply={applyTime}
+              applyColor={applyColor}
               disabled={running}
-              style="text-[clamp(1rem,6vmin,3rem)]"
+              style={`text-[clamp(1rem,6vmin,3rem)] text-notion-${timerColor}-text`}
             />
           </div>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import ModeToggle from "@/components/ModeToggle";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -21,6 +22,7 @@ type ApplyTimePayload = {
 type TimeOptionProps = {
   value: number;
   onApply?: (payload: ApplyTimePayload) => void;
+  applyColor?: (payload: string) => void;
   disabled?: boolean;
   style?: string;
 };
@@ -28,6 +30,7 @@ type TimeOptionProps = {
 export default function TimeOption({
   value,
   onApply,
+  applyColor,
   disabled,
   style,
 }: TimeOptionProps) {
@@ -160,6 +163,89 @@ export default function TimeOption({
           </div>
           <div>
             <ModeToggle />
+          </div>
+        </div>
+        <div className="grid gap-4">
+          <div className="space-y-2">
+            <h4 className="leading-none font-medium">Label</h4>
+            <p className="text-muted-foreground text-sm">
+              타이머에 표시할 라벨을 입력해주세요.
+            </p>
+          </div>
+          <div>
+            <Input
+              id="timer-label"
+              type="text"
+              inputMode="numeric"
+              defaultValue="test"
+              // onChange={onSecondChange}
+              // onBlur={() => setSecond(onBlurClamp(second, 59))}
+              className="col-span-2 h-8"
+            />
+          </div>
+        </div>
+        <div className="grid gap-4">
+          <div className="space-y-2">
+            <h4 className="leading-none font-medium">Color</h4>
+            <p className="text-muted-foreground text-sm">
+              타이머의 메인 색상을 선택해주세요.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              className="bg-notion-default-bg text-notion-default-text"
+              onClick={() => applyColor?.("default")}
+            >
+              Default
+            </Button>
+            <Button
+              className="bg-notion-brown-bg text-notion-brown-text"
+              onClick={() => applyColor?.("brown")}
+            >
+              Brown
+            </Button>
+            <Button
+              className="bg-notion-orange-bg text-notion-orange-text"
+              onClick={() => applyColor?.("orange")}
+            >
+              Orange
+            </Button>
+            <Button
+              className="bg-notion-yellow-bg text-notion-yellow-text"
+              onClick={() => applyColor?.("yellow")}
+            >
+              Yellow
+            </Button>
+            <Button
+              className="bg-notion-green-bg text-notion-green-text"
+              onClick={() => applyColor?.("green")}
+            >
+              Green
+            </Button>
+            <Button
+              className="bg-notion-blue-bg text-notion-blue-text"
+              onClick={() => applyColor?.("blue")}
+            >
+              Blue
+            </Button>
+            <Button
+              className="bg-notion-purple-bg text-notion-purple-text"
+              onClick={() => applyColor?.("purple")}
+            >
+              Purple
+            </Button>
+            <Button
+              className="bg-notion-pink-bg text-notion-pink-text"
+              onClick={() => applyColor?.("pink")}
+            >
+              Pink
+            </Button>
+            <Button
+              className="bg-notion-red-bg text-notion-red-text"
+              onClick={() => applyColor?.("red")}
+            >
+              Red
+            </Button>
           </div>
         </div>
       </PopoverContent>
