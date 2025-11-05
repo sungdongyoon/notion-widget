@@ -522,7 +522,9 @@ const Timer01 = () => {
     <div className="widget_container" data-variant="timer01">
       <BreakPointView />
       <div
-        className={`bg-notion-${timerColor}-bg flex flex-col items-center justify-between p-[clamp(1.3rem,10vmin,3rem)] aspect-square`}
+        className={`bg-notion-${
+          timerColor === "default" ? "gray" : timerColor
+        }-bg flex flex-col items-center justify-between p-[clamp(1.3rem,10vmin,3rem)] aspect-square`}
         style={{
           width: "min(100vw,100vh)",
           height: "min(100vw,100vh)",
