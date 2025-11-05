@@ -538,6 +538,7 @@ const Timer01 = () => {
                   0,
                   Math.min(100, remainTimePercent)
                 )}%`,
+                ["--timer-color" as string]: `hsl(var(--notion-${timerColor}-text))`,
               }}
             >
               <div

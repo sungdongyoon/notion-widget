@@ -5,8 +5,9 @@
   &[data-variant="timer01"] {
     .timer_circle {
       background: conic-gradient(
-        hsl(var(--blackwhite) / 0.1) 0 calc(100% - var(--remain, 0%)),
-        hsl(var(--blackwhite)) 0
+        hsl(from var(--timer-color) h s l / 0.1) 0
+          calc(100% - var(--remain, 0%)),
+        var(--timer-color) 0
       );
     }
   }
