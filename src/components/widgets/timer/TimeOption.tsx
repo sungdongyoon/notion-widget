@@ -26,6 +26,7 @@ type TimeOptionProps = {
   applyLabel?: (payload: string) => void;
   disabled?: boolean;
   style?: string;
+  activeOption?: ("hour" | "minute" | "second" | "color" | "label")[];
 };
 
 // 색상 배열
@@ -48,6 +49,7 @@ export default function TimeOption({
   applyLabel,
   disabled,
   style,
+  activeOption,
 }: TimeOptionProps) {
   const totalSec = Math.floor((Number(value) || 0) / 1000);
   const initH = Math.floor(totalSec / 3600);
@@ -96,6 +98,8 @@ export default function TimeOption({
     setOpen(false);
   };
 
+  console.log("active", activeOption);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -126,42 +130,48 @@ export default function TimeOption({
             </p>
           </div>
           <div className="grid gap-2">
-            {/* <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="hour">hour</Label>
-              <Input
-                id="hour"
-                type="text"
-                inputMode="numeric"
-                value={hour}
-                onChange={onHourChange}
-                onBlur={() => setHour(onBlurClamp(hour, 23))}
-                className="col-span-2 h-8"
-              />
-            </div> */}
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="minute">minute</Label>
-              <Input
-                id="minute"
-                type="text"
-                inputMode="numeric"
-                value={minute}
-                onChange={onMinuteChange}
-                onBlur={() => setMinute(onBlurClamp(minute, 59))}
-                className="col-span-2 h-8"
-              />
-            </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="second">second</Label>
-              <Input
-                id="second"
-                type="text"
-                inputMode="numeric"
-                value={second}
-                onChange={onSecondChange}
-                onBlur={() => setSecond(onBlurClamp(second, 59))}
-                className="col-span-2 h-8"
-              />
-            </div>
+            {activeOption?.includes("hour") && (
+              <div className="grid grid-cols-3 items-center gap-4">
+                <Label htmlFor="hour">hour</Label>
+                <Input
+                  id="hour"
+                  type="text"
+                  inputMode="numeric"
+                  value={hour}
+                  onChange={onHourChange}
+                  onBlur={() => setHour(onBlurClamp(hour, 23))}
+                  className="col-span-2 h-8"
+                />
+              </div>
+            )}
+            {activeOption?.includes("minute") && (
+              <div className="grid grid-cols-3 items-center gap-4">
+                <Label htmlFor="minute">minute</Label>
+                <Input
+                  id="minute"
+                  type="text"
+                  inputMode="numeric"
+                  value={minute}
+                  onChange={onMinuteChange}
+                  onBlur={() => setMinute(onBlurClamp(minute, 59))}
+                  className="col-span-2 h-8"
+                />
+              </div>
+            )}
+            {activeOption?.includes("second") && (
+              <div className="grid grid-cols-3 items-center gap-4">
+                <Label htmlFor="second">second</Label>
+                <Input
+                  id="second"
+                  type="text"
+                  inputMode="numeric"
+                  value={second}
+                  onChange={onSecondChange}
+                  onBlur={() => setSecond(onBlurClamp(second, 59))}
+                  className="col-span-2 h-8"
+                />
+              </div>
+            )}
 
             <button
               className="mt-2 h-8 rounded bg-black text-white text-sm"
@@ -182,52 +192,64 @@ export default function TimeOption({
             <ModeToggle />
           </div>
         </div>
-        <div className="grid gap-4">
-          <div className="space-y-2">
-            <h4 className="leading-none font-medium">Label</h4>
-            <p className="text-muted-foreground text-sm">
-              타이머에 표시할 라벨을 입력해주세요.
-            </p>
+        {activeOption?.includes("label") && (
+          <div className="grid gap-4">
+            <div className="space-y-2">
+              <h4 className="leading-none font-medium">Label</h4>
+              <p className="text-muted-foreground text-sm">
+                타이머에 표시할 라벨을 입력해주세요.
+              </p>
+            </div>
+            <div>
+              <Input
+                id="timer-label"
+                type="text"
+                value={timerLabel}
+                onChange={(e) => setTimerLabel(e.target.value)}
+                className="col-span-2 h-8"
+              />
+            </div>
+            <button
+              className="mt-2 h-8 rounded bg-black text-white text-sm"
+              onClick={() => applyLabel?.(timerLabel)}
+            >
+              적용하기
+            </button>
           </div>
-          <div>
-            <Input
-              id="timer-label"
-              type="text"
-              value={timerLabel}
-              onChange={(e) => setTimerLabel(e.target.value)}
-              className="col-span-2 h-8"
-            />
+        )}
+        {activeOption?.includes("color") && (
+          <div className="grid gap-4">
+            <div className="space-y-2">
+              <h4 className="leading-none font-medium">Color</h4>
+              <p className="text-muted-foreground text-sm">
+                타이머의 메인 색상을 선택해주세요.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {COLOR_OPTIONS.map(({ id, label }) => {
+                return (
+                  <Button
+                    key={id}
+                    type="button"
+                    onClick={() => applyColor?.(id)}
+                    className={`bg-notion-${id}-bg text-notion-${id}-text`}
+                  >
+                    {label}
+                  </Button>
+                );
+              })}
+            </div>
           </div>
-          <button
-            className="mt-2 h-8 rounded bg-black text-white text-sm"
-            onClick={() => applyLabel?.(timerLabel)}
-          >
-            적용하기
-          </button>
-        </div>
-        <div className="grid gap-4">
-          <div className="space-y-2">
-            <h4 className="leading-none font-medium">Color</h4>
-            <p className="text-muted-foreground text-sm">
-              타이머의 메인 색상을 선택해주세요.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {COLOR_OPTIONS.map(({ id, label }) => {
-              return (
-                <Button
-                  key={id}
-                  type="button"
-                  onClick={() => applyColor?.(id)}
-                  className={`bg-notion-${id}-bg text-notion-${id}-text`}
-                >
-                  {label}
-                </Button>
-              );
-            })}
-          </div>
-        </div>
+        )}
       </PopoverContent>
     </Popover>
   );
 }
+
+/***************************
+ * 작업해야 할 것들
+ * 1. 라벨, 메인 컬러 localstorage 적용
+ * 2. running일때 새로고침 하면 초기화 되는 문제 개선
+ * 3. label 개행 처리?
+ * 5. 배포 환경에서 테마 컬러 적용 안되는 문제 개선
+ ****************************/
