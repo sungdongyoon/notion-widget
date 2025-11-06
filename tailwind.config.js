@@ -1,7 +1,20 @@
 /** @type {import('tailwindcss').Config} */
+const notionColors =
+  "(default|gray|brown|orange|yellow|green|blue|purple|pink|red)";
+
 module.exports = {
   darkMode: ["class"],
-  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
+  content: [
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  safelist: [
+    // 동적 색상 유틸 전부 커버
+    { pattern: new RegExp(`^bg-notion-${notionColors}-bg$`) },
+    { pattern: new RegExp(`^text-notion-${notionColors}-text$`) },
+  ],
   theme: {
     extend: {
       borderRadius: {
