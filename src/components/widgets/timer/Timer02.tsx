@@ -147,32 +147,30 @@ const Timer02 = () => {
 
     if (!state) return;
 
-    const remain = Math.max(0, state.deadline - Date.now());
+    const remain = state?.deadline
+      ? Math.max(0, state.deadline - Date.now())
+      : 0;
 
-    if (state.mode === "running") {
-      setInitialTime(state.initialMs);
-      setTime(state.initialMs);
-      setRunning(remain > 0);
+    // 초기 상태 복원
+    setInitialTime(state.initialMs);
 
-      if (remain === 0) {
-        saveState({
-          mode: "stopped",
-          remainMs: state.initialMs,
-          initialMs: state.initialMs,
-        });
-      }
-    } else {
-      setInitialTime(state.initialMs);
-      setTime(state.remainMs);
-      setRunning(false);
-    }
-
-    if (time <= 10) {
+    // running 상태인데 시간이 다 지났다면 stopped로 변경
+    if (state.mode === "running" && remain === 0) {
       saveState({
         mode: "stopped",
         remainMs: state.initialMs,
         initialMs: state.initialMs,
       });
+      setRunning(false);
+      setTime(state.initialMs);
+    } else if (state.mode === "running" && remain > 0) {
+      // running 상태일 때 남은 시간을 정확히 계산하여 업데이트
+      setTime(remain);
+      setRunning(true);
+    } else {
+      // paused 또는 stopped 상태
+      setTime(state.remainMs);
+      setRunning(false);
     }
   }, []);
 

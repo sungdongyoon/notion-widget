@@ -332,7 +332,7 @@ import BreakPointView from "@/components/BreakPointView";
 
 // export default Timer01;
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaPause, FaPlay, FaRedo } from "react-icons/fa";
 import TimeOption from "./TimeOption";
 
@@ -349,23 +349,93 @@ type PersistState =
       deadline: number;
       remainMs?: number;
       initialMs: number;
+      color?: string;
+      label?: string;
     }
   | {
       mode: "paused";
       remainMs: number;
       initialMs: number;
+      color?: string;
+      label?: string;
     }
   | {
       mode: "stopped";
       remainMs: number;
       initialMs: number;
+      color?: string;
+      label?: string;
     };
 
 const DEFAULT_INITIAL = 60 * 1000; // 초기 시간
 const INTERVAL = 10; // INTERVAL 밀리초 마다 시간 줄어듦
 const STORAGE_KEY = "timer01_state"; // 로컬 스토리지 키 값
 
+// 초기 상태를 로컬 스토리지에서 불러오는 함수 (클라이언트에서만 실행)
+const getInitialState = () => {
+  // 서버 사이드에서는 기본값 반환
+  if (typeof window === "undefined") {
+    return {
+      initialTime: DEFAULT_INITIAL,
+      time: DEFAULT_INITIAL,
+      running: false,
+      color: "default",
+      label: "FOCUS",
+    };
+  }
+
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const state = JSON.parse(raw);
+      const remain = state?.deadline
+        ? Math.max(0, state.deadline - Date.now())
+        : 0;
+
+      // running 상태인데 시간이 다 지났다면 stopped로 처리
+      if (state.mode === "running" && remain === 0) {
+        return {
+          initialTime: state.initialMs,
+          time: state.initialMs,
+          running: false,
+          color: state.color || "default",
+          label: state.label || "FOCUS",
+        };
+      }
+
+      if (state.mode === "running" && remain > 0) {
+        return {
+          initialTime: state.initialMs,
+          time: remain,
+          running: true,
+          color: state.color || "default",
+          label: state.label || "FOCUS",
+        };
+      }
+
+      return {
+        initialTime: state.initialMs,
+        time: state.remainMs,
+        running: false,
+        color: state.color || "default",
+        label: state.label || "FOCUS",
+      };
+    }
+  } catch {
+    // 에러 발생 시 기본값 반환
+  }
+
+  return {
+    initialTime: DEFAULT_INITIAL,
+    time: DEFAULT_INITIAL,
+    running: false,
+    color: "default",
+    label: "FOCUS",
+  };
+};
+
 const Timer01 = () => {
+  // 서버와 클라이언트의 초기 렌더링을 동일하게 하기 위해 기본값 사용
   // 초기값
   const [initialTime, setInitialTime] = useState<number>(DEFAULT_INITIAL);
   // 시간
@@ -409,18 +479,28 @@ const Timer01 = () => {
     setRunning(true);
 
     const deadline = Date.now() + time;
+    const currentState = loadState();
     saveState({
       mode: "running",
       deadline,
       remainMs: initialTime,
       initialMs: initialTime,
+      color: currentState?.color,
+      label: currentState?.label,
     });
   };
 
   // 타이머 일시정지 함수
   const pauseTime = (): void => {
     setRunning(false);
-    saveState({ mode: "paused", remainMs: time, initialMs: initialTime });
+    const currentState = loadState();
+    saveState({
+      mode: "paused",
+      remainMs: time,
+      initialMs: initialTime,
+      color: currentState?.color,
+      label: currentState?.label,
+    });
   };
 
   // 타이머 리셋 함수
@@ -433,6 +513,8 @@ const Timer01 = () => {
       mode: "stopped",
       remainMs: state.initialMs,
       initialMs: state.initialMs,
+      color: state?.color,
+      label: state?.label,
     });
   };
 
@@ -445,17 +527,56 @@ const Timer01 = () => {
     setRunning(false);
     setInitialTime(ms);
     setTime(ms);
-    saveState({ mode: "stopped", remainMs: ms, initialMs: ms });
+    const currentState = loadState();
+    saveState({
+      mode: "stopped",
+      remainMs: ms,
+      initialMs: ms,
+      color: currentState?.color,
+      label: currentState?.label,
+    });
   };
 
   // 메인 컬러 적용
   const applyColor = (color: string): void => {
     setTimerColor(color);
+    // 기존 state를 불러와서 color만 업데이트
+    const currentState = loadState();
+    if (currentState) {
+      saveState({
+        ...currentState,
+        color,
+      });
+    } else {
+      // state가 없는 경우 기본 state 생성
+      saveState({
+        mode: "stopped",
+        remainMs: time,
+        initialMs: initialTime,
+        color,
+      });
+    }
   };
 
   // 라벨 적용
   const applyLabel = (label: string): void => {
     setTimerLabel(label);
+    // 기존 state를 불러와서 label만 업데이트
+    const currentState = loadState();
+    if (currentState) {
+      saveState({
+        ...currentState,
+        label,
+      });
+    } else {
+      // state가 없는 경우 기본 state 생성
+      saveState({
+        mode: "stopped",
+        remainMs: time,
+        initialMs: initialTime,
+        label,
+      });
+    }
   };
 
   // INTERVAL 초 마다 시간 줄어들게 하기
@@ -480,43 +601,46 @@ const Timer01 = () => {
     };
   }, [running, initialTime]);
 
+  // 클라이언트 마운트 후 로컬 스토리지에서 상태 복원
   useEffect(() => {
     const state = loadState();
 
     if (!state) return;
-    console.log("state", state);
 
     const remain = state?.deadline
       ? Math.max(0, state.deadline - Date.now())
       : 0;
 
-    // 초기 화면 상태에 따른 조건
-    if (state.mode === "running") {
-      setInitialTime(state.initialMs);
-      setTime(state.remainMs);
-      setRunning(true);
+    // 초기 상태 복원
+    setInitialTime(state.initialMs);
 
-      // running인 상태인데 remain이 0이라면 stopped로 변경
-      if (remain === 0) {
-        saveState({
-          mode: "stopped",
-          remainMs: state.initialMs,
-          initialMs: state.initialMs,
-        });
-      }
-    } else {
-      // 작동 상태가 아닌 경우
-      setInitialTime(state.initialMs);
-      setTime(state.remainMs);
-      setRunning(false);
+    // color와 label 복원
+    if (state.color) {
+      setTimerColor(state.color);
+    }
+    if (state.label) {
+      setTimerLabel(state.label);
     }
 
-    if (time <= 10) {
+    // running 상태인데 시간이 다 지났다면 stopped로 변경
+    if (state.mode === "running" && remain === 0) {
       saveState({
         mode: "stopped",
         remainMs: state.initialMs,
         initialMs: state.initialMs,
+        color: state.color,
+        label: state.label,
       });
+      setRunning(false);
+      setTime(state.initialMs);
+    } else if (state.mode === "running" && remain > 0) {
+      // running 상태일 때 남은 시간을 정확히 계산하여 업데이트
+      setTime(remain);
+      setRunning(true);
+    } else {
+      // paused 또는 stopped 상태
+      setTime(state.remainMs);
+      setRunning(false);
     }
   }, []);
 

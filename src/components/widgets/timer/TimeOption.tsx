@@ -98,8 +98,6 @@ export default function TimeOption({
     setOpen(false);
   };
 
-  console.log("active", activeOption);
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -251,5 +249,4 @@ export default function TimeOption({
  * 1. 라벨, 메인 컬러 localstorage 적용
  * 2. running일때 새로고침 하면 초기화 되는 문제 개선
  * 3. label 개행 처리?
- * 5. 배포 환경에서 테마 컬러 적용 안되는 문제 개선
  ****************************/
