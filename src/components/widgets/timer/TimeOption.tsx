@@ -42,6 +42,9 @@ const COLOR_OPTIONS = [
   { id: "red", label: "Red" },
 ] as const;
 
+// label 최대 길이
+const LABEL_MAX_LENGTH = 10;
+
 export default function TimeOption({
   value,
   onApply,
@@ -61,13 +64,16 @@ export default function TimeOption({
   const [second, setSecond] = useState<string>(String(initS));
 
   const [open, setOpen] = useState<boolean>(false);
-  const [timerLabel, setTimerLabel] = useState<string>("");
+  const [timerLabel, setTimerLabel] = useState<{
+    label: string;
+    length: number;
+  }>({
+    label: "",
+    length: 0,
+  });
+  const [overLimit, setOverLimit] = useState<boolean>(false);
 
-  useEffect(() => {
-    setHour(String(initH));
-    setMinute(String(initM));
-    setSecond(String(initS));
-  }, [value]);
+  const labelPercent = (timerLabel.length / LABEL_MAX_LENGTH) * 100;
 
   const clamp = (n: number, min: number, max: number) =>
     Math.min(max, Math.max(min, n));
@@ -97,6 +103,30 @@ export default function TimeOption({
 
     setOpen(false);
   };
+
+  const onLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    if (value.length <= LABEL_MAX_LENGTH) {
+      setTimerLabel({
+        label: value,
+        length: value.length,
+      });
+
+      return;
+    }
+
+    setOverLimit(true);
+    setTimeout(() => {
+      setOverLimit(false);
+    }, 300);
+  };
+
+  useEffect(() => {
+    setHour(String(initH));
+    setMinute(String(initM));
+    setSecond(String(initS));
+  }, [value]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -202,14 +232,26 @@ export default function TimeOption({
               <Input
                 id="timer-label"
                 type="text"
-                value={timerLabel}
-                onChange={(e) => setTimerLabel(e.target.value)}
-                className="col-span-2 h-8"
+                placeholder="예) study 📝"
+                value={timerLabel.label}
+                onChange={onLabelChange}
+                className={`col-span-2 h-8 ${
+                  overLimit ? "shake border-red-500" : ""
+                }`}
               />
+              <div className="relative w-full h-1 bg-gray-200 rounded mt-2">
+                <div
+                  className="absolute top-0 left-0 h-full rounded bg-blue-500 transition-all"
+                  style={{ width: `${labelPercent}%` }}
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-1 text-right">
+                {timerLabel.length} / {LABEL_MAX_LENGTH}
+              </p>
             </div>
             <button
               className="mt-2 h-8 rounded bg-black text-white text-sm"
-              onClick={() => applyLabel?.(timerLabel)}
+              onClick={() => applyLabel?.(timerLabel.label)}
             >
               적용하기
             </button>
@@ -243,10 +285,3 @@ export default function TimeOption({
     </Popover>
   );
 }
-
-/***************************
- * 작업해야 할 것들
- * 1. 라벨, 메인 컬러 localstorage 적용
- * 2. running일때 새로고침 하면 초기화 되는 문제 개선
- * 3. label 개행 처리?
- ****************************/
