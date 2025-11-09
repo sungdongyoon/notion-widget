@@ -236,7 +236,7 @@ export default function TimeOption({
                 value={timerLabel.label}
                 onChange={onLabelChange}
                 className={`col-span-2 h-8 ${
-                  overLimit ? "shake border-red-500" : ""
+                  overLimit ? "timer_label_input border-red-500" : ""
                 }`}
               />
               <div className="relative w-full h-1 bg-gray-200 rounded mt-2">
