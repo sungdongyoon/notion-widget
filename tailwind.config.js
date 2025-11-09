@@ -14,6 +14,7 @@ module.exports = {
     // 동적 색상 유틸 전부 커버
     { pattern: new RegExp(`^bg-notion-${notionColors}-bg$`) },
     { pattern: new RegExp(`^text-notion-${notionColors}-text$`) },
+    { pattern: new RegExp(`^bg-notion-${notionColors}-text$`) },
   ],
   theme: {
     extend: {

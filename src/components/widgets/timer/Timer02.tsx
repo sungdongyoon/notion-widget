@@ -1,9 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { FaPlayCircle } from "react-icons/fa";
+import { FaPlayCircle, FaPlay, FaPause } from "react-icons/fa";
 import TimeOption from "./TimeOption";
 import BreakPointView from "@/components/BreakPointView";
+import {
+  FaArrowRotateLeft,
+  FaCirclePlay,
+  FaRegCirclePlay,
+} from "react-icons/fa6";
 
 // ===== 타입 =====
 type ApplyTimeProps = {
@@ -18,16 +23,19 @@ type PersistState =
       deadline: number;
       remainMs?: number;
       initialMs: number;
+      color?: string;
     }
   | {
       mode: "paused";
       remainMs: number;
       initialMs: number;
+      color?: string;
     }
   | {
       mode: "stopped";
       remainMs: number;
       initialMs: number;
+      color?: string;
     };
 
 const DEFAULT_INITIAL = 60 * 1000; // 초기 시간
@@ -41,6 +49,8 @@ const Timer02 = () => {
   const [time, setTime] = useState<number>(DEFAULT_INITIAL);
   // 타이머 진행 여부
   const [running, setRunning] = useState<boolean>(false);
+  // 메인 컬러 상태
+  const [timerColor, setTimerColor] = useState<string>("default");
 
   const isFinished = time === 0; // 종료 여부
   const isInitial = !running && time === initialTime; // 초기 상태 판별
@@ -119,6 +129,27 @@ const Timer02 = () => {
     saveState({ mode: "stopped", remainMs: ms, initialMs: ms });
   };
 
+  // 메인 컬러 적용
+  const applyColor = (color: string): void => {
+    setTimerColor(color);
+    // 기존 state를 불러와서 color만 업데이트
+    const currentState = loadState();
+    if (currentState) {
+      saveState({
+        ...currentState,
+        color,
+      });
+    } else {
+      // state가 없는 경우 기본 state 생성
+      saveState({
+        mode: "stopped",
+        remainMs: time,
+        initialMs: initialTime,
+        color,
+      });
+    }
+  };
+
   // INTERVAL 초 마다 시간 줄어들게 하는 이펙트
   useEffect(() => {
     if (!running) return;
@@ -154,6 +185,11 @@ const Timer02 = () => {
     // 초기 상태 복원
     setInitialTime(state.initialMs);
 
+    // 컬러 복원
+    if (state.color) {
+      setTimerColor(state.color);
+    }
+
     // running 상태인데 시간이 다 지났다면 stopped로 변경
     if (state.mode === "running" && remain === 0) {
       saveState({
@@ -176,7 +212,9 @@ const Timer02 = () => {
 
   return (
     <div className="widget_container" data-variant="timer02">
-      <div className="bg-timer-02-bg relative max-w-[500px] min-w-[150px] w-full aspect-[1/1] flex flex-col items-center justify-between rounded-[50%]">
+      <div
+        className={`bg-notion-${timerColor}-text relative max-w-[500px] min-w-[150px] w-full aspect-[1/1] flex flex-col items-center justify-between rounded-[50%]`}
+      >
         <div className="w-full flex-[2] flex justify-center items-center relative">
           <div
             className="timer_clock"
@@ -188,23 +226,25 @@ const Timer02 = () => {
             }}
           >
             {showInProgressUI && (
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-timer-02-bg border-[10px] border-solid border-timer-02-clock-bg w-[40%] min-w-[100px] aspect-square flex flex-col gap-2 justify-center items-center p-5">
+              <div
+                className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-notion-${timerColor}-text timer-02-bg border-[10px] border-solid border-timer-02-clock-bg w-[40%] min-w-[100px] aspect-square flex flex-col gap-2 justify-center items-center p-5`}
+              >
                 <div className="text-[clamp(0.9rem,4vmin,1.5rem)] text-timer-02-ring-text font-bold">
                   <span>{minute}</span>:<span>{second}</span>
                 </div>
-                <div className="w-full flex">
+                <div className="w-full flex justify-center gap-[clamp(0.6rem,2.5vmin,1rem)]">
                   <button
                     onClick={!running ? startTime : pauseTime}
                     aria-label={!running ? "시작" : "일시정지"}
-                    className="inline-flex items-center justify-center text-[clamp(0.47rem,2.5vmin,0.8rem)] text-timer-02-ring-text flex-1 font-medium"
+                    className="inline-flex items-center justify-center text-[clamp(0.5rem,2.5vmin,1rem)] text-timer-02-ring-text font-medium hover:opacity-80 transition-[1]"
                   >
-                    {!running ? "play" : "pause"}
+                    {!running ? <FaCirclePlay /> : <FaPause />}
                   </button>
                   <button
-                    className="inline-flex items-center justify-center text-[clamp(0.47rem,2.5vmin,0.8rem)] text-timer-02-ring-text flex-1 font-medium"
+                    className="inline-flex items-center justify-center text-[clamp(0.5rem,2.5vmin,1rem)] text-timer-02-ring-text font-medium hover:opacity-80 transition-[1]"
                     onClick={resetTime}
                   >
-                    reset
+                    <FaArrowRotateLeft />
                   </button>
                 </div>
               </div>
@@ -217,11 +257,13 @@ const Timer02 = () => {
                     onClick={startTime}
                     aria-label="시작"
                     disabled={running}
-                    className="inline-flex items-center justify-center text-[clamp(2.5rem,30cqi,10rem)] text-timer-02-timer-text text-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+                    className={`inline-flex items-center justify-center text-[clamp(2.5rem,30cqi,10rem)] text-notion-${timerColor}-text timer-02-timer-text disabled:opacity-90 disabled:cursor-not-allowed hover:opacity-80 transition-[1]`}
                   >
                     <FaPlayCircle aria-hidden="true" />
                   </button>
-                  <p className="text-timer-02-timer-text text-[clamp(0.8rem,6vmin,2rem)] font-bold">
+                  <p
+                    className={`text-notion-${timerColor}-text -timer-02-timer-text text-[clamp(0.8rem,6vmin,2rem)] font-bold`}
+                  >
                     <span>{minute}</span>:<span>{second}</span>
                   </p>
                 </div>
@@ -230,8 +272,9 @@ const Timer02 = () => {
                     value={time}
                     onApply={applyTime}
                     disabled={running}
-                    activeOption={["minute", "second"]}
-                    style="text-[clamp(0.6rem,5vmin,1.2rem)] text-timer-02-setting-btn"
+                    activeOption={["minute", "second", "color"]}
+                    applyColor={applyColor}
+                    style={`text-[clamp(0.6rem,5vmin,1.2rem)] text-notion-${timerColor}-text timer-02-setting-btn hover:opacity-80 transition-[1]`}
                   />
                 </div>
               </>

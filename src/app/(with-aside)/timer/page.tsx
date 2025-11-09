@@ -12,7 +12,7 @@ const TimerPage = () => {
             <Link href="/timer/1001">Clasic Timer</Link>
           </div>
           <div className="widget_item">
-            <Link href="/timer/1002">Time Timer</Link>
+            <Link href="/timer/1002">Donut Timer</Link>
           </div>
         </div>
       </div>

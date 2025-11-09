@@ -223,7 +223,7 @@ export default function TimeOption({
                 타이머의 메인 색상을 선택해주세요.
               </p>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid gap-2 grid-cols-2">
               {COLOR_OPTIONS.map(({ id, label }) => {
                 return (
                   <Button
