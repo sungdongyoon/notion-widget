@@ -2,6 +2,7 @@
 
 import ModeToggle from "@/components/ModeToggle";
 import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -9,6 +10,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useTheme } from "next-themes";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import { FaGear } from "react-icons/fa6";
@@ -31,7 +34,7 @@ type TimeOptionProps = {
 
 // 색상 배열
 const COLOR_OPTIONS = [
-  { id: "default", label: "Defualt" },
+  { id: "default", label: "Default" },
   { id: "brown", label: "Brown" },
   { id: "orange", label: "Orange" },
   { id: "yellow", label: "Yellow" },
@@ -58,6 +61,9 @@ export default function TimeOption({
   const initH = Math.floor(totalSec / 3600);
   const initM = Math.floor((totalSec % 3600) / 60);
   const initS = totalSec % 60;
+
+  // 테마 변경 함수
+  const { theme, setTheme } = useTheme();
 
   const [hour, setHour] = useState<string>(String(initH));
   const [minute, setMinute] = useState<string>(String(initM));
@@ -94,6 +100,7 @@ export default function TimeOption({
     if (only2Digits(v)) setSecond(v);
   };
 
+  // 시간, 라벨 저장
   const handleApply = () => {
     onApply?.({
       hour: Number(hour || 0),
@@ -101,9 +108,12 @@ export default function TimeOption({
       second: Number(second || 0),
     });
 
+    applyLabel?.(timerLabel.label);
+
     setOpen(false);
   };
 
+  // 라벨 입력 함수
   const onLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
@@ -122,6 +132,17 @@ export default function TimeOption({
     }, 300);
   };
 
+  // 섹션 스크롤 함수
+  const scrollToSection = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const id = e.currentTarget.value;
+
+    document.getElementById(id)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  // 시간 세팅
   useEffect(() => {
     setHour(String(initH));
     setMinute(String(initM));
@@ -150,7 +171,7 @@ export default function TimeOption({
     flex flex-col gap-4
     p-4 sm:p-5"
       >
-        <div className="grid gap-4">
+        <div className="grid gap-4 mt-10" id="time">
           <div className="space-y-2">
             <h4 className="leading-none font-medium">Time Select</h4>
             <p className="text-muted-foreground text-sm">
@@ -200,28 +221,36 @@ export default function TimeOption({
                 />
               </div>
             )}
-
-            <button
-              className="mt-2 h-8 rounded bg-black text-white text-sm"
-              onClick={handleApply}
-            >
-              적용하기
-            </button>
           </div>
         </div>
-        <div className="grid gap-4">
+
+        <div className="grid gap-4 mt-7" id="theme">
           <div className="space-y-2">
-            <h4 className="leading-none font-medium">Time Theme</h4>
+            <h4 className="leading-none font-medium">Theme</h4>
             <p className="text-muted-foreground text-sm">
               타이머 테마를 설정해주세요.
             </p>
           </div>
-          <div>
-            <ModeToggle />
+          <div className="flex flex-col gap-1">
+            <Button
+              variant="outline"
+              className="bg-white text-black"
+              onClick={() => setTheme("light")}
+            >
+              Light
+            </Button>
+            <Button
+              variant="outline"
+              className="bg-black text-white"
+              onClick={() => setTheme("dark")}
+            >
+              Dark
+            </Button>
           </div>
         </div>
+
         {activeOption?.includes("label") && (
-          <div className="grid gap-4">
+          <div className="grid gap-4 mt-7" id="label">
             <div className="space-y-2">
               <h4 className="leading-none font-medium">Label</h4>
               <p className="text-muted-foreground text-sm">
@@ -249,23 +278,18 @@ export default function TimeOption({
                 {timerLabel.length} / {LABEL_MAX_LENGTH}
               </p>
             </div>
-            <button
-              className="mt-2 h-8 rounded bg-black text-white text-sm"
-              onClick={() => applyLabel?.(timerLabel.label)}
-            >
-              적용하기
-            </button>
           </div>
         )}
+
         {activeOption?.includes("color") && (
-          <div className="grid gap-4">
+          <div className="grid gap-4 mt-7" id="color">
             <div className="space-y-2">
               <h4 className="leading-none font-medium">Color</h4>
               <p className="text-muted-foreground text-sm">
                 타이머의 메인 색상을 선택해주세요.
               </p>
             </div>
-            <div className="grid gap-2 grid-cols-2">
+            {/* <div className="grid gap-2 grid-cols-2">
               {COLOR_OPTIONS.map(({ id, label }) => {
                 return (
                   <Button
@@ -278,9 +302,67 @@ export default function TimeOption({
                   </Button>
                 );
               })}
+            </div> */}
+            <div className="grid gap-2 grid-cols-3">
+              {COLOR_OPTIONS.map(({ id, label }) => {
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => applyColor?.(id)}
+                    className="relative aspect-square border rounded-lg hover:scale-105 transition-all"
+                  >
+                    <Image
+                      src={`/image/timer/color/${theme}-${label}.png`}
+                      fill
+                      alt={`${label} 아이콘`}
+                      className="rounded-lg"
+                    />
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
+        <div className="w-full p-3 fixed top-0 left-0 bg-white flex justify-between items-center">
+          <ButtonGroup>
+            <Button
+              size="sm"
+              variant="outline"
+              value="time"
+              onClick={scrollToSection}
+            >
+              Time
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              value="theme"
+              onClick={scrollToSection}
+            >
+              Theme
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              value="label"
+              onClick={scrollToSection}
+            >
+              Label
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              value="color"
+              onClick={scrollToSection}
+            >
+              Color
+            </Button>
+          </ButtonGroup>
+          <Button size="sm" onClick={handleApply}>
+            Save
+          </Button>
+        </div>
       </PopoverContent>
     </Popover>
   );
