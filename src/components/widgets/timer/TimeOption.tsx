@@ -313,7 +313,7 @@ export default function TimeOption({
                     className="relative aspect-square border rounded-lg hover:scale-105 transition-all"
                   >
                     <Image
-                      src={`/image/timer/color/${theme}-${label}.png`}
+                      src={`/image/timer/color/${theme}-${id}.png`}
                       fill
                       alt={`${label} 아이콘`}
                       className="rounded-lg"
