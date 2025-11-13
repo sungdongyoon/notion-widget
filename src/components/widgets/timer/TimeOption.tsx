@@ -1,6 +1,5 @@
 "use client";
 
-import ModeToggle from "@/components/ModeToggle";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { Input } from "@/components/ui/input";
@@ -10,6 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -169,9 +169,29 @@ export default function TimeOption({
     max-h-[min(70vh,420px)]
     overflow-auto
     flex flex-col gap-4
-    p-4 sm:p-5"
+    p-4 sm:p-5 sm:pt-0"
       >
-        <div className="grid gap-4 mt-10" id="time">
+        <div className="w-full sticky pt-3 top-0 flex justify-center items-center flex-wrap">
+          <Tabs
+            onValueChange={(value) => {
+              document.getElementById(value)?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+            }}
+          >
+            <TabsList>
+              <TabsTrigger value="time">Time</TabsTrigger>
+              <TabsTrigger value="theme">Theme</TabsTrigger>
+              <TabsTrigger value="label">Label</TabsTrigger>
+              <TabsTrigger value="color">Color</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          {/* <Button size="sm" onClick={handleApply}>
+            Save
+          </Button> */}
+        </div>
+        <div className="grid gap-4" id="time">
           <div className="space-y-2">
             <h4 className="leading-none font-medium">Time Select</h4>
             <p className="text-muted-foreground text-sm">
@@ -289,20 +309,6 @@ export default function TimeOption({
                 타이머의 메인 색상을 선택해주세요.
               </p>
             </div>
-            {/* <div className="grid gap-2 grid-cols-2">
-              {COLOR_OPTIONS.map(({ id, label }) => {
-                return (
-                  <Button
-                    key={id}
-                    type="button"
-                    onClick={() => applyColor?.(id)}
-                    className={`bg-notion-${id}-bg text-notion-${id}-text`}
-                  >
-                    {label}
-                  </Button>
-                );
-              })}
-            </div> */}
             <div className="grid gap-2 grid-cols-3">
               {COLOR_OPTIONS.map(({ id, label }) => {
                 return (
@@ -324,45 +330,6 @@ export default function TimeOption({
             </div>
           </div>
         )}
-        <div className="w-full p-3 fixed top-0 left-0 bg-white flex justify-between items-center">
-          <ButtonGroup>
-            <Button
-              size="sm"
-              variant="outline"
-              value="time"
-              onClick={scrollToSection}
-            >
-              Time
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              value="theme"
-              onClick={scrollToSection}
-            >
-              Theme
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              value="label"
-              onClick={scrollToSection}
-            >
-              Label
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              value="color"
-              onClick={scrollToSection}
-            >
-              Color
-            </Button>
-          </ButtonGroup>
-          <Button size="sm" onClick={handleApply}>
-            Save
-          </Button>
-        </div>
       </PopoverContent>
     </Popover>
   );
