@@ -163,17 +163,17 @@ export default function TimeOption({
       </PopoverTrigger>
       <PopoverContent
         side="bottom"
-        sideOffset={10}
+        sideOffset={-20}
         align="end"
         className="w-[clamp(16rem,92vw,22rem)]
-    max-h-[min(70vh,420px)]
+    max-h-[min(90vh,420px)]
     overflow-auto
     flex flex-col gap-4
-    p-4 sm:p-5 sm:pt-0
+    p-[clamp(0.5rem,3vmin,1rem)]
     scroll-pt-16"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
-        <div className="w-full sticky pt-3 top-0 flex justify-center items-center flex-wrap z-10">
+        <div className="w-full sticky top-0 flex justify-center items-center flex-wrap z-10">
           <Tabs
             onValueChange={(value) => {
               document.getElementById(value)?.scrollIntoView({
@@ -182,7 +182,7 @@ export default function TimeOption({
               });
             }}
           >
-            <TabsList>
+            <TabsList className="h-[clamp(1.6rem,5vmin,2.25rem)]">
               <TabsTrigger
                 value="time"
                 className="text-[clamp(0.6rem,3vmin,0.8rem)]"
