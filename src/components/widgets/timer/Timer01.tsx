@@ -447,6 +447,9 @@ const Timer01 = () => {
   // 라벨
   const [timerLabel, setTimerLabel] = useState<string>("FOCUS");
 
+  // 마감시간 ref
+  const deadlineRef = useRef<number | null>(null);
+
   // 시, 분, 초
   const hour = String(Math.floor(time / (1000 * 60 * 60))).padStart(2, "0");
   const minute = String(Math.floor(time / (1000 * 60)) % 60).padStart(2, "0");
@@ -476,9 +479,12 @@ const Timer01 = () => {
   // 타이머 시작 함수
   const startTime = (): void => {
     if (time <= 0) return;
-    setRunning(true);
 
     const deadline = Date.now() + time;
+    deadlineRef.current = deadline;
+
+    setRunning(true);
+
     const currentState = loadState();
     saveState({
       mode: "running",
@@ -507,6 +513,8 @@ const Timer01 = () => {
   const resetTime = (): void => {
     const state = loadState();
     setRunning(false);
+    deadlineRef.current = null;
+
     setInitialTime(state.initialMs);
     setTime(state.initialMs);
     saveState({
@@ -583,23 +591,27 @@ const Timer01 = () => {
   useEffect(() => {
     if (!running) return;
 
-    const timer: number = window.setInterval(() => {
-      setTime((prev) => {
-        const next = prev - INTERVAL;
+    const timer = () => {
+      const deadline = deadlineRef.current ?? Date.now() + time;
+      const remain = Math.max(0, deadline - Date.now());
+      setTime(remain);
 
-        if (next <= 0) {
-          setRunning(false);
-          return initialTime;
-        }
+      if (remain < 0) {
+        setRunning(false);
+        deadlineRef.current = null;
+      }
+    };
 
-        return next;
-      });
-    }, INTERVAL);
+    timer();
+    const id = window.setInterval(timer, 10);
+    const onVis = () => timer();
+    document.addEventListener("visibilitychange", onVis);
 
     return () => {
-      clearInterval(timer);
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVis);
     };
-  }, [running, initialTime]);
+  }, [running]);
 
   // 클라이언트 마운트 후 로컬 스토리지에서 상태 복원
   useEffect(() => {
@@ -635,10 +647,12 @@ const Timer01 = () => {
       setTime(state.initialMs);
     } else if (state.mode === "running" && remain > 0) {
       // running 상태일 때 남은 시간을 정확히 계산하여 업데이트
+      deadlineRef.current = state.deadline;
       setTime(remain);
       setRunning(true);
     } else {
       // paused 또는 stopped 상태
+      deadlineRef.current = null;
       setTime(state.remainMs);
       setRunning(false);
     }
