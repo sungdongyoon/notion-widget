@@ -29,7 +29,7 @@ type TimeOptionProps = {
   applyLabel?: (payload: string) => void;
   disabled?: boolean;
   style?: string;
-  activeOption?: ("hour" | "minute" | "second" | "color" | "label")[];
+  activeOption?: ("hour" | "minute" | "second" | "color" | "theme" | "label")[];
 };
 
 // 색상 배열
@@ -183,30 +183,40 @@ export default function TimeOption({
             }}
           >
             <TabsList className="h-[clamp(1.6rem,5vmin,2.25rem)]">
-              <TabsTrigger
-                value="time"
-                className="text-[clamp(0.6rem,3vmin,0.8rem)]"
-              >
-                Time
-              </TabsTrigger>
-              <TabsTrigger
-                value="theme"
-                className="text-[clamp(0.6rem,3vmin,0.8rem)]"
-              >
-                Theme
-              </TabsTrigger>
-              <TabsTrigger
-                value="label"
-                className="text-[clamp(0.6rem,3vmin,0.8rem)]"
-              >
-                Label
-              </TabsTrigger>
-              <TabsTrigger
-                value="color"
-                className="text-[clamp(0.6rem,3vmin,0.8rem)]"
-              >
-                Color
-              </TabsTrigger>
+              {activeOption?.some((opt) =>
+                ["hour", "minute", "second"].includes(opt)
+              ) && (
+                <TabsTrigger
+                  value="time"
+                  className="text-[clamp(0.6rem,3vmin,0.8rem)]"
+                >
+                  Time
+                </TabsTrigger>
+              )}
+              {activeOption?.includes("theme") && (
+                <TabsTrigger
+                  value="theme"
+                  className="text-[clamp(0.6rem,3vmin,0.8rem)]"
+                >
+                  Theme
+                </TabsTrigger>
+              )}
+              {activeOption?.includes("label") && (
+                <TabsTrigger
+                  value="label"
+                  className="text-[clamp(0.6rem,3vmin,0.8rem)]"
+                >
+                  Label
+                </TabsTrigger>
+              )}
+              {activeOption?.includes("color") && (
+                <TabsTrigger
+                  value="color"
+                  className="text-[clamp(0.6rem,3vmin,0.8rem)]"
+                >
+                  Color
+                </TabsTrigger>
+              )}
             </TabsList>
           </Tabs>
         </div>
@@ -280,32 +290,34 @@ export default function TimeOption({
           </div>
         </div>
 
-        <div className="grid gap-4 mt-7" id="theme">
-          <div className="space-y-2">
-            <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
-              Theme
-            </h4>
-            <p className="text-muted-foreground text-[clamp(0.6rem,3vmin,0.8rem)]">
-              타이머 테마를 설정해주세요.
-            </p>
+        {activeOption?.includes("theme") && (
+          <div className="grid gap-4 mt-7" id="theme">
+            <div className="space-y-2">
+              <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
+                Theme
+              </h4>
+              <p className="text-muted-foreground text-[clamp(0.6rem,3vmin,0.8rem)]">
+                타이머 테마를 설정해주세요.
+              </p>
+            </div>
+            <div className="flex gap-1">
+              <Button
+                variant="outline"
+                className="bg-white text-black text-[clamp(0.6rem,3vmin,0.8rem)] h-[clamp(1.7rem,5vmin,2rem)]"
+                onClick={() => setTheme("light")}
+              >
+                Light
+              </Button>
+              <Button
+                variant="outline"
+                className="bg-black text-white text-[clamp(0.6rem,3vmin,0.8rem)] h-[clamp(1.7rem,5vmin,2rem)]"
+                onClick={() => setTheme("dark")}
+              >
+                Dark
+              </Button>
+            </div>
           </div>
-          <div className="flex gap-1">
-            <Button
-              variant="outline"
-              className="bg-white text-black text-[clamp(0.6rem,3vmin,0.8rem)] h-[clamp(1.7rem,5vmin,2rem)]"
-              onClick={() => setTheme("light")}
-            >
-              Light
-            </Button>
-            <Button
-              variant="outline"
-              className="bg-black text-white text-[clamp(0.6rem,3vmin,0.8rem)] h-[clamp(1.7rem,5vmin,2rem)]"
-              onClick={() => setTheme("dark")}
-            >
-              Dark
-            </Button>
-          </div>
-        </div>
+        )}
 
         {activeOption?.includes("label") && (
           <div className="grid gap-4 mt-7" id="label">

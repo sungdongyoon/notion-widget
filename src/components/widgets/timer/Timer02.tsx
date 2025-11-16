@@ -272,7 +272,7 @@ const Timer02 = () => {
                     value={time}
                     onApply={applyTime}
                     disabled={running}
-                    activeOption={["minute", "second", "color"]}
+                    activeOption={["minute", "second", "theme", "color"]}
                     applyColor={applyColor}
                     style={`text-[clamp(0.6rem,5vmin,1.2rem)] text-notion-${timerColor}-text timer-02-setting-btn hover:opacity-80 transition-[1]`}
                   />

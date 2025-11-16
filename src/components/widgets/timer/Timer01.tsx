@@ -706,7 +706,14 @@ const Timer01 = () => {
               applyColor={applyColor}
               applyLabel={applyLabel}
               disabled={running}
-              activeOption={["hour", "minute", "second", "color", "label"]}
+              activeOption={[
+                "hour",
+                "minute",
+                "second",
+                "theme",
+                "color",
+                "label",
+              ]}
               style={`text-[clamp(1rem,6vmin,3rem)] text-notion-${timerColor}-text`}
             />
           </div>
