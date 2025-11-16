@@ -166,10 +166,10 @@ export default function TimeOption({
         sideOffset={-20}
         align="end"
         className="w-[clamp(16rem,92vw,22rem)]
-    max-h-[min(90vh,420px)]
+    max-h-[min(80vh,420px)]
     overflow-auto
-    flex flex-col gap-4
-    p-[clamp(0.5rem,3vmin,1rem)]
+    flex flex-col gap-3
+    p-[clamp(0.6rem,3vmin,1rem)]
     scroll-pt-16"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
@@ -384,3 +384,8 @@ export default function TimeOption({
     </Popover>
   );
 }
+
+/**********
+ * 노션에서 위젯에 마우스 올리면 우측 상단에 노션 옵션 탭이 떠서 스크롤 탭이 가려지는 문제 발생
+ * 다른 방법으로 스크롤 탭 노출 시켜야함
+ */
