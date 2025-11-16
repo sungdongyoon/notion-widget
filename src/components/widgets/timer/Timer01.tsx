@@ -593,17 +593,30 @@ const Timer01 = () => {
 
     const timer = () => {
       const deadline = deadlineRef.current ?? Date.now() + time;
-      const remain = Math.max(0, deadline - Date.now());
+      const remain = deadline - Date.now();
       setTime(remain);
 
-      if (remain < 0) {
+      if (remain <= 0) {
         setRunning(false);
         deadlineRef.current = null;
+        setTime(initialTime);
+
+        const state = loadState();
+        saveState({
+          mode: "stopped",
+          remainMs: initialTime,
+          initialMs: initialTime,
+          color: state?.color,
+          label: state?.label,
+        });
+        return;
       }
+
+      setTime(remain);
     };
 
     timer();
-    const id = window.setInterval(timer, 10);
+    const id = window.setInterval(timer, INTERVAL);
     const onVis = () => timer();
     document.addEventListener("visibilitychange", onVis);
 
