@@ -671,6 +671,11 @@ const Timer01 = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const id = setInterval(() => setTime((n) => n + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
+
   return (
     <div className="widget_container" data-variant="timer01">
       {/* <BreakPointView /> */}
