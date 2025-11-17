@@ -671,10 +671,17 @@ const Timer01 = () => {
     }
   }, []);
 
-  useEffect(() => {
-    const id = setInterval(() => setTime((n) => n + 1), 1000);
-    return () => clearInterval(id);
-  }, []);
+  const storageData = loadState();
+
+  const channel = new BroadcastChannel("timer01-channel");
+
+  channel.postMessage(storageData);
+
+  channel.onmessage = (e) => {
+    console.log("test data", e.data);
+  };
+
+  // channel.close();
 
   return (
     <div className="widget_container" data-variant="timer01">
