@@ -380,7 +380,7 @@ const getInitialState = () => {
       time: DEFAULT_INITIAL,
       running: false,
       color: "default",
-      label: "FOCUS",
+      label: "Timer Label",
     };
   }
 
@@ -399,7 +399,7 @@ const getInitialState = () => {
           time: state.initialMs,
           running: false,
           color: state.color || "default",
-          label: state.label || "FOCUS",
+          label: state.label || "Timer Label",
         };
       }
 
@@ -409,7 +409,7 @@ const getInitialState = () => {
           time: remain,
           running: true,
           color: state.color || "default",
-          label: state.label || "FOCUS",
+          label: state.label || "Timer Label",
         };
       }
 
@@ -418,7 +418,7 @@ const getInitialState = () => {
         time: state.remainMs,
         running: false,
         color: state.color || "default",
-        label: state.label || "FOCUS",
+        label: state.label || "Timer Label",
       };
     }
   } catch {
@@ -430,7 +430,7 @@ const getInitialState = () => {
     time: DEFAULT_INITIAL,
     running: false,
     color: "default",
-    label: "FOCUS",
+    label: "Timer Label",
   };
 };
 
@@ -445,7 +445,7 @@ const Timer01 = () => {
   // 메인 컬러 상태
   const [timerColor, setTimerColor] = useState<string>("default");
   // 라벨
-  const [timerLabel, setTimerLabel] = useState<string>("FOCUS");
+  const [timerLabel, setTimerLabel] = useState<string>("Timer Label");
 
   // 마감시간 ref
   const deadlineRef = useRef<number | null>(null);
@@ -690,7 +690,7 @@ const Timer01 = () => {
       setTime(nextRemain);
       setRunning(state.mode === "running");
       setTimerColor(state.color ?? "default");
-      setTimerLabel(state.label ?? "FOCUS");
+      setTimerLabel(state.label ?? "Timer Label");
       deadlineRef.current =
         state.mode === "running" ? state.deadline ?? null : null;
     };
@@ -758,7 +758,7 @@ const Timer01 = () => {
               {!running ? <FaPlay /> : <FaPause />}
             </button>
             <TimeOption
-              value={time}
+              value={{ time: initialTime, label: timerLabel }}
               onApply={applyTime}
               applyColor={applyColor}
               applyLabel={applyLabel}

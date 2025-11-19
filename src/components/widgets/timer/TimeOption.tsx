@@ -23,7 +23,10 @@ type ApplyTimePayload = {
 };
 
 type TimeOptionProps = {
-  value: number;
+  value: {
+    time: number;
+    label?: string;
+  };
   onApply?: (payload: ApplyTimePayload) => void;
   applyColor?: (payload: string) => void;
   applyLabel?: (payload: string) => void;
@@ -57,7 +60,7 @@ export default function TimeOption({
   style,
   activeOption,
 }: TimeOptionProps) {
-  const totalSec = Math.floor((Number(value) || 0) / 1000);
+  const totalSec = Math.floor((Number(value.time) || 0) / 1000);
   const initH = Math.floor(totalSec / 3600);
   const initM = Math.floor((totalSec % 3600) / 60);
   const initS = totalSec % 60;
@@ -74,12 +77,14 @@ export default function TimeOption({
     label: string;
     length: number;
   }>({
-    label: "",
+    label: value.label ?? "",
     length: 0,
   });
   const [overLimit, setOverLimit] = useState<boolean>(false);
 
   const labelPercent = (timerLabel.length / LABEL_MAX_LENGTH) * 100;
+
+  console.log("totalSec", totalSec);
 
   const clamp = (n: number, min: number, max: number) =>
     Math.min(max, Math.max(min, n));
@@ -147,7 +152,7 @@ export default function TimeOption({
     setHour(String(initH));
     setMinute(String(initM));
     setSecond(String(initS));
-  }, [value]);
+  }, [value.time]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

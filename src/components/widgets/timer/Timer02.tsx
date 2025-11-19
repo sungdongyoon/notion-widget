@@ -269,7 +269,7 @@ const Timer02 = () => {
                 </div>
                 <div className="absolute bottom-[0] left-1/2 -translate-x-1/2">
                   <TimeOption
-                    value={time}
+                    value={{ time: time }}
                     onApply={applyTime}
                     disabled={running}
                     activeOption={["minute", "second", "theme", "color"]}
