@@ -449,6 +449,8 @@ const Timer01 = () => {
 
   // 마감시간 ref
   const deadlineRef = useRef<number | null>(null);
+  // 채널 ref
+  const channelRef = useRef<BroadcastChannel | null>(null);
 
   // 시, 분, 초
   const hour = String(Math.floor(time / (1000 * 60 * 60))).padStart(2, "0");
@@ -462,6 +464,7 @@ const Timer01 = () => {
   const saveState = (state: PersistState) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      channelRef.current?.postMessage(state);
     } catch {}
   };
 
@@ -671,17 +674,32 @@ const Timer01 = () => {
     }
   }, []);
 
-  const storageData = loadState();
+  // 탭 별 동기화
+  useEffect(() => {
+    const channel = new BroadcastChannel("timer01-channel");
+    channelRef.current = channel;
 
-  const channel = new BroadcastChannel("timer01-channel");
+    channel.onmessage = (e) => {
+      const state = e.data as PersistState;
 
-  channel.postMessage(storageData);
+      // 로컬 상태를 받은 state로 맞춰주기
+      const nextInitial = state.initialMs ?? DEFAULT_INITIAL;
+      const nextRemain = state.remainMs ?? nextInitial;
 
-  channel.onmessage = (e) => {
-    console.log("test data", e.data);
-  };
+      setInitialTime(nextInitial);
+      setTime(nextRemain);
+      setRunning(state.mode === "running");
+      setTimerColor(state.color ?? "default");
+      setTimerLabel(state.label ?? "FOCUS");
+      deadlineRef.current =
+        state.mode === "running" ? state.deadline ?? null : null;
+    };
 
-  // channel.close();
+    return () => {
+      channel.close();
+      channelRef.current = null;
+    };
+  }, []);
 
   return (
     <div className="widget_container" data-variant="timer01">
