@@ -84,8 +84,6 @@ export default function TimeOption({
 
   const labelPercent = (timerLabel.length / LABEL_MAX_LENGTH) * 100;
 
-  console.log("totalSec", totalSec);
-
   const clamp = (n: number, min: number, max: number) =>
     Math.min(max, Math.max(min, n));
   const only2Digits = (v: string) => /^\d{0,2}$/.test(v); // 최대 2자리, 빈 문자열 허용

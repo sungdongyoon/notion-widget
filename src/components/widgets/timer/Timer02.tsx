@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaPlayCircle, FaPlay, FaPause } from "react-icons/fa";
 import TimeOption from "./TimeOption";
 import BreakPointView from "@/components/BreakPointView";
@@ -52,6 +52,11 @@ const Timer02 = () => {
   // 메인 컬러 상태
   const [timerColor, setTimerColor] = useState<string>("default");
 
+  // 마감시간 ref
+  const deadlineRef = useRef<number | null>(null);
+  // 채널 ref
+  const channelRef = useRef<BroadcastChannel | null>(null);
+
   const isFinished = time === 0; // 종료 여부
   const isInitial = !running && time === initialTime; // 초기 상태 판별
   const showSetup = !running && isInitial; // 초기 ui(재생, 설정, 시간) 노출 여부
@@ -70,6 +75,7 @@ const Timer02 = () => {
   const saveState = (state: PersistState) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      channelRef.current?.postMessage(state);
     } catch {}
   };
 
@@ -87,33 +93,48 @@ const Timer02 = () => {
   // 타이머 시작 함수
   const startTime = (): void => {
     if (time <= 0) return;
-    setRunning(true);
 
     const deadline = Date.now() + time;
+    deadlineRef.current = deadline;
+
+    setRunning(true);
+
+    const currentState = loadState();
     saveState({
       mode: "running",
       deadline,
       remainMs: initialTime,
       initialMs: initialTime,
+      color: currentState?.color,
     });
   };
 
   // 타이머 일시정지 함수
   const pauseTime = (): void => {
     setRunning(false);
-    saveState({ mode: "paused", remainMs: time, initialMs: initialTime });
+
+    const currentState = loadState();
+    saveState({
+      mode: "paused",
+      remainMs: time,
+      initialMs: initialTime,
+      color: currentState?.color,
+    });
   };
 
   // 타이머 리셋 함수
   const resetTime = (): void => {
     const state = loadState();
     setRunning(false);
+    deadlineRef.current = null;
+
     setInitialTime(state.initialMs);
     setTime(state.initialMs);
     saveState({
       mode: "stopped",
       remainMs: state.initialMs,
       initialMs: state.initialMs,
+      color: state?.color,
     });
   };
 
@@ -126,7 +147,13 @@ const Timer02 = () => {
     setRunning(false);
     setInitialTime(ms);
     setTime(ms);
-    saveState({ mode: "stopped", remainMs: ms, initialMs: ms });
+    const currentState = loadState();
+    saveState({
+      mode: "stopped",
+      remainMs: ms,
+      initialMs: ms,
+      color: currentState?.color,
+    });
   };
 
   // 메인 컬러 적용
@@ -154,23 +181,40 @@ const Timer02 = () => {
   useEffect(() => {
     if (!running) return;
 
-    const timer: number = window.setInterval(() => {
-      setTime((prev) => {
-        const next = prev - INTERVAL;
+    const timer = () => {
+      const deadline = deadlineRef.current ?? Date.now() + time;
+      const remain = deadline - Date.now();
+      setTime(remain);
 
-        if (next <= 0) {
-          setRunning(false);
-          return initialTime;
-        }
+      if (remain <= 0) {
+        setRunning(false);
+        deadlineRef.current = null;
+        setTime(initialTime);
 
-        return next;
-      });
-    }, INTERVAL);
+        const state = loadState();
+        saveState({
+          mode: "stopped",
+          remainMs: initialTime,
+          initialMs: initialTime,
+          color: state?.color,
+        });
+
+        return;
+      }
+
+      setTime(remain);
+    };
+
+    timer();
+    const id = window.setInterval(timer, INTERVAL);
+    const onVis = () => timer();
+    document.addEventListener("visibilitychange", onVis);
 
     return () => {
-      clearInterval(timer);
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVis);
     };
-  }, [running, initialTime]);
+  }, [running]);
 
   // 마운트 시 복원
   useEffect(() => {
@@ -196,18 +240,47 @@ const Timer02 = () => {
         mode: "stopped",
         remainMs: state.initialMs,
         initialMs: state.initialMs,
+        color: state.color,
       });
       setRunning(false);
       setTime(state.initialMs);
     } else if (state.mode === "running" && remain > 0) {
       // running 상태일 때 남은 시간을 정확히 계산하여 업데이트
+      deadlineRef.current = state.deadline;
       setTime(remain);
       setRunning(true);
     } else {
       // paused 또는 stopped 상태
+      deadlineRef.current = null;
       setTime(state.remainMs);
       setRunning(false);
     }
+  }, []);
+
+  // 탭 별 동기화
+  useEffect(() => {
+    const channel = new BroadcastChannel("timer02-channel");
+    channelRef.current = channel;
+
+    channel.onmessage = (e) => {
+      const state = e.data as PersistState;
+
+      // 로컬 상태를 받은 state로 맞춰주기
+      const nextInitial = state.initialMs ?? DEFAULT_INITIAL;
+      const nextRemain = state.remainMs ?? nextInitial;
+
+      setInitialTime(nextInitial);
+      setTime(nextRemain);
+      setRunning(state.mode === "running");
+      setTimerColor(state.color ?? "default");
+      deadlineRef.current =
+        state.mode === "running" ? state.deadline ?? null : null;
+    };
+
+    return () => {
+      channel.close();
+      channelRef.current = null;
+    };
   }, []);
 
   return (
