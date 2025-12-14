@@ -1,9 +1,21 @@
 import { getApiWeather } from "@/lib/weather";
-import WeatherClient from "./WeatherClient";
 import { notFound } from "next/navigation";
+import { ComponentType } from "react";
+import dynamic from "next/dynamic";
 
-// 위젯 타입 화이트리스트
-const ALLOWED_TYPE = ["typeA"];
+type WidgetEntry = {
+  Comp: ComponentType<any>;
+  getProps?: (params: { widgetId: string }) => Promise<Record<string, any>>;
+};
+
+const WIDGETS: Record<string, WidgetEntry> = {
+  2001: {
+    Comp: dynamic(
+      () => import("@/components/widgets/weather/Weather01")
+    ) as ComponentType<any>,
+    getProps: async () => ({ data: await getApiWeather() }),
+  },
+};
 
 export default async function WeatherPage({
   params,
@@ -11,16 +23,14 @@ export default async function WeatherPage({
   params: Promise<{ widgetId: string }>;
 }) {
   // 위젯 아이디
-  const { widgetId: rawId } = await params;
-  const widgetId = (rawId ?? "").trim();
+  const { widgetId } = await params;
+  const entry = WIDGETS[widgetId];
+  [widgetId];
 
-  // 화이트 리스트에 걸리지 않는 위젯 아이디는 not found 페이지로 이동
-  if (!ALLOWED_TYPE.includes(widgetId)) {
-    notFound();
-  }
+  if (!entry) return notFound();
 
-  const data = await getApiWeather();
+  const Comp = entry.Comp;
+  const props = entry.getProps ? await entry.getProps({ widgetId }) : {};
 
-  console.log("data", data);
-  return <WeatherClient data={data} widgetId={widgetId} />;
+  return <Comp {...props} />;
 }
