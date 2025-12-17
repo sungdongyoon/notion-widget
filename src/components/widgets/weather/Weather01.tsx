@@ -9,7 +9,7 @@ const Weather01 = (props: any) => {
   return (
     <div className="widget_container" data-variant="weather01">
       <div
-        className="bg-blue-200 p-[clamp(1rem,5vmin,2.5rem)] flex flex-col"
+        className="bg-notion-gray-bg p-[clamp(1rem,5vmin,2.5rem)] flex flex-col"
         style={{
           width: "min(100vw,100vh)",
           // height: "min(100vw,100vh)",
@@ -36,6 +36,7 @@ const Weather01 = (props: any) => {
               <span className="text-[clamp(0.5rem,2vmin,0.87rem)]">맑음</span>
             </div>
           </div>
+
           <div className="w-full max-w-[200px] flex flex-col items-center">
             <span
               aria-label="현재 온도"
@@ -57,6 +58,7 @@ const Weather01 = (props: any) => {
             </div>
           </div>
         </div>
+
         <div className="w-full flex flex-col flex-[1]">
           <Tabs defaultValue="weekly" className="w-full">
             <TabsList className="w-full justify-start bg-transparent relative after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:bg-notion-gray-text pb-0">
@@ -79,7 +81,27 @@ const Weather01 = (props: any) => {
                 Tab 3
               </TabsTrigger>
             </TabsList>
-            <TabsContent value="weekly">주간 날씨</TabsContent>
+
+            <TabsContent value="weekly">
+              <div className="grid grid-cols-8">
+                {Array.from({ length: 8 }).map((_, idx) => (
+                  <div
+                    key={idx}
+                    className="flex flex-col items-center gap-1 text-center"
+                  >
+                    <span className="text-[clamp(0.6rem,2vmin,0.8rem)]">
+                      오늘&#40;일&#41;
+                    </span>
+                    <IoIosSunny className="text-[clamp(1rem,6vmin,2.5rem)]" />
+                    <div className="text-[clamp(0.6rem,2vmin,0.8rem)]">
+                      <span aria-label="최저 온도">0º</span>
+                      <span> / </span>
+                      <span aria-label="최고 온도">9º</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
             <TabsContent value="detail">상세 정보</TabsContent>
             <TabsContent value="tab3">tab 3</TabsContent>
           </Tabs>
