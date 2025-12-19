@@ -17,3 +17,5 @@ const LocationProvider = () => {
 };
 
 export default LocationProvider;
+
+// 위도, 경도 관리 provider

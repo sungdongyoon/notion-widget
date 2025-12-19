@@ -5,12 +5,12 @@ type Location = {
   lon: number;
 };
 
-export async function getApiWeather({ lat, lon }: Location) {
+export async function getApiWeatherForecast5Days({ lat, lon }: Location) {
   const key = process.env.WEATHER_API_KEY;
   if (!key) throw new Error("Weather API Key Missing!");
 
   const { data } = await axios.get(
-    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${key}`,
+    `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${key}`,
     {
       params: { lat, lon, units: "metric", lang: "kr", appid: key },
     }
