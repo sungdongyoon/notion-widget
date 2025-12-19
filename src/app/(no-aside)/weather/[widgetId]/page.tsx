@@ -13,7 +13,12 @@ const WIDGETS: Record<string, WidgetEntry> = {
     Comp: dynamic(
       () => import("@/components/widgets/weather/Weather01")
     ) as ComponentType<any>,
-    getProps: async () => ({ data: await getApiWeather() }),
+    getProps: async () => ({
+      data: await getApiWeather({
+        lat: 37.542668916743665,
+        lon: 127.09028525298679,
+      }),
+    }),
   },
 };
 

@@ -1,11 +1,33 @@
+"use client";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { IoIosSunny } from "react-icons/io";
 import { IoIosAlert } from "react-icons/io";
+import { useLocationStore } from "@/store/useLocationStore";
+import axios from "axios";
 
 const Weather01 = (props: any) => {
-  console.log("props", props);
+  const { lat, lon } = useLocationStore();
+
+  useEffect(() => {
+    if (lat === 0 || lon === 0) return;
+
+    const getWeatherData = async () => {
+      try {
+        const result = await axios.get(`/api/weather?lat=${lat}&lon=${lon}`);
+        const data = result.data;
+        console.log("클라이언트 통신 ok", data);
+      } catch (error) {
+        console.log("클라이언트 통신 failed");
+        console.error("error", error);
+      }
+    };
+
+    getWeatherData();
+  }, [lat, lon]);
+
   return (
     <div className="widget_container" data-variant="weather01">
       <div

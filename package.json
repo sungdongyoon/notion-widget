@@ -33,6 +33,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/navermaps": "^3.9.1",
     "@types/node": "^24.7.2",
     "@types/react": "^19.2.2",
     "autoprefixer": "^10.4.21",

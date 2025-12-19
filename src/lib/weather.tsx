@@ -1,10 +1,19 @@
 import axios from "axios";
 
-export async function getApiWeather() {
-  const lat = "37.5511121532521";
-  const lon = "126.98819670241075";
+type Location = {
+  lat: number;
+  lon: number;
+};
+
+export async function getApiWeather({ lat, lon }: Location) {
+  const key = process.env.WEATHER_API_KEY;
+  if (!key) throw new Error("Weather API Key Missing!");
+
   const { data } = await axios.get(
-    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${process.env.WEATHER_API_KEY}`
+    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${key}`,
+    {
+      params: { lat, lon, units: "metric", appid: key },
+    }
   );
 
   return data;

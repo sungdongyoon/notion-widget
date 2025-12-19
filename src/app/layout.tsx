@@ -1,5 +1,6 @@
 import "@/assets/scss/globals.scss";
 import { ThemeProvider } from "@/components/theme-provider";
+import LocationProvider from "@/provider/LocationProvider";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -23,7 +24,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="root_container">{children}</div>
+          <div className="root_container">
+            <LocationProvider />
+            {children}
+          </div>
         </ThemeProvider>
       </body>
     </html>
