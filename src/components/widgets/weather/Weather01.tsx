@@ -38,6 +38,29 @@ type WeatherData = {
   };
 };
 
+type ForecastItem = {
+  dt: number;
+  main: {
+    temp: number;
+    temp_min: number;
+    temp_max: number;
+  };
+};
+
+type DailyAvg = {
+  sumTemp: number;
+  count: number;
+  min: number;
+  max: number;
+};
+
+type DailySummary = {
+  dateKey: string;
+  avgTemp: number;
+  min: number;
+  max: number;
+};
+
 const Weather01 = () => {
   // zustand 위도, 경도
   const { lat, lon } = useLocationStore();
@@ -64,7 +87,7 @@ const Weather01 = () => {
     },
   });
   // forecast 상태
-  const [forecastState, setForecastState] = useState<object | null>(null);
+  const [forecastState, setForecastState] = useState<any | null>(null);
   // 오늘 / 주간 로딩 상태
   const [loading, setLoading] = useState<{ today: boolean; forecast: boolean }>(
     {
@@ -81,9 +104,70 @@ const Weather01 = () => {
     year: "numeric",
   }).format(date);
 
+  // forecast 데이터
+  const forecastData = forecastState?.list.filter((e: { dt_txt: string }) =>
+    e.dt_txt.includes("12:00:00")
+  );
+
+  // 유닉스 타임 변환
+  const foramttedUnixTime = (time: number): string => {
+    const date = new Date(time * 1000);
+
+    return new Intl.DateTimeFormat("ko-KR", {
+      weekday: "short",
+      day: "numeric",
+    }).format(date);
+  };
+
+  // forecast 평균 온도 및 최저/최고 온도 구하기
+  const timezone = forecastState?.city?.timezone ?? 0;
+  const forecastList: ForecastItem[] = forecastState?.list ?? [];
+
+  // dt => 날짜 변환
+  const toLocalKey = (dt: number) => {
+    const date = new Date((dt + timezone) * 1000);
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  // forecast 온도 담을 배열 생성
+  const acc = new Map<string, DailyAvg>();
+
+  for (const it of forecastList) {
+    const key = toLocalKey(it.dt);
+    const cur = acc.get(key) ?? {
+      sumTemp: 0,
+      count: 0,
+      min: Infinity,
+      max: -Infinity,
+    };
+
+    cur.sumTemp += it.main.temp;
+    cur.count += 1;
+
+    cur.min = Math.min(cur.min, it.main.temp_min);
+    cur.max = Math.max(cur.max, it.main.temp_max);
+
+    acc.set(key, cur);
+  }
+
+  // forecast 평균 및 최저/최고 온도 구하기
+  const dailyAverages: DailySummary[] = Array.from(acc.entries())
+    .slice(0, 5)
+    .map(([dateKey, v]) => ({
+      dateKey,
+      avgTemp: Math.round(v.sumTemp / v.count),
+      min: Math.round(v.min),
+      max: Math.round(v.max),
+    }));
+
+  console.log("2", dailyAverages);
+
   // 날씨 정보 통신
   useEffect(() => {
-    if (lat === 0 || lon === 0) return;
+    if (lat === null || lon === null) return;
 
     const getWeatherData = async () => {
       try {
@@ -122,6 +206,8 @@ const Weather01 = () => {
 
   // 기상정보 예측 5일
   useEffect(() => {
+    if (lat === null || lon === null) return;
+
     const getWeatherForecast5Data = async () => {
       try {
         const result = await axios.get(
@@ -141,8 +227,8 @@ const Weather01 = () => {
   }, [lat, lon]);
 
   if (weatherState) {
-    console.log("state", weatherState);
-    console.log("forecast", forecastState);
+    // console.log("state", weatherState);
+    // console.log("forecast", forecastState);
   }
 
   return (
@@ -232,20 +318,26 @@ const Weather01 = () => {
                 </TabsList>
 
                 <TabsContent value="weekly">
-                  <div className="grid grid-cols-8">
-                    {Array.from({ length: 8 }).map((_, idx) => (
+                  <div className="grid grid-cols-5">
+                    {dailyAverages?.map((e: any) => (
                       <div
-                        key={idx}
+                        key={e.dateKey}
                         className="flex flex-col items-center gap-1 text-center"
                       >
                         <span className="text-[clamp(0.6rem,2vmin,0.8rem)]">
-                          오늘&#40;일&#41;
+                          {/* {foramttedUnixTime(e.dt)} */}
+                          {e.dateKey}
                         </span>
                         <IoIosSunny className="text-[clamp(1rem,6vmin,2.5rem)]" />
                         <div className="text-[clamp(0.6rem,2vmin,0.8rem)]">
-                          <span aria-label="최저 온도">0º</span>
+                          <span aria-label="최저 온도">
+                            {/* {Math.ceil(e.main.temp_min)}º */}
+                            {e.min}º
+                          </span>
                           <span> / </span>
-                          <span aria-label="최고 온도">9º</span>
+                          <span aria-label="최고 온도">
+                            {e.max}º{/* {Math.ceil(e.main.temp_max)}º */}
+                          </span>
                         </div>
                       </div>
                     ))}
