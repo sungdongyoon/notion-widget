@@ -7,6 +7,8 @@ import { IoIosSunny } from "react-icons/io";
 import { IoIosAlert } from "react-icons/io";
 import { useLocationStore } from "@/store/useLocationStore";
 import axios from "axios";
+import { Spinner } from "@/components/ui/spinner";
+import Image from "next/image";
 
 /* 
     날씨상태 : data.name
@@ -23,7 +25,10 @@ import axios from "axios";
 
 type WeatherData = {
   name: string | null;
-  weather: { description: string | null }[];
+  weather: {
+    description: string | null;
+    main: string | null;
+  }[];
   main: {
     temp: number | null;
     feels_like: number | null;
@@ -45,6 +50,9 @@ type ForecastItem = {
     temp_min: number;
     temp_max: number;
   };
+  weather: {
+    main: string;
+  }[];
 };
 
 type DailyAvg = {
@@ -52,6 +60,7 @@ type DailyAvg = {
   count: number;
   min: number;
   max: number;
+  imageKey: string;
 };
 
 type DailySummary = {
@@ -59,6 +68,63 @@ type DailySummary = {
   avgTemp: number;
   min: number;
   max: number;
+  imageKey: string;
+};
+
+// 날씨 상태 객체 - 날씨 상태, 아이콘 화면에 출력
+const WEATHER_STATE_OBJECT: Record<string, { mean: string; image: string }> = {
+  Clear: {
+    mean: "맑음",
+    image: "/image/weather/icon/weather-clear.png",
+  },
+  Clouds: {
+    mean: "구름 많음",
+    image: "/image/weather/icon/weather-clouds.png",
+  },
+  Rain: {
+    mean: "비",
+    image: "/image/weather/icon/weather-rain.png",
+  },
+  Drizzle: {
+    mean: "이슬비",
+    image: "/image/weather/icon/weather-drizzle.png",
+  },
+  Snow: {
+    mean: "눈",
+    image: "/image/weather/icon/weather-snow.png",
+  },
+  Mist: {
+    mean: "안개",
+    image: "/image/weather/icon/weather-mist.png",
+  },
+  // Smoke: {
+  //   mean: "연기",
+  //   image: "",
+  // },
+  Dust: {
+    mean: "먼지",
+    image: "/image/weather/icon/weather-dust.png",
+  },
+  // Sand: {
+  //   mean: "모래",
+  //   image: "",
+  // },
+  // Ash: {
+  //   mean: "화산재",
+  //   image: "",
+  // },
+  Squall: {
+    mean: "돌풍",
+    image: "/image/weather/icon/weather-squall.png",
+  },
+  Tornado: {
+    mean: "토네이도",
+    image: "/image/weather/icon/weather-tornado.png",
+  },
+  Thunderstorm: {
+    mean: "뇌우",
+    image: "/image/weather/icon/weather-thunderstorm.png",
+  },
 };
 
 const Weather01 = () => {
@@ -67,10 +133,11 @@ const Weather01 = () => {
 
   // 날씨 상태
   const [weatherState, setWeatherState] = useState<WeatherData>({
-    name: null, // 날씨 상태
+    name: null, // 지역 이름
     weather: [
       {
         description: null, // 날씨 정보
+        main: null, // 날씨 상태
       },
     ],
     main: {
@@ -129,35 +196,40 @@ const Weather01 = () => {
     const year = date.getUTCFullYear();
     const month = String(date.getUTCMonth() + 1).padStart(2, "0");
     const day = String(date.getUTCDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+    return `${month}.${day}`;
   };
 
   // forecast 온도 담을 배열 생성
-  const acc = new Map<string, DailyAvg>();
+  const forecastArray = new Map<string, DailyAvg>();
 
-  for (const it of forecastList) {
-    const key = toLocalKey(it.dt);
-    const cur = acc.get(key) ?? {
+  for (const forcastItem of forecastList) {
+    const fcDate = toLocalKey(forcastItem.dt);
+    const fcValue = forecastArray.get(fcDate) ?? {
       sumTemp: 0,
       count: 0,
       min: Infinity,
       max: -Infinity,
+      imageKey: "",
     };
 
-    cur.sumTemp += it.main.temp;
-    cur.count += 1;
+    // forcast배열 값 설정
+    fcValue.sumTemp += forcastItem.main.temp; // 온도
+    fcValue.count += 1; // 평균값 구하기 위한 카운트
 
-    cur.min = Math.min(cur.min, it.main.temp_min);
-    cur.max = Math.max(cur.max, it.main.temp_max);
+    fcValue.min = Math.min(fcValue.min, forcastItem.main.temp_min); // 최저온도
+    fcValue.max = Math.max(fcValue.max, forcastItem.main.temp_max); // 최고온도
 
-    acc.set(key, cur);
+    fcValue.imageKey = forcastItem.weather[0].main;
+
+    forecastArray.set(fcDate, fcValue);
   }
 
   // forecast 평균 및 최저/최고 온도 구하기
-  const dailyAverages: DailySummary[] = Array.from(acc.entries())
+  const dailyAverages: DailySummary[] = Array.from(forecastArray.entries())
     .slice(0, 5)
     .map(([dateKey, v]) => ({
       dateKey,
+      imageKey: v.imageKey,
       avgTemp: Math.round(v.sumTemp / v.count),
       min: Math.round(v.min),
       max: Math.round(v.max),
@@ -227,7 +299,7 @@ const Weather01 = () => {
   }, [lat, lon]);
 
   if (weatherState) {
-    // console.log("state", weatherState);
+    console.log("state", weatherState);
     // console.log("forecast", forecastState);
   }
 
@@ -243,7 +315,10 @@ const Weather01 = () => {
         }}
       >
         {loading.today ? (
-          <p>날씨 데이터 로딩중...</p>
+          <div className="w-full h-full flex flex-col justify-center items-center gap-3">
+            <Spinner className="size-20" />
+            <p className="">날씨 데이터 로딩중...</p>
+          </div>
         ) : (
           <>
             <div className="w-full flex justify-between flex-wrap flex-[2]">
@@ -259,13 +334,23 @@ const Weather01 = () => {
                 </time>
                 <div
                   aria-label="날씨 아이콘"
-                  className="flex flex-col items-center"
+                  className="flex flex-col items-center w-[clamp(3rem,12vmin,6rem)] h-[clamp(3rem,12vmin,6rem)] relative"
                 >
-                  <IoIosSunny className="text-[clamp(3rem,12vmin,6rem)]" />
-                  <span className="text-[clamp(0.5rem,2vmin,0.87rem)]">
-                    {weatherState.weather[0].description}
-                  </span>
+                  {weatherState.weather[0].main && (
+                    <Image
+                      src={
+                        WEATHER_STATE_OBJECT[weatherState.weather[0].main]
+                          ?.image
+                      }
+                      fill
+                      alt="날씨 아이콘"
+                    />
+                  )}
                 </div>
+                <span className="text-[clamp(0.5rem,2vmin,0.87rem)]">
+                  {weatherState.weather[0].main &&
+                    WEATHER_STATE_OBJECT[weatherState.weather[0].main]?.mean}
+                </span>
               </div>
 
               <div className="w-full max-w-[200px] flex flex-col items-center">
@@ -325,19 +410,27 @@ const Weather01 = () => {
                         className="flex flex-col items-center gap-1 text-center"
                       >
                         <span className="text-[clamp(0.6rem,2vmin,0.8rem)]">
-                          {/* {foramttedUnixTime(e.dt)} */}
                           {e.dateKey}
                         </span>
-                        <IoIosSunny className="text-[clamp(1rem,6vmin,2.5rem)]" />
+                        <div
+                          aria-label="날씨 아이콘"
+                          className="flex flex-col items-center w-[clamp(3rem,12vmin,4rem)] h-[clamp(3rem,12vmin,4rem)] relative"
+                        >
+                          {dailyAverages ? (
+                            <Image
+                              src={WEATHER_STATE_OBJECT[e.imageKey]?.image}
+                              fill
+                              alt="날씨 아이콘"
+                            />
+                          ) : (
+                            <Spinner />
+                          )}
+                        </div>
+                        {/* <IoIosSunny className="text-[clamp(1rem,6vmin,2.5rem)]" /> */}
                         <div className="text-[clamp(0.6rem,2vmin,0.8rem)]">
-                          <span aria-label="최저 온도">
-                            {/* {Math.ceil(e.main.temp_min)}º */}
-                            {e.min}º
-                          </span>
+                          <span aria-label="최저 온도">{e.min}º</span>
                           <span> / </span>
-                          <span aria-label="최고 온도">
-                            {e.max}º{/* {Math.ceil(e.main.temp_max)}º */}
-                          </span>
+                          <span aria-label="최고 온도">{e.max}º</span>
                         </div>
                       </div>
                     ))}
