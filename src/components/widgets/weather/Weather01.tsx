@@ -72,7 +72,7 @@ type DailySummary = {
 };
 
 // 날씨 상태 객체 - 날씨 상태, 아이콘 화면에 출력
-const WEATHER_STATE_OBJECT: Record<string, { mean: string; image: string }> = {
+const WEATHER_STATE_MAP: Record<string, { mean: string; image: string }> = {
   Clear: {
     mean: "맑음",
     image: "/image/weather/icon/weather-clear.png",
@@ -171,20 +171,20 @@ const Weather01 = () => {
     year: "numeric",
   }).format(date);
 
-  // forecast 데이터
-  const forecastData = forecastState?.list.filter((e: { dt_txt: string }) =>
-    e.dt_txt.includes("12:00:00")
-  );
+  // // forecast 데이터
+  // const forecastData = forecastState?.list.filter((e: { dt_txt: string }) =>
+  //   e.dt_txt.includes("12:00:00")
+  // );
 
-  // 유닉스 타임 변환
-  const foramttedUnixTime = (time: number): string => {
-    const date = new Date(time * 1000);
+  // // 유닉스 타임 변환
+  // const foramttedUnixTime = (time: number): string => {
+  //   const date = new Date(time * 1000);
 
-    return new Intl.DateTimeFormat("ko-KR", {
-      weekday: "short",
-      day: "numeric",
-    }).format(date);
-  };
+  //   return new Intl.DateTimeFormat("ko-KR", {
+  //     weekday: "short",
+  //     day: "numeric",
+  //   }).format(date);
+  // };
 
   // forecast 평균 온도 및 최저/최고 온도 구하기
   const timezone = forecastState?.city?.timezone ?? 0;
@@ -192,11 +192,14 @@ const Weather01 = () => {
 
   // dt => 날짜 변환
   const toLocalKey = (dt: number) => {
+    const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
     const date = new Date((dt + timezone) * 1000);
+
     const year = date.getUTCFullYear();
     const month = String(date.getUTCMonth() + 1).padStart(2, "0");
     const day = String(date.getUTCDate()).padStart(2, "0");
-    return `${month}.${day}`;
+    const weekday = date.getUTCDay();
+    return `${month}.${day} (${weekdays[weekday]})`;
   };
 
   // forecast 온도 담을 배열 생성
@@ -306,7 +309,7 @@ const Weather01 = () => {
   return (
     <div className="widget_container" data-variant="weather01">
       <div
-        className="bg-notion-gray-bg p-[clamp(1rem,5vmin,2.5rem)] flex flex-col"
+        className="bg-notion-gray-bg p-[clamp(1rem,5vmin,2.5rem)] flex flex-col gap-3 2xs:gap-0"
         style={{
           width: "min(100vw,100vh)",
           // height: "min(100vw,100vh)",
@@ -321,46 +324,47 @@ const Weather01 = () => {
           </div>
         ) : (
           <>
-            <div className="w-full flex justify-between flex-wrap flex-[2]">
-              <div className="flex flex-col items-start">
+            <div className="w-full flex justify-center flex-[2] flex-col gap-4 2xs:flex-row 2xs:justify-between 2xs:gap-0">
+              <div className="flex flex-col items-center 2xs:items-start">
                 <h2 className="text-[clamp(1.6rem,5vmin,2rem)] font-semibold">
                   {weatherState.name}
                 </h2>
                 <time
                   dateTime={date.toISOString()}
-                  className="text-[clamp(0.7rem,2vmin,1rem)]"
+                  className="text-[clamp(0.7rem,2vmin,1rem)] font-semibold"
                 >
                   {formattedDate}
                 </time>
-                <div
-                  aria-label="날씨 아이콘"
-                  className="flex flex-col items-center w-[clamp(3rem,12vmin,6rem)] h-[clamp(3rem,12vmin,6rem)] relative"
-                >
-                  {weatherState.weather[0].main && (
-                    <Image
-                      src={
-                        WEATHER_STATE_OBJECT[weatherState.weather[0].main]
-                          ?.image
-                      }
-                      fill
-                      alt="날씨 아이콘"
-                    />
-                  )}
+                <div className="flex flex-col items-center">
+                  <div
+                    aria-label="날씨 아이콘"
+                    className="flex flex-col items-center w-[clamp(3rem,12vmin,6rem)] h-[clamp(3rem,12vmin,6rem)] relative"
+                  >
+                    {weatherState.weather[0].main && (
+                      <Image
+                        src={
+                          WEATHER_STATE_MAP[weatherState.weather[0].main]?.image
+                        }
+                        fill
+                        alt="날씨 아이콘"
+                      />
+                    )}
+                  </div>
+                  <span className="text-[clamp(0.5rem,2vmin,0.87rem)] font-semibold">
+                    {weatherState.weather[0].main &&
+                      WEATHER_STATE_MAP[weatherState.weather[0].main]?.mean}
+                  </span>
                 </div>
-                <span className="text-[clamp(0.5rem,2vmin,0.87rem)]">
-                  {weatherState.weather[0].main &&
-                    WEATHER_STATE_OBJECT[weatherState.weather[0].main]?.mean}
-                </span>
               </div>
 
-              <div className="w-full max-w-[200px] flex flex-col items-center">
+              <div className="w-[full] 2xs:w-[30%] min-w-[100px] flex flex-col items-center">
                 <span
                   aria-label="현재 온도"
-                  className="text-[clamp(4rem,12vmin,6rem)] leading-none"
+                  className="text-[clamp(2rem,12vmin,6rem)] leading-none"
                 >
                   {weatherState.main.temp}º
                 </span>
-                <div className="text-[clamp(0.8rem,4vmin,1rem)] font-semibold">
+                <div className="text-[clamp(0.6rem,3vmin,1rem)] font-semibold">
                   <span aria-label="최저 온도">
                     {weatherState.main.temp_min}º
                   </span>
@@ -371,32 +375,34 @@ const Weather01 = () => {
                 </div>
                 <div
                   aria-label="기상특보"
-                  className="flex justify-center items-center gap-1 bg-white/50 w-full text-center py-2 mt-3"
+                  className="w-full flex justify-center items-center gap-1 bg-white/50 text-center py-[clamp(0.3rem,1vmin,0.5rem)] mt-3"
                 >
                   <IoIosAlert />
-                  <span className="text-[0.8rem]">기상특보 Box</span>
+                  <span className="text-[clamp(0.6rem,2vmin,0.8rem)]">
+                    기상특보 Box
+                  </span>
                 </div>
               </div>
             </div>
 
             <div className="w-full flex flex-col flex-[1]">
               <Tabs defaultValue="weekly" className="w-full">
-                <TabsList className="w-full justify-start bg-transparent relative after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:bg-notion-gray-text pb-0">
+                <TabsList className="w-full h-auto justify-start bg-transparent relative pb-0 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:bg-notion-gray-text">
                   <TabsTrigger
                     value="weekly"
-                    className="data-[state=active]:font-bold data-[state=active]:shadow-none data-[state=active]:bg-transparent relative data-[state=active]:after:absolute data-[state=active]:after:top-[95%] data-[state=active]:left-0 data-[state=active]:after:h-[2px] data-[state=active]:after:w-full data-[state=active]:after:bg-black"
+                    className="data-[state=active]:font-bold data-[state=active]:shadow-none data-[state=active]:bg-transparent relative data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:left-0 data-[state=active]:after:h-[3px] data-[state=active]:after:w-full data-[state=active]:after:bg-black text-[clamp(0.6rem,2vmin,1rem)]"
                   >
                     주간 날씨
                   </TabsTrigger>
                   <TabsTrigger
                     value="detail"
-                    className="data-[state=active]:font-bold data-[state=active]:shadow-none data-[state=active]:bg-transparent relative data-[state=active]:after:absolute data-[state=active]:after:top-[95%] data-[state=active]:left-0 data-[state=active]:after:h-[2px] data-[state=active]:after:w-full data-[state=active]:after:bg-black"
+                    className="data-[state=active]:font-bold data-[state=active]:shadow-none data-[state=active]:bg-transparent relative data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:left-0 data-[state=active]:after:h-[3px] data-[state=active]:after:w-full data-[state=active]:after:bg-black text-[clamp(0.6rem,2vmin,1rem)]"
                   >
                     상세 정보
                   </TabsTrigger>
                   <TabsTrigger
                     value="tab3"
-                    className="data-[state=active]:font-bold data-[state=active]:shadow-none data-[state=active]:bg-transparent relative data-[state=active]:after:absolute data-[state=active]:after:top-[95%] data-[state=active]:left-0 data-[state=active]:after:h-[2px] data-[state=active]:after:w-full data-[state=active]:after:bg-black"
+                    className="data-[state=active]:font-bold data-[state=active]:shadow-none data-[state=active]:bg-transparent relative data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:left-0 data-[state=active]:after:h-[3px] data-[state=active]:after:w-full data-[state=active]:after:bg-black text-[clamp(0.6rem,2vmin,1rem)]"
                   >
                     Tab 3
                   </TabsTrigger>
@@ -414,11 +420,11 @@ const Weather01 = () => {
                         </span>
                         <div
                           aria-label="날씨 아이콘"
-                          className="flex flex-col items-center w-[clamp(3rem,12vmin,4rem)] h-[clamp(3rem,12vmin,4rem)] relative"
+                          className="flex flex-col items-center w-[clamp(1rem,6vmin,3rem)] h-[clamp(1rem,6vmin,3rem)] relative"
                         >
                           {dailyAverages ? (
                             <Image
-                              src={WEATHER_STATE_OBJECT[e.imageKey]?.image}
+                              src={WEATHER_STATE_MAP[e.imageKey]?.image}
                               fill
                               alt="날씨 아이콘"
                             />
