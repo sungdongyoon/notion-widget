@@ -1,13 +1,13 @@
 import { create } from "zustand";
 
 type Location = {
-  lat: number;
-  lon: number;
+  lat: number | null;
+  lon: number | null;
   setLocation: (lat: number, lon: number) => void;
 };
 
 export const useLocationStore = create<Location>((set) => ({
-  lat: 0,
-  lon: 0,
+  lat: null,
+  lon: null,
   setLocation: (lat, lon) => set({ lat, lon }),
 }));

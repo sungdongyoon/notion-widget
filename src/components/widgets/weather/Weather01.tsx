@@ -9,6 +9,7 @@ import { useLocationStore } from "@/store/useLocationStore";
 import axios from "axios";
 import { Spinner } from "@/components/ui/spinner";
 import Image from "next/image";
+import { getApiReverseGeocoding } from "@/lib/reverseGeocoding";
 
 /* 
     날씨상태 : data.name
@@ -71,6 +72,20 @@ type DailySummary = {
   imageKey: string;
 };
 
+type LocationResultName = "legalcode" | "admcode" | "addr" | "roadaddr";
+
+type LocationReverseResult = {
+  name: string;
+  region?: any;
+};
+
+type LocationState = Record<LocationResultName, { region: any }>;
+
+type LocationStateItem = {
+  name: LocationResultName;
+  region: Record<string, any>;
+};
+
 // 날씨 상태 객체 - 날씨 상태, 아이콘 화면에 출력
 const WEATHER_STATE_MAP: Record<string, { mean: string; image: string }> = {
   Clear: {
@@ -127,6 +142,13 @@ const WEATHER_STATE_MAP: Record<string, { mean: string; image: string }> = {
   },
 };
 
+const EMPTY_LOCATION_STATE: LocationState = {
+  legalcode: { region: {} },
+  admcode: { region: {} },
+  addr: { region: {} },
+  roadaddr: { region: {} },
+};
+
 const Weather01 = () => {
   // zustand 위도, 경도
   const { lat, lon } = useLocationStore();
@@ -155,13 +177,19 @@ const Weather01 = () => {
   });
   // forecast 상태
   const [forecastState, setForecastState] = useState<any | null>(null);
-  // 오늘 / 주간 로딩 상태
-  const [loading, setLoading] = useState<{ today: boolean; forecast: boolean }>(
-    {
-      today: true,
-      forecast: true,
-    }
-  );
+  // reverse geocoding 상태
+  const [locationState, setLocationState] =
+    useState<LocationState>(EMPTY_LOCATION_STATE);
+  // state 로딩 상태
+  const [loading, setLoading] = useState<{
+    today: boolean;
+    forecast: boolean;
+    location: boolean;
+  }>({
+    today: true,
+    forecast: true,
+    location: true,
+  });
 
   // Today 변환
   const date = new Date();
@@ -170,21 +198,6 @@ const Weather01 = () => {
     day: "numeric",
     year: "numeric",
   }).format(date);
-
-  // // forecast 데이터
-  // const forecastData = forecastState?.list.filter((e: { dt_txt: string }) =>
-  //   e.dt_txt.includes("12:00:00")
-  // );
-
-  // // 유닉스 타임 변환
-  // const foramttedUnixTime = (time: number): string => {
-  //   const date = new Date(time * 1000);
-
-  //   return new Intl.DateTimeFormat("ko-KR", {
-  //     weekday: "short",
-  //     day: "numeric",
-  //   }).format(date);
-  // };
 
   // forecast 평균 온도 및 최저/최고 온도 구하기
   const timezone = forecastState?.city?.timezone ?? 0;
@@ -238,9 +251,35 @@ const Weather01 = () => {
       max: Math.round(v.max),
     }));
 
-  console.log("2", dailyAverages);
+  // reverse geocoding 결과 매핑
+  const NAMES: LocationResultName[] = [
+    "legalcode",
+    "admcode",
+    "addr",
+    "roadaddr",
+  ];
 
-  // 날씨 정보 통신
+  const normalizeReverseGeocodingResults = (
+    results: LocationReverseResult[]
+  ): LocationState => {
+    const next: LocationState = {
+      legalcode: { region: {} },
+      admcode: { region: {} },
+      addr: { region: {} },
+      roadaddr: { region: {} },
+    };
+
+    for (const result of results ?? []) {
+      const name = result.name as LocationResultName;
+      if (name in next) {
+        next[name] = { region: result.region ?? {} };
+      }
+    }
+
+    return next;
+  };
+
+  // 날씨 정보 호출
   useEffect(() => {
     if (lat === null || lon === null) return;
 
@@ -279,7 +318,7 @@ const Weather01 = () => {
     getWeatherData();
   }, [lat, lon]);
 
-  // 기상정보 예측 5일
+  // forecast 5days 호출
   useEffect(() => {
     if (lat === null || lon === null) return;
 
@@ -301,9 +340,40 @@ const Weather01 = () => {
     getWeatherForecast5Data();
   }, [lat, lon]);
 
+  // reverse geocoding 호출
+  useEffect(() => {
+    if (lat === null || lon === null) return;
+
+    const getReverseGeocodingData = async () => {
+      try {
+        const result = await axios.get(
+          `/api/reverseGeocoding?lat=${lat}&lon=${lon}`
+        );
+        const data = result.data;
+        setLocationState(normalizeReverseGeocodingResults(data.results ?? []));
+        setLoading((prev) => ({ ...prev, location: false }));
+        console.log("reverse geocoding 클라이언트 통신 ok ", data);
+      } catch (error) {
+        setLoading((prev) => ({ ...prev, location: true }));
+        console.log("reverse geocoding 클라이언트 통신 failed");
+        console.error(error);
+      }
+    };
+
+    getReverseGeocodingData();
+  }, [lat, lon]);
+
+  // 주소 출력
+  const area1 = locationState.admcode.region?.area1?.name ?? "";
+  const area2 = locationState.admcode.region?.area2?.name ?? "";
+  const area3 = locationState.admcode.region?.area3?.name ?? "";
+
+  const regionLabel = `${area1} ${area2} ${area3}`;
+
   if (weatherState) {
-    console.log("state", weatherState);
-    // console.log("forecast", forecastState);
+    // console.log("weatherState", weatherState);
+    // console.log("forecastState", forecastState);
+    // console.log("locationState", locationState);
   }
 
   return (
@@ -327,7 +397,7 @@ const Weather01 = () => {
             <div className="w-full flex justify-center flex-[2] flex-col gap-4 2xs:flex-row 2xs:justify-between 2xs:gap-0">
               <div className="flex flex-col items-center 2xs:items-start">
                 <h2 className="text-[clamp(1.6rem,5vmin,2rem)] font-semibold">
-                  {weatherState.name}
+                  {regionLabel}
                 </h2>
                 <time
                   dateTime={date.toISOString()}
