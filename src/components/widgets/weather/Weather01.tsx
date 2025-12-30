@@ -186,9 +186,9 @@ const Weather01 = () => {
     forecast: boolean;
     location: boolean;
   }>({
-    today: true,
-    forecast: true,
-    location: true,
+    today: false,
+    forecast: false,
+    location: false,
   });
 
   // Today 변환
@@ -396,7 +396,7 @@ const Weather01 = () => {
           <>
             <div className="w-full flex justify-center flex-[2] flex-col gap-4 2xs:flex-row 2xs:justify-between 2xs:gap-0">
               <div className="flex flex-col items-center 2xs:items-start">
-                <h2 className="text-[clamp(1.6rem,5vmin,2rem)] font-semibold">
+                <h2 className="text-[clamp(1rem,4vmin,2rem)] font-semibold">
                   {regionLabel}
                 </h2>
                 <time
