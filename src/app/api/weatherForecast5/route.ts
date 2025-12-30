@@ -8,5 +8,9 @@ export async function GET(req: Request) {
 
   const data = await getApiWeatherForecast5Days({ lat, lon });
 
-  return NextResponse.json(data);
+  return NextResponse.json(data, {
+    headers: {
+      "Access-Control-Allow-Origin": "https://www.notion.so",
+    },
+  });
 }

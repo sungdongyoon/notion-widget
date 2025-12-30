@@ -186,9 +186,9 @@ const Weather01 = () => {
     forecast: boolean;
     location: boolean;
   }>({
-    today: false,
-    forecast: false,
-    location: false,
+    today: true,
+    forecast: true,
+    location: true,
   });
 
   // Today 변환
