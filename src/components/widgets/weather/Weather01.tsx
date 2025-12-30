@@ -396,6 +396,8 @@ const Weather01 = () => {
           <>
             <div className="w-full flex justify-center flex-[2] flex-col gap-4 2xs:flex-row 2xs:justify-between 2xs:gap-0">
               <div className="flex flex-col items-center 2xs:items-start">
+                <div>lat: {lat}</div>
+                <div>lon: {lon}</div>
                 <h2 className="text-[clamp(1rem,4vmin,2rem)] font-semibold">
                   {regionLabel}
                 </h2>

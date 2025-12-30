@@ -7,7 +7,7 @@ type Location = {
 };
 
 export const useLocationStore = create<Location>((set) => ({
-  lat: null,
-  lon: null,
+  lat: 37.5510697,
+  lon: 126.9882562,
   setLocation: (lat, lon) => set({ lat, lon }),
 }));
