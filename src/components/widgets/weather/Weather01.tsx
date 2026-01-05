@@ -3,13 +3,13 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useEffect, useState } from "react";
 
-import { IoIosSunny } from "react-icons/io";
 import { IoIosAlert } from "react-icons/io";
 import { useLocationStore } from "@/store/useLocationStore";
 import axios from "axios";
 import { Spinner } from "@/components/ui/spinner";
 import Image from "next/image";
-import { getApiReverseGeocoding } from "@/lib/reverseGeocoding";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 /* 
     날씨상태 : data.name
@@ -178,18 +178,61 @@ const Weather01 = () => {
   // forecast 상태
   const [forecastState, setForecastState] = useState<any | null>(null);
   // reverse geocoding 상태
-  const [locationState, setLocationState] =
+  const [revGeocoding, setRevGeocoding] =
     useState<LocationState>(EMPTY_LOCATION_STATE);
+  // geocoding 상태
+  const [geocoding, setGeocoding] = useState<any>({
+    lat: null,
+    lon: null,
+    roadAddress: "",
+    jibunAddress: "",
+    englishAddress: "",
+    addressElements: [],
+  });
+  // 주소 입력 상태
+  const [isAddress, setIsAddress] = useState<boolean>(false);
+  const [addressQuery, setAddressQuery] = useState<string>("");
   // state 로딩 상태
   const [loading, setLoading] = useState<{
     today: boolean;
     forecast: boolean;
-    location: boolean;
+    revGeocoding: boolean;
+    geocoding: boolean;
   }>({
     today: true,
     forecast: true,
-    location: true,
+    revGeocoding: true,
+    geocoding: false,
   });
+
+  // 주소 체크
+  const handleCheckAddress = async () => {
+    if (!addressQuery.trim()) {
+      alert("주소를 입력해주세요!");
+      return;
+    }
+
+    setLoading((prev) => ({ ...prev, geocoding: true }));
+
+    try {
+      const result = await axios.get(
+        `/api/geocoding?address=${encodeURIComponent(addressQuery)}`
+      );
+      const data = result.data;
+      setGeocoding({
+        lat: data.addresses[0].y,
+        lon: data.addresses[0].x,
+        roadAddress: data.addresses[0].roadAddress,
+        englishAddress: data.addresses[0].englishAddress,
+        addressElements: data.addresses[0].addressElements,
+      });
+      setIsAddress(true);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading((prev) => ({ ...prev, geocoding: false }));
+    }
+  };
 
   // Today 변환
   const date = new Date();
@@ -281,12 +324,12 @@ const Weather01 = () => {
 
   // 날씨 정보 호출
   useEffect(() => {
-    if (lat === null || lon === null) return;
+    if (geocoding.lat === null || geocoding.lon === null) return;
 
     const getWeatherData = async () => {
       try {
         const result = await axios.get<WeatherData>(
-          `/api/weather?lat=${lat}&lon=${lon}`
+          `/api/weather?lat=${geocoding.lat}&lon=${geocoding.lon}`
         );
         const data = result.data;
         setWeatherState({
@@ -307,73 +350,73 @@ const Weather01 = () => {
           wind: data.wind,
         });
         setLoading((prev) => ({ ...prev, today: false }));
-        console.log("weather 클라이언트 통신 ok", data);
+        // console.log("weather 클라이언트 통신 ok ", data);
       } catch (error) {
         setLoading((prev) => ({ ...prev, today: true }));
-        console.log("weather 클라이언트 통신 failed");
+        // console.log("weather 클라이언트 통신 failed");
         console.error("error", error);
       }
     };
 
     getWeatherData();
-  }, [lat, lon]);
+  }, [geocoding.lat, geocoding.lon]);
 
   // forecast 5days 호출
   useEffect(() => {
-    if (lat === null || lon === null) return;
+    if (geocoding.lat === null || geocoding.lon === null) return;
 
     const getWeatherForecast5Data = async () => {
       try {
         const result = await axios.get(
-          `/api/weatherForecast5?lat=${lat}&lon=${lon}`
+          `/api/weatherForecast5?lat=${geocoding.lat}&lon=${geocoding.lon}`
         );
         const data = result.data;
         setForecastState(data);
         setLoading((prev) => ({ ...prev, forecast: false }));
-        console.log("forecast5 클라이언트 통신 ok ", data);
+        // console.log("forecast5 클라이언트 통신 ok ", data);
       } catch (error) {
         setLoading((prev) => ({ ...prev, forecast: true }));
-        console.log("forecast5 클라이언트 통신 failed ");
+        // console.log("forecast5 클라이언트 통신 failed ");
         console.error(error);
       }
     };
     getWeatherForecast5Data();
-  }, [lat, lon]);
+  }, [geocoding.lat, geocoding.lon]);
 
   // reverse geocoding 호출
   useEffect(() => {
-    if (lat === null || lon === null) return;
+    if (geocoding.lat === null || geocoding.lon === null) return;
 
     const getReverseGeocodingData = async () => {
       try {
         const result = await axios.get(
-          `/api/reverseGeocoding?lat=${lat}&lon=${lon}`
+          `/api/reverseGeocoding?lat=${geocoding.lat}&lon=${geocoding.lon}`
         );
         const data = result.data;
-        setLocationState(normalizeReverseGeocodingResults(data.results ?? []));
-        setLoading((prev) => ({ ...prev, location: false }));
-        console.log("reverse geocoding 클라이언트 통신 ok ", data);
+        setRevGeocoding(normalizeReverseGeocodingResults(data.results ?? []));
+        setLoading((prev) => ({ ...prev, revGeocoding: false }));
+        // console.log("reverse geocoding 클라이언트 통신 ok ", data);
       } catch (error) {
-        setLoading((prev) => ({ ...prev, location: true }));
-        console.log("reverse geocoding 클라이언트 통신 failed");
+        setLoading((prev) => ({ ...prev, revGeocoding: true }));
+        // console.log("reverse geocoding 클라이언트 통신 failed");
         console.error(error);
       }
     };
 
     getReverseGeocodingData();
-  }, [lat, lon]);
+  }, [geocoding.lat, geocoding.lon]);
 
   // 주소 출력
-  const area1 = locationState.admcode.region?.area1?.name ?? "";
-  const area2 = locationState.admcode.region?.area2?.name ?? "";
-  const area3 = locationState.admcode.region?.area3?.name ?? "";
+  const area1 = revGeocoding.admcode.region?.area1?.name ?? "";
+  const area2 = revGeocoding.admcode.region?.area2?.name ?? "";
+  const area3 = revGeocoding.admcode.region?.area3?.name ?? "";
 
   const regionLabel = `${area1} ${area2} ${area3}`;
 
   if (weatherState) {
     // console.log("weatherState", weatherState);
     // console.log("forecastState", forecastState);
-    // console.log("locationState", locationState);
+    // console.log("revGeocoding", revGeocoding);
   }
 
   return (
@@ -387,138 +430,163 @@ const Weather01 = () => {
           aspectRatio: "12/7",
         }}
       >
-        {loading.today ? (
+        {isAddress ? (
+          loading.today ? (
+            <div className="w-full h-full flex flex-col justify-center items-center gap-3">
+              <Spinner className="size-20" />
+              <p className="">날씨 데이터 로딩중...</p>
+            </div>
+          ) : (
+            <>
+              <div className="w-full flex justify-center flex-[2] flex-col gap-4 2xs:flex-row 2xs:justify-between 2xs:gap-0">
+                <div className="flex flex-col items-center 2xs:items-start">
+                  <h2 className="text-[clamp(1rem,4vmin,2rem)] font-semibold">
+                    {regionLabel}
+                  </h2>
+                  <time
+                    dateTime={date.toISOString()}
+                    className="text-[clamp(0.7rem,2vmin,1rem)] font-semibold"
+                  >
+                    {formattedDate}
+                  </time>
+                  <div className="flex flex-col items-center">
+                    <div
+                      aria-label="날씨 아이콘"
+                      className="flex flex-col items-center w-[clamp(3rem,12vmin,6rem)] h-[clamp(3rem,12vmin,6rem)] relative"
+                    >
+                      {weatherState.weather[0].main && (
+                        <Image
+                          src={
+                            WEATHER_STATE_MAP[weatherState.weather[0].main]
+                              ?.image
+                          }
+                          fill
+                          alt="날씨 아이콘"
+                        />
+                      )}
+                    </div>
+                    <span className="text-[clamp(0.5rem,2vmin,0.87rem)] font-semibold">
+                      {weatherState.weather[0].main &&
+                        WEATHER_STATE_MAP[weatherState.weather[0].main]?.mean}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="w-[full] 2xs:w-[30%] min-w-[100px] flex flex-col items-center">
+                  <span
+                    aria-label="현재 온도"
+                    className="text-[clamp(2rem,12vmin,6rem)] leading-none"
+                  >
+                    {weatherState.main.temp}º
+                  </span>
+                  <div className="text-[clamp(0.6rem,3vmin,1rem)] font-semibold">
+                    <span aria-label="최저 온도">
+                      {weatherState.main.temp_min}º
+                    </span>
+                    <span> / </span>
+                    <span aria-label="최고 온도">
+                      {weatherState.main.temp_max}º
+                    </span>
+                  </div>
+                  <div
+                    aria-label="기상특보"
+                    className="w-full flex justify-center items-center gap-1 bg-white/50 text-center py-[clamp(0.3rem,1vmin,0.5rem)] mt-3"
+                  >
+                    <IoIosAlert />
+                    <span className="text-[clamp(0.6rem,2vmin,0.8rem)]">
+                      기상특보 Box
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-full flex flex-col flex-[1]">
+                <Tabs defaultValue="weekly" className="w-full">
+                  <TabsList className="w-full h-auto justify-start bg-transparent relative pb-0 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:bg-notion-gray-text">
+                    <TabsTrigger
+                      value="weekly"
+                      className="data-[state=active]:font-bold data-[state=active]:shadow-none data-[state=active]:bg-transparent relative data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:left-0 data-[state=active]:after:h-[3px] data-[state=active]:after:w-full data-[state=active]:after:bg-black text-[clamp(0.6rem,2vmin,1rem)]"
+                    >
+                      주간 날씨
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="detail"
+                      className="data-[state=active]:font-bold data-[state=active]:shadow-none data-[state=active]:bg-transparent relative data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:left-0 data-[state=active]:after:h-[3px] data-[state=active]:after:w-full data-[state=active]:after:bg-black text-[clamp(0.6rem,2vmin,1rem)]"
+                    >
+                      상세 정보
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="tab3"
+                      className="data-[state=active]:font-bold data-[state=active]:shadow-none data-[state=active]:bg-transparent relative data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:left-0 data-[state=active]:after:h-[3px] data-[state=active]:after:w-full data-[state=active]:after:bg-black text-[clamp(0.6rem,2vmin,1rem)]"
+                    >
+                      Tab 3
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="weekly">
+                    <div className="grid grid-cols-5">
+                      {dailyAverages?.map((e: any) => (
+                        <div
+                          key={e.dateKey}
+                          className="flex flex-col items-center gap-1 text-center"
+                        >
+                          <span className="text-[clamp(0.6rem,2vmin,0.8rem)]">
+                            {e.dateKey}
+                          </span>
+                          <div
+                            aria-label="날씨 아이콘"
+                            className="flex flex-col items-center w-[clamp(1rem,6vmin,3rem)] h-[clamp(1rem,6vmin,3rem)] relative"
+                          >
+                            {dailyAverages ? (
+                              <Image
+                                src={WEATHER_STATE_MAP[e.imageKey]?.image}
+                                fill
+                                alt="날씨 아이콘"
+                              />
+                            ) : (
+                              <Spinner />
+                            )}
+                          </div>
+                          <div className="text-[clamp(0.6rem,2vmin,0.8rem)]">
+                            <span aria-label="최저 온도">{e.min}º</span>
+                            <span> / </span>
+                            <span aria-label="최고 온도">{e.max}º</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="detail">상세 정보</TabsContent>
+                  <TabsContent value="tab3">tab 3</TabsContent>
+                </Tabs>
+              </div>
+            </>
+          )
+        ) : loading.geocoding ? (
           <div className="w-full h-full flex flex-col justify-center items-center gap-3">
             <Spinner className="size-20" />
-            <p className="">날씨 데이터 로딩중...</p>
+            <p className="">지역 정보 불러오는중 ...</p>
           </div>
         ) : (
-          <>
-            <div className="w-full flex justify-center flex-[2] flex-col gap-4 2xs:flex-row 2xs:justify-between 2xs:gap-0">
-              <div className="flex flex-col items-center 2xs:items-start">
-                <div>lat: {lat}</div>
-                <div>lon: {lon}</div>
-                <h2 className="text-[clamp(1rem,4vmin,2rem)] font-semibold">
-                  {regionLabel}
-                </h2>
-                <time
-                  dateTime={date.toISOString()}
-                  className="text-[clamp(0.7rem,2vmin,1rem)] font-semibold"
-                >
-                  {formattedDate}
-                </time>
-                <div className="flex flex-col items-center">
-                  <div
-                    aria-label="날씨 아이콘"
-                    className="flex flex-col items-center w-[clamp(3rem,12vmin,6rem)] h-[clamp(3rem,12vmin,6rem)] relative"
-                  >
-                    {weatherState.weather[0].main && (
-                      <Image
-                        src={
-                          WEATHER_STATE_MAP[weatherState.weather[0].main]?.image
-                        }
-                        fill
-                        alt="날씨 아이콘"
-                      />
-                    )}
-                  </div>
-                  <span className="text-[clamp(0.5rem,2vmin,0.87rem)] font-semibold">
-                    {weatherState.weather[0].main &&
-                      WEATHER_STATE_MAP[weatherState.weather[0].main]?.mean}
-                  </span>
-                </div>
+          <div className="w-full h-full flex justify-center items-center">
+            <div className="max-w-[450px] min-w-[100px] w-full flex flex-col gap-10">
+              <div className="flex flex-col items-center">
+                <p className="text-[clamp(1rem,5vmin,1.4rem)]">
+                  날씨 정보를 확인하고 싶은 지역을 입력해주세요!
+                </p>
+                <p>Please enter your location</p>
               </div>
-
-              <div className="w-[full] 2xs:w-[30%] min-w-[100px] flex flex-col items-center">
-                <span
-                  aria-label="현재 온도"
-                  className="text-[clamp(2rem,12vmin,6rem)] leading-none"
-                >
-                  {weatherState.main.temp}º
-                </span>
-                <div className="text-[clamp(0.6rem,3vmin,1rem)] font-semibold">
-                  <span aria-label="최저 온도">
-                    {weatherState.main.temp_min}º
-                  </span>
-                  <span> / </span>
-                  <span aria-label="최고 온도">
-                    {weatherState.main.temp_max}º
-                  </span>
-                </div>
-                <div
-                  aria-label="기상특보"
-                  className="w-full flex justify-center items-center gap-1 bg-white/50 text-center py-[clamp(0.3rem,1vmin,0.5rem)] mt-3"
-                >
-                  <IoIosAlert />
-                  <span className="text-[clamp(0.6rem,2vmin,0.8rem)]">
-                    기상특보 Box
-                  </span>
-                </div>
+              <div className="flex gap-1 justify-center w-full">
+                <Input
+                  className="w-full"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setAddressQuery(e.target.value)
+                  }
+                />
+                <Button onClick={handleCheckAddress}>확인</Button>
               </div>
             </div>
-
-            <div className="w-full flex flex-col flex-[1]">
-              <Tabs defaultValue="weekly" className="w-full">
-                <TabsList className="w-full h-auto justify-start bg-transparent relative pb-0 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:bg-notion-gray-text">
-                  <TabsTrigger
-                    value="weekly"
-                    className="data-[state=active]:font-bold data-[state=active]:shadow-none data-[state=active]:bg-transparent relative data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:left-0 data-[state=active]:after:h-[3px] data-[state=active]:after:w-full data-[state=active]:after:bg-black text-[clamp(0.6rem,2vmin,1rem)]"
-                  >
-                    주간 날씨
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="detail"
-                    className="data-[state=active]:font-bold data-[state=active]:shadow-none data-[state=active]:bg-transparent relative data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:left-0 data-[state=active]:after:h-[3px] data-[state=active]:after:w-full data-[state=active]:after:bg-black text-[clamp(0.6rem,2vmin,1rem)]"
-                  >
-                    상세 정보
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="tab3"
-                    className="data-[state=active]:font-bold data-[state=active]:shadow-none data-[state=active]:bg-transparent relative data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:left-0 data-[state=active]:after:h-[3px] data-[state=active]:after:w-full data-[state=active]:after:bg-black text-[clamp(0.6rem,2vmin,1rem)]"
-                  >
-                    Tab 3
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="weekly">
-                  <div className="grid grid-cols-5">
-                    {dailyAverages?.map((e: any) => (
-                      <div
-                        key={e.dateKey}
-                        className="flex flex-col items-center gap-1 text-center"
-                      >
-                        <span className="text-[clamp(0.6rem,2vmin,0.8rem)]">
-                          {e.dateKey}
-                        </span>
-                        <div
-                          aria-label="날씨 아이콘"
-                          className="flex flex-col items-center w-[clamp(1rem,6vmin,3rem)] h-[clamp(1rem,6vmin,3rem)] relative"
-                        >
-                          {dailyAverages ? (
-                            <Image
-                              src={WEATHER_STATE_MAP[e.imageKey]?.image}
-                              fill
-                              alt="날씨 아이콘"
-                            />
-                          ) : (
-                            <Spinner />
-                          )}
-                        </div>
-                        {/* <IoIosSunny className="text-[clamp(1rem,6vmin,2.5rem)]" /> */}
-                        <div className="text-[clamp(0.6rem,2vmin,0.8rem)]">
-                          <span aria-label="최저 온도">{e.min}º</span>
-                          <span> / </span>
-                          <span aria-label="최고 온도">{e.max}º</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </TabsContent>
-                <TabsContent value="detail">상세 정보</TabsContent>
-                <TabsContent value="tab3">tab 3</TabsContent>
-              </Tabs>
-            </div>
-          </>
+          </div>
         )}
       </div>
     </div>
