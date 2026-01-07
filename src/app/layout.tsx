@@ -1,5 +1,6 @@
 import "@/assets/scss/globals.scss";
 import { ThemeProvider } from "@/components/theme-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import LocationProvider from "@/provider/LocationProvider";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -26,7 +27,7 @@ export default function RootLayout({
         >
           <div className="root_container">
             <LocationProvider />
-            {children}
+            <TooltipProvider>{children}</TooltipProvider>
           </div>
         </ThemeProvider>
       </body>

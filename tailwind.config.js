@@ -92,6 +92,10 @@ module.exports = {
           5: "hsl(var(--chart-5))",
         },
       },
+      fontSize: {
+        "3xs": ["0.5rem", { lineHeight: "0.55rem" }],
+        "2xs": ["0.6rem", { lineHeight: "0.75rem" }],
+      },
     },
     screens: {
       "7xs": "150px",

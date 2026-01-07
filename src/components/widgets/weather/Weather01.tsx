@@ -10,6 +10,23 @@ import { Spinner } from "@/components/ui/spinner";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { FaQuestionCircle } from "react-icons/fa";
+import { FaRotate } from "react-icons/fa6";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 /* 
     날씨상태 : data.name
@@ -322,6 +339,11 @@ const Weather01 = () => {
     return next;
   };
 
+  // 주소 초기화
+  const handleResetAddress = () => {
+    setIsAddress(false);
+  };
+
   // 날씨 정보 호출
   useEffect(() => {
     if (geocoding.lat === null || geocoding.lon === null) return;
@@ -440,9 +462,31 @@ const Weather01 = () => {
             <>
               <div className="w-full flex justify-center flex-[2] flex-col gap-4 2xs:flex-row 2xs:justify-between 2xs:gap-0">
                 <div className="flex flex-col items-center 2xs:items-start">
-                  <h2 className="text-[clamp(1rem,4vmin,2rem)] font-semibold">
-                    {regionLabel}
-                  </h2>
+                  <div className="flex items-center gap-1">
+                    <h2 className="text-[clamp(1rem,4vmin,2rem)] font-semibold">
+                      {regionLabel}
+                    </h2>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button size="2xs">
+                          <FaRotate />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            주소를 초기화 하시겠습니까?
+                          </AlertDialogTitle>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>취소</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleResetAddress}>
+                            초기화
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
                   <time
                     dateTime={date.toISOString()}
                     className="text-[clamp(0.7rem,2vmin,1rem)] font-semibold"
@@ -488,7 +532,7 @@ const Weather01 = () => {
                       {weatherState.main.temp_max}º
                     </span>
                   </div>
-                  <div
+                  {/* <div
                     aria-label="기상특보"
                     className="w-full flex justify-center items-center gap-1 bg-white/50 text-center py-[clamp(0.3rem,1vmin,0.5rem)] mt-3"
                   >
@@ -496,7 +540,7 @@ const Weather01 = () => {
                     <span className="text-[clamp(0.6rem,2vmin,0.8rem)]">
                       기상특보 Box
                     </span>
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
@@ -569,12 +613,14 @@ const Weather01 = () => {
           </div>
         ) : (
           <div className="w-full h-full flex justify-center items-center">
-            <div className="max-w-[450px] min-w-[100px] w-full flex flex-col gap-10">
+            <div className="max-w-[450px] min-w-[100px] w-full flex flex-col items-center gap-[clamp(0.4rem,5vmin,2rem)]">
               <div className="flex flex-col items-center">
-                <p className="text-[clamp(1rem,5vmin,1.4rem)]">
+                <p className="text-[clamp(0.6rem,3vmin,1.4rem)]">
                   날씨 정보를 확인하고 싶은 지역을 입력해주세요!
                 </p>
-                <p>Please enter your location</p>
+                <p className="text-[clamp(0.4rem,2vmin,1rem)]">
+                  Please enter your address
+                </p>
               </div>
               <div className="flex gap-1 justify-center w-full">
                 <Input
@@ -582,8 +628,32 @@ const Weather01 = () => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setAddressQuery(e.target.value)
                   }
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === "Enter") {
+                      handleCheckAddress();
+                    }
+                  }}
                 />
                 <Button onClick={handleCheckAddress}>확인</Button>
+              </div>
+              <div className="flex items-center gap-1">
+                <p className="text-[clamp(0.5rem,3vmin,0.8rem)]">
+                  주소 입력 팁
+                </p>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <FaQuestionCircle />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      정확한 주소를 입력하거나 행정구, 행정동만 입력해도 됩니다.
+                    </p>
+                    <p>
+                      단, 행정구 또는 행정동을 입력하면 해당하는 구청이나
+                      주민센터를 기준으로 위치가 잡히게 됩니다.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
             </div>
           </div>
