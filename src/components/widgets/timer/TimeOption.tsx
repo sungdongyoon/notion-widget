@@ -223,6 +223,12 @@ export default function TimeOption({
                   Color
                 </TabsTrigger>
               )}
+              <TabsTrigger
+                value="created"
+                className="text-[clamp(0.6rem,3vmin,0.8rem)]"
+              >
+                CopyRight
+              </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -393,14 +399,29 @@ export default function TimeOption({
             </div>
           </div>
         )}
-        <Button
-          size="sm"
-          variant="destructive"
-          className="fixed z-50 bottom-2 right-5 bg-red-500 h-[clamp(1.8rem,5vmin,2rem)] px-[clamp(1rem,3vmin,1.5rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
-          onClick={handleApply}
-        >
-          저장
-        </Button>
+
+        {optionSection === "created" && (
+          <div className="grid gap-4 mt-1" id="created">
+            <div className="space-y-2">
+              <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)] text-center">
+                Thank You !
+              </h4>
+              <p className="text-muted-foreground text-[clamp(0.6rem,3vmin,0.8rem)]">
+                © 2026 Created by Mober & Dong
+              </p>
+            </div>
+          </div>
+        )}
+        {optionSection !== "created" && (
+          <Button
+            size="sm"
+            variant="destructive"
+            className="fixed z-50 bottom-2 right-5 bg-red-500 h-[clamp(1.8rem,5vmin,2rem)] px-[clamp(1rem,3vmin,1.5rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
+            onClick={handleApply}
+          >
+            저장
+          </Button>
+        )}
       </PopoverContent>
     </Popover>
   );
