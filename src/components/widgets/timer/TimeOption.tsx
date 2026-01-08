@@ -81,6 +81,7 @@ export default function TimeOption({
     length: 0,
   });
   const [overLimit, setOverLimit] = useState<boolean>(false);
+  const [optionSection, setOptionSection] = useState<string>("time");
 
   const labelPercent = (timerLabel.length / LABEL_MAX_LENGTH) * 100;
 
@@ -176,14 +177,16 @@ export default function TimeOption({
     scroll-pt-16"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
-        <div className="w-full sticky top-0 flex justify-center items-center flex-wrap z-10">
+        <div className="w-full flex justify-center items-center flex-wrap z-10">
           <Tabs
             onValueChange={(value) => {
-              document.getElementById(value)?.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-              });
+              // document.getElementById(value)?.scrollIntoView({
+              //   behavior: "smooth",
+              //   block: "start",
+              // });
+              setOptionSection(value);
             }}
+            defaultValue="time"
           >
             <TabsList className="h-[clamp(1.6rem,5vmin,2.25rem)]">
               {activeOption?.some((opt) =>
@@ -196,20 +199,20 @@ export default function TimeOption({
                   Time
                 </TabsTrigger>
               )}
+              {/* {activeOption?.includes("label") && (
+                <TabsTrigger
+                  value="label"
+                  className="text-[clamp(0.6rem,3vmin,0.8rem)]"
+                >
+                  Label
+                </TabsTrigger>
+              )} */}
               {activeOption?.includes("theme") && (
                 <TabsTrigger
                   value="theme"
                   className="text-[clamp(0.6rem,3vmin,0.8rem)]"
                 >
                   Theme
-                </TabsTrigger>
-              )}
-              {activeOption?.includes("label") && (
-                <TabsTrigger
-                  value="label"
-                  className="text-[clamp(0.6rem,3vmin,0.8rem)]"
-                >
-                  Label
                 </TabsTrigger>
               )}
               {activeOption?.includes("color") && (
@@ -223,78 +226,115 @@ export default function TimeOption({
             </TabsList>
           </Tabs>
         </div>
-        <div className="grid gap-4 scroll-mt-3" id="time">
-          <div className="space-y-2">
-            <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
-              Time Select
-            </h4>
-            <p className="text-muted-foreground text-[clamp(0.6rem,3vmin,0.8rem)]">
-              타이머 시간을 설정해주세요.
-            </p>
-          </div>
-          <div className="grid gap-2">
-            {activeOption?.includes("hour") && (
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label
-                  htmlFor="hour"
-                  className="text-[clamp(0.6rem,3vmin,0.8rem)]"
-                >
-                  hour
-                </Label>
-                <Input
-                  id="hour"
-                  type="text"
-                  inputMode="numeric"
-                  value={hour}
-                  onChange={onHourChange}
-                  onBlur={() => setHour(onBlurClamp(hour, 23))}
-                  className="col-span-2 h-[clamp(1.5rem,5vmin,2rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
-                />
+        {optionSection === "time" && (
+          <>
+            <div className="grid gap-4 scroll-mt-3" id="time">
+              <div className="space-y-2">
+                <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
+                  Time Select
+                </h4>
+                <p className="text-muted-foreground text-[clamp(0.6rem,3vmin,0.8rem)]">
+                  타이머 시간을 설정해주세요.
+                </p>
+              </div>
+              <div className="grid gap-2">
+                {activeOption?.includes("hour") && (
+                  <div className="grid grid-cols-3 items-center gap-4">
+                    <Label
+                      htmlFor="hour"
+                      className="text-[clamp(0.6rem,3vmin,0.8rem)]"
+                    >
+                      hour
+                    </Label>
+                    <Input
+                      id="hour"
+                      type="text"
+                      inputMode="numeric"
+                      value={hour}
+                      onChange={onHourChange}
+                      onBlur={() => setHour(onBlurClamp(hour, 23))}
+                      className="col-span-2 h-[clamp(1.5rem,5vmin,2rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
+                    />
+                  </div>
+                )}
+                {activeOption?.includes("minute") && (
+                  <div className="grid grid-cols-3 items-center gap-4">
+                    <Label
+                      htmlFor="minute"
+                      className="text-[clamp(0.6rem,3vmin,0.8rem)]"
+                    >
+                      minute
+                    </Label>
+                    <Input
+                      id="minute"
+                      type="text"
+                      inputMode="numeric"
+                      value={minute}
+                      onChange={onMinuteChange}
+                      onBlur={() => setMinute(onBlurClamp(minute, 59))}
+                      className="col-span-2 h-[clamp(1.5rem,5vmin,2rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
+                    />
+                  </div>
+                )}
+                {activeOption?.includes("second") && (
+                  <div className="grid grid-cols-3 items-center gap-4">
+                    <Label
+                      htmlFor="second"
+                      className="text-[clamp(0.6rem,3vmin,0.8rem)]"
+                    >
+                      second
+                    </Label>
+                    <Input
+                      id="second"
+                      type="text"
+                      inputMode="numeric"
+                      value={second}
+                      onChange={onSecondChange}
+                      onBlur={() => setSecond(onBlurClamp(second, 59))}
+                      className="col-span-2 h-[clamp(1.5rem,5vmin,2rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+            {activeOption?.includes("label") && (
+              <div className="grid gap-4 mt-7" id="label">
+                <div className="space-y-2">
+                  <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
+                    Label
+                  </h4>
+                  <p className="text-muted-foreground text-[clamp(0.6rem,3vmin,0.8rem)]">
+                    타이머에 표시할 라벨을 입력해주세요.
+                  </p>
+                </div>
+                <div>
+                  <Input
+                    id="timer-label"
+                    type="text"
+                    placeholder="예) study 📝"
+                    value={timerLabel.label}
+                    onChange={onLabelChange}
+                    className={`col-span-2 h-[clamp(1.5rem,5vmin,2rem)] text-[clamp(0.6rem,3vmin,0.8rem)] ${
+                      overLimit ? "timer_label_input border-red-500" : ""
+                    }`}
+                  />
+                  <div className="relative w-full h-1 bg-gray-200 rounded mt-2">
+                    <div
+                      className="absolute top-0 left-0 h-full rounded bg-blue-500 transition-all"
+                      style={{ width: `${labelPercent}%` }}
+                    />
+                  </div>
+                  <p className="text-[clamp(0.6rem,3vmin,0.8rem)] text-gray-500 mt-1 text-left">
+                    {timerLabel.length} / {LABEL_MAX_LENGTH}
+                  </p>
+                </div>
               </div>
             )}
-            {activeOption?.includes("minute") && (
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label
-                  htmlFor="minute"
-                  className="text-[clamp(0.6rem,3vmin,0.8rem)]"
-                >
-                  minute
-                </Label>
-                <Input
-                  id="minute"
-                  type="text"
-                  inputMode="numeric"
-                  value={minute}
-                  onChange={onMinuteChange}
-                  onBlur={() => setMinute(onBlurClamp(minute, 59))}
-                  className="col-span-2 h-[clamp(1.5rem,5vmin,2rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
-                />
-              </div>
-            )}
-            {activeOption?.includes("second") && (
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label
-                  htmlFor="second"
-                  className="text-[clamp(0.6rem,3vmin,0.8rem)]"
-                >
-                  second
-                </Label>
-                <Input
-                  id="second"
-                  type="text"
-                  inputMode="numeric"
-                  value={second}
-                  onChange={onSecondChange}
-                  onBlur={() => setSecond(onBlurClamp(second, 59))}
-                  className="col-span-2 h-[clamp(1.5rem,5vmin,2rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
-                />
-              </div>
-            )}
-          </div>
-        </div>
+          </>
+        )}
 
-        {activeOption?.includes("theme") && (
-          <div className="grid gap-4 mt-7" id="theme">
+        {activeOption?.includes("theme") && optionSection === "theme" && (
+          <div className="grid gap-4" id="theme">
             <div className="space-y-2">
               <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
                 Theme
@@ -322,42 +362,8 @@ export default function TimeOption({
           </div>
         )}
 
-        {activeOption?.includes("label") && (
-          <div className="grid gap-4 mt-7" id="label">
-            <div className="space-y-2">
-              <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
-                Label
-              </h4>
-              <p className="text-muted-foreground text-[clamp(0.6rem,3vmin,0.8rem)]">
-                타이머에 표시할 라벨을 입력해주세요.
-              </p>
-            </div>
-            <div>
-              <Input
-                id="timer-label"
-                type="text"
-                placeholder="예) study 📝"
-                value={timerLabel.label}
-                onChange={onLabelChange}
-                className={`col-span-2 h-[clamp(1.5rem,5vmin,2rem)] text-[clamp(0.6rem,3vmin,0.8rem)] ${
-                  overLimit ? "timer_label_input border-red-500" : ""
-                }`}
-              />
-              <div className="relative w-full h-1 bg-gray-200 rounded mt-2">
-                <div
-                  className="absolute top-0 left-0 h-full rounded bg-blue-500 transition-all"
-                  style={{ width: `${labelPercent}%` }}
-                />
-              </div>
-              <p className="text-[clamp(0.6rem,3vmin,0.8rem)] text-gray-500 mt-1 text-right">
-                {timerLabel.length} / {LABEL_MAX_LENGTH}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {activeOption?.includes("color") && (
-          <div className="grid gap-4 mt-7" id="color">
+        {activeOption?.includes("color") && optionSection === "color" && (
+          <div className="grid gap-4" id="color">
             <div className="space-y-2">
               <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
                 Color
@@ -390,7 +396,7 @@ export default function TimeOption({
         <Button
           size="sm"
           variant="destructive"
-          className="fixed bottom-2 right-5 bg-red-500 h-[clamp(1.8rem,5vmin,2rem)] px-[clamp(1rem,3vmin,1.5rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
+          className="fixed z-50 bottom-2 right-5 bg-red-500 h-[clamp(1.8rem,5vmin,2rem)] px-[clamp(1rem,3vmin,1.5rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
           onClick={handleApply}
         >
           저장
