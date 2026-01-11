@@ -1,5 +1,6 @@
 "use client";
 
+import LangToggle from "@/components/LangToggle";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Toggle } from "@/components/ui/toggle";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -82,6 +85,8 @@ export default function TimeOption({
   });
   const [overLimit, setOverLimit] = useState<boolean>(false);
   const [optionSection, setOptionSection] = useState<string>("time");
+
+  const t = useTranslations("Test");
 
   const labelPercent = (timerLabel.length / LABEL_MAX_LENGTH) * 100;
 
@@ -170,7 +175,7 @@ export default function TimeOption({
         sideOffset={-20}
         align="end"
         className="w-[clamp(16rem,92vw,22rem)]
-    max-h-[min(80vh,420px)]
+    h-[min(80vh,400px)]
     overflow-auto
     flex flex-col gap-3
     p-[clamp(0.6rem,3vmin,1rem)]
@@ -401,7 +406,10 @@ export default function TimeOption({
         )}
 
         {optionSection === "created" && (
-          <div className="grid gap-4 mt-1" id="created">
+          <div
+            className="flex justify-center items-center w-full h-full"
+            id="created"
+          >
             <div className="space-y-2">
               <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)] text-center">
                 Thank You !
@@ -409,9 +417,12 @@ export default function TimeOption({
               <p className="text-muted-foreground text-[clamp(0.6rem,3vmin,0.8rem)]">
                 © 2026 Created by Mober & Dong
               </p>
+              <p>{t("test")}</p>
             </div>
           </div>
         )}
+
+        <LangToggle />
         {optionSection !== "created" && (
           <Button
             size="sm"
