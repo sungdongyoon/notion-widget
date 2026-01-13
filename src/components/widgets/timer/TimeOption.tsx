@@ -182,7 +182,7 @@ export default function TimeOption({
     scroll-pt-16"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
-        <div className="w-full flex justify-center items-center flex-wrap z-10">
+        <div className="w-full flex justify-center items-center flex-wrap z-10 relative">
           <Tabs
             onValueChange={(value) => {
               // document.getElementById(value)?.scrollIntoView({
@@ -236,6 +236,7 @@ export default function TimeOption({
               </TabsTrigger>
             </TabsList>
           </Tabs>
+          <LangToggle className="text-[clamp(0.6rem,3vmin,1rem)] w-[40px] h-7 fixed bottom-[99%] right-0 bg-notion-default-bg rounded-none py-1 px-2 2xs:w-[60px] 2xs:h-9 2xs:py-2 2xs:px-3" />
         </div>
         {optionSection === "time" && (
           <>
@@ -421,7 +422,6 @@ export default function TimeOption({
           </div>
         )}
 
-        <LangToggle />
         {optionSection !== "created" && (
           <Button
             size="sm"

@@ -29,6 +29,9 @@
     "Color": {
       "title": "Color",
       "desc": "Please select the main color of the timer."
+    },
+    "Lang": {
+      "title": "Lang"
     }
   }
 }
