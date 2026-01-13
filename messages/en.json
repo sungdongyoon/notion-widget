@@ -1,5 +1,34 @@
 {
   "Test": {
     "test": "test"
+  },
+  "TimeOption": {
+    "Tab": {
+      "time": "Time",
+      "theme": "Theme",
+      "color": "Color",
+      "copyright": "Copyright"
+    },
+    "Time": {
+      "title": "Time Select",
+      "desc": "Please enter the timer time.",
+      "hour": "hour",
+      "minute": "minute",
+      "second": "second"
+    },
+    "Label": {
+      "title": "Label",
+      "desc": "Please enter a label to display on the timer."
+    },
+    "Theme": {
+      "title": "Theme",
+      "desc": "Please set the timer theme",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "Color": {
+      "title": "Color",
+      "desc": "Please select the main color of the timer."
+    }
   }
 }

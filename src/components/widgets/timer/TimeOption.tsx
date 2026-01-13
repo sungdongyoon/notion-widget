@@ -86,7 +86,7 @@ export default function TimeOption({
   const [overLimit, setOverLimit] = useState<boolean>(false);
   const [optionSection, setOptionSection] = useState<string>("time");
 
-  const t = useTranslations("Test");
+  const t = useTranslations("TimeOption");
 
   const labelPercent = (timerLabel.length / LABEL_MAX_LENGTH) * 100;
 
@@ -201,7 +201,7 @@ export default function TimeOption({
                   value="time"
                   className="text-[clamp(0.6rem,3vmin,0.8rem)]"
                 >
-                  Time
+                  {t("Tab.time")}
                 </TabsTrigger>
               )}
               {/* {activeOption?.includes("label") && (
@@ -217,7 +217,7 @@ export default function TimeOption({
                   value="theme"
                   className="text-[clamp(0.6rem,3vmin,0.8rem)]"
                 >
-                  Theme
+                  {t("Tab.theme")}
                 </TabsTrigger>
               )}
               {activeOption?.includes("color") && (
@@ -225,14 +225,14 @@ export default function TimeOption({
                   value="color"
                   className="text-[clamp(0.6rem,3vmin,0.8rem)]"
                 >
-                  Color
+                  {t("Tab.color")}
                 </TabsTrigger>
               )}
               <TabsTrigger
                 value="created"
                 className="text-[clamp(0.6rem,3vmin,0.8rem)]"
               >
-                CopyRight
+                {t("Tab.copyright")}
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -242,10 +242,10 @@ export default function TimeOption({
             <div className="grid gap-4 scroll-mt-3" id="time">
               <div className="space-y-2">
                 <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
-                  Time Select
+                  {t("Time.title")}
                 </h4>
                 <p className="text-muted-foreground text-[clamp(0.6rem,3vmin,0.8rem)]">
-                  타이머 시간을 설정해주세요.
+                  {t("Time.desc")}
                 </p>
               </div>
               <div className="grid gap-2">
@@ -255,7 +255,7 @@ export default function TimeOption({
                       htmlFor="hour"
                       className="text-[clamp(0.6rem,3vmin,0.8rem)]"
                     >
-                      hour
+                      {t("Time.hour")}
                     </Label>
                     <Input
                       id="hour"
@@ -274,7 +274,7 @@ export default function TimeOption({
                       htmlFor="minute"
                       className="text-[clamp(0.6rem,3vmin,0.8rem)]"
                     >
-                      minute
+                      {t("Time.minute")}
                     </Label>
                     <Input
                       id="minute"
@@ -293,7 +293,7 @@ export default function TimeOption({
                       htmlFor="second"
                       className="text-[clamp(0.6rem,3vmin,0.8rem)]"
                     >
-                      second
+                      {t("Time.second")}
                     </Label>
                     <Input
                       id="second"
@@ -312,10 +312,10 @@ export default function TimeOption({
               <div className="grid gap-4 mt-7" id="label">
                 <div className="space-y-2">
                   <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
-                    Label
+                    {t("Label.title")}
                   </h4>
                   <p className="text-muted-foreground text-[clamp(0.6rem,3vmin,0.8rem)]">
-                    타이머에 표시할 라벨을 입력해주세요.
+                    {t("Label.desc")}
                   </p>
                 </div>
                 <div>
@@ -348,10 +348,10 @@ export default function TimeOption({
           <div className="grid gap-4" id="theme">
             <div className="space-y-2">
               <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
-                Theme
+                {t("Theme.title")}
               </h4>
               <p className="text-muted-foreground text-[clamp(0.6rem,3vmin,0.8rem)]">
-                타이머 테마를 설정해주세요.
+                {t("Theme.desc")}
               </p>
             </div>
             <div className="flex gap-1">
@@ -360,14 +360,14 @@ export default function TimeOption({
                 className="bg-white text-black text-[clamp(0.6rem,3vmin,0.8rem)] h-[clamp(1.7rem,5vmin,2rem)]"
                 onClick={() => setTheme("light")}
               >
-                Light
+                {t("Theme.light")}
               </Button>
               <Button
                 variant="outline"
                 className="bg-black text-white text-[clamp(0.6rem,3vmin,0.8rem)] h-[clamp(1.7rem,5vmin,2rem)]"
                 onClick={() => setTheme("dark")}
               >
-                Dark
+                {t("Theme.dark")}
               </Button>
             </div>
           </div>
@@ -377,10 +377,10 @@ export default function TimeOption({
           <div className="grid gap-4" id="color">
             <div className="space-y-2">
               <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
-                Color
+                {t("Color.title")}
               </h4>
               <p className="text-muted-foreground text-[clamp(0.6rem,3vmin,0.8rem)]">
-                타이머의 메인 색상을 선택해주세요.
+                {t("Color.desc")}
               </p>
             </div>
             <div className="grid gap-2 grid-cols-3">
@@ -417,7 +417,6 @@ export default function TimeOption({
               <p className="text-muted-foreground text-[clamp(0.6rem,3vmin,0.8rem)]">
                 © 2026 Created by Mober & Dong
               </p>
-              <p>{t("test")}</p>
             </div>
           </div>
         )}
