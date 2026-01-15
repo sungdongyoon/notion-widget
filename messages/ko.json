@@ -7,7 +7,7 @@
       "time": "시간",
       "theme": "테마",
       "color": "색상",
-      "copyright": "저작권"
+      "info": "정보"
     },
     "Time": {
       "title": "시간",
@@ -29,6 +29,14 @@
     "Color": {
       "title": "색상",
       "desc": "타이머의 메인 색상을 선택해주세요."
+    },
+    "Info": {
+      "Lang": {
+        "title": "언어"
+      },
+      "Copyright": {
+        "title": "저작권"
+      }
     },
     "Lang": {
       "title": "언어"

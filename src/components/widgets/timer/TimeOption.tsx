@@ -174,7 +174,7 @@ export default function TimeOption({
         side="bottom"
         sideOffset={-20}
         align="end"
-        className="w-[clamp(15rem,92vw,22rem)]
+        className="w-[clamp(14rem,92vw,22rem)]
     h-[min(80vh,400px)]
     overflow-auto
     flex flex-col gap-3
@@ -229,14 +229,14 @@ export default function TimeOption({
                 </TabsTrigger>
               )}
               <TabsTrigger
-                value="created"
+                value="info"
                 className="text-[clamp(0.6rem,3vmin,0.8rem)]"
               >
-                {t("Tab.copyright")}
+                {t("Tab.info")}
               </TabsTrigger>
             </TabsList>
           </Tabs>
-          <LangToggle className="text-[clamp(0.6rem,3vmin,1rem)] w-[40px] h-7 fixed bottom-[99%] left-0 top-0 bg-notion-default-bg rounded-none rounded-tl-md rounded-br-md py-1 px-2 2xs:w-[60px] 2xs:h-9 2xs:py-2 2xs:px-3" />
+          {/* <LangToggle className="text-[clamp(0.6rem,3vmin,1rem)] w-[40px] h-7 fixed bottom-[99%] left-0 top-0 bg-notion-default-bg rounded-none rounded-tl-md rounded-br-md py-1 px-2 2xs:w-[60px] 2xs:h-9 2xs:py-2 2xs:px-3" /> */}
         </div>
         {optionSection === "time" && (
           <>
@@ -406,23 +406,31 @@ export default function TimeOption({
           </div>
         )}
 
-        {optionSection === "created" && (
-          <div
-            className="flex justify-center items-center w-full h-full"
-            id="created"
-          >
-            <div className="space-y-2">
-              <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)] text-center">
-                Thank You !
-              </h4>
-              <p className="text-muted-foreground text-[clamp(0.6rem,3vmin,0.8rem)]">
-                © 2026 Created by Mober & Dong
-              </p>
+        {optionSection === "info" && (
+          <>
+            <div className="grid gap-4" id="lang">
+              <div className="space-y-2">
+                <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
+                  {t("Info.Lang.title")}
+                </h4>
+                <LangToggle className="text-[clamp(0.6rem,3vmin,1rem)] w-[40px] h-7 bg-notion-default-bg rounded-none rounded-tl-md rounded-br-md py-1 px-2 2xs:w-[60px] 2xs:h-9 2xs:py-2 2xs:px-3" />
+              </div>
             </div>
-          </div>
+
+            <div className="grid gap-4 mt-7" id="copyright">
+              <div className="space-y-2">
+                <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
+                  {t("Info.Copyright.title")}
+                </h4>
+                <p className="text-muted-foreground text-[clamp(0.6rem,3vmin,0.8rem)]">
+                  © 2026 Created by Mober & Dong
+                </p>
+              </div>
+            </div>
+          </>
         )}
 
-        {optionSection !== "created" && (
+        {optionSection === "time" && (
           <Button
             size="sm"
             variant="destructive"

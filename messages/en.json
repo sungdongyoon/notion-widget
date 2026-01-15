@@ -7,7 +7,7 @@
       "time": "Time",
       "theme": "Theme",
       "color": "Color",
-      "copyright": "Copyright"
+      "info": "Info"
     },
     "Time": {
       "title": "Time Select",
@@ -29,6 +29,14 @@
     "Color": {
       "title": "Color",
       "desc": "Please select the main color of the timer."
+    },
+    "Info": {
+      "Lang": {
+        "title": "Language"
+      },
+      "Copyright": {
+        "title": "Copyright"
+      }
     },
     "Lang": {
       "title": "Lang"
