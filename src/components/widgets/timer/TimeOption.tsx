@@ -174,7 +174,7 @@ export default function TimeOption({
         side="bottom"
         sideOffset={-20}
         align="end"
-        className="w-[clamp(16rem,92vw,22rem)]
+        className="w-[clamp(15rem,92vw,22rem)]
     h-[min(80vh,400px)]
     overflow-auto
     flex flex-col gap-3
@@ -236,7 +236,7 @@ export default function TimeOption({
               </TabsTrigger>
             </TabsList>
           </Tabs>
-          <LangToggle className="text-[clamp(0.6rem,3vmin,1rem)] w-[40px] h-7 fixed bottom-[99%] right-0 bg-notion-default-bg rounded-none py-1 px-2 2xs:w-[60px] 2xs:h-9 2xs:py-2 2xs:px-3" />
+          <LangToggle className="text-[clamp(0.6rem,3vmin,1rem)] w-[40px] h-7 fixed bottom-[99%] left-0 top-0 bg-notion-default-bg rounded-none rounded-tl-md rounded-br-md py-1 px-2 2xs:w-[60px] 2xs:h-9 2xs:py-2 2xs:px-3" />
         </div>
         {optionSection === "time" && (
           <>
