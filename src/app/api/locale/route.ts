@@ -10,7 +10,8 @@ export async function POST(req: Request) {
   const res = NextResponse.json({ ok: true });
   res.cookies.set("locale", locale, {
     path: "/",
-    sameSite: "lax",
+    sameSite: "none",
+    secure: true,
     maxAge: 60 * 60 * 24 * 365,
   });
 

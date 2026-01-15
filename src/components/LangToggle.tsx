@@ -1,6 +1,5 @@
 "use client";
 
-import { Toggle } from "@radix-ui/react-toggle";
 import axios from "axios";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -22,14 +21,10 @@ const LangToggle = ({ className }: { className: string }) => {
   const locale = useLocale();
   const router = useRouter();
 
-  const isEnglish = locale === "en";
-
   const handleChange = async (value: string) => {
     if (value !== "ko" && value !== "en") return;
 
     if (value === locale) return;
-
-    // const next = value ? "en" : "ko";
 
     await axios.post("/api/locale", { locale: value });
 
@@ -37,14 +32,6 @@ const LangToggle = ({ className }: { className: string }) => {
   };
 
   return (
-    // <Toggle
-    //   pressed={isEnglish}
-    //   onPressedChange={handlePressChange}
-    //   aria-label="Toggle language"
-    //   className={className}
-    // >
-    //   {isEnglish ? "🇺🇸" : "🇰🇷"}
-    // </Toggle>
     <Select value={locale} onValueChange={handleChange}>
       <SelectTrigger className={className}>
         <SelectValue />
