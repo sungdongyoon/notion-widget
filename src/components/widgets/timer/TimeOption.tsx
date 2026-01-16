@@ -437,7 +437,7 @@ export default function TimeOption({
             className="fixed z-50 bottom-2 right-5 bg-red-500 h-[clamp(1.8rem,5vmin,2rem)] px-[clamp(1rem,3vmin,1.5rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
             onClick={handleApply}
           >
-            저장
+            {t("Save")}
           </Button>
         )}
       </PopoverContent>
