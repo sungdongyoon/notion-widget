@@ -29,6 +29,9 @@ const SideMenu = () => {
             <li className={style["menu_item"]}>
               <Link href="/weather">weather</Link>
             </li>
+            <li className={style["menu_item"]}>
+              <Link href="/calendar">calendar</Link>
+            </li>
           </ul>
         </div>
         <div className={style["side_category"]}>
