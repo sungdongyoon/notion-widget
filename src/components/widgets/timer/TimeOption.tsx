@@ -2,22 +2,33 @@
 
 import LangToggle from "@/components/LangToggle";
 import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Toggle } from "@/components/ui/toggle";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import { FaGear } from "react-icons/fa6";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldLabel,
+  FieldTitle,
+} from "@/components/ui/field";
+import { FaMoon, FaSun } from "react-icons/fa";
+import { IoMoon, IoSunny } from "react-icons/io5";
 
 type ApplyTimePayload = {
   hour: number;
@@ -141,16 +152,6 @@ export default function TimeOption({
     }, 300);
   };
 
-  // 섹션 스크롤 함수
-  // const scrollToSection = (e: React.MouseEvent<HTMLButtonElement>) => {
-  //   const id = e.currentTarget.value;
-
-  //   document.getElementById(id)?.scrollIntoView({
-  //     behavior: "smooth",
-  //     block: "start",
-  //   });
-  // };
-
   // 시간 세팅
   useEffect(() => {
     setHour(String(initH));
@@ -159,8 +160,8 @@ export default function TimeOption({
   }, [value.time]);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
         <button
           className={`${style} ${
             disabled ? "cursor-not-allowed opacity-30" : "cursor-pointer"
@@ -169,33 +170,32 @@ export default function TimeOption({
         >
           <FaGear />
         </button>
-      </PopoverTrigger>
-      <PopoverContent
-        side="bottom"
-        sideOffset={-20}
-        align="end"
-        className="w-[clamp(14rem,92vw,22rem)]
-    h-[min(80vh,400px)]
+      </DialogTrigger>
+      <DialogContent
+        className="w-[clamp(10rem,90vw,22rem)]
+    aspect-square
     overflow-auto
-    flex flex-col gap-3
+    flex flex-col items-end gap-3
     p-[clamp(0.6rem,3vmin,1rem)]
-    scroll-pt-16"
+    scroll-pt-16
+    "
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
+        <VisuallyHidden>
+          <DialogHeader>
+            <DialogTitle>Edit Option</DialogTitle>
+          </DialogHeader>
+        </VisuallyHidden>
         <div className="w-full flex justify-center items-center flex-wrap z-10 relative">
           <Tabs
             onValueChange={(value) => {
-              // document.getElementById(value)?.scrollIntoView({
-              //   behavior: "smooth",
-              //   block: "start",
-              // });
               setOptionSection(value);
             }}
-            defaultValue="time"
+            value={optionSection}
           >
-            <TabsList className="h-[clamp(1.6rem,5vmin,2.25rem)]">
+            <TabsList className="h-[clamp(1.8rem,9vmin,2.25rem)]">
               {activeOption?.some((opt) =>
-                ["hour", "minute", "second"].includes(opt)
+                ["hour", "minute", "second"].includes(opt),
               ) && (
                 <TabsTrigger
                   value="time"
@@ -204,14 +204,6 @@ export default function TimeOption({
                   {t("Tab.time")}
                 </TabsTrigger>
               )}
-              {/* {activeOption?.includes("label") && (
-                <TabsTrigger
-                  value="label"
-                  className="text-[clamp(0.6rem,3vmin,0.8rem)]"
-                >
-                  Label
-                </TabsTrigger>
-              )} */}
               {activeOption?.includes("theme") && (
                 <TabsTrigger
                   value="theme"
@@ -236,11 +228,10 @@ export default function TimeOption({
               </TabsTrigger>
             </TabsList>
           </Tabs>
-          {/* <LangToggle className="text-[clamp(0.6rem,3vmin,1rem)] w-[40px] h-7 fixed bottom-[99%] left-0 top-0 bg-notion-default-bg rounded-none rounded-tl-md rounded-br-md py-1 px-2 2xs:w-[60px] 2xs:h-9 2xs:py-2 2xs:px-3" /> */}
         </div>
         {optionSection === "time" && (
           <>
-            <div className="grid gap-4 scroll-mt-3" id="time">
+            <div className="w-full grid gap-4 scroll-mt-3" id="time">
               <div className="space-y-2">
                 <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
                   {t("Time.title")}
@@ -310,7 +301,7 @@ export default function TimeOption({
               </div>
             </div>
             {activeOption?.includes("label") && (
-              <div className="grid gap-4 mt-7" id="label">
+              <div className="w-full grid gap-4 mt-7" id="label">
                 <div className="space-y-2">
                   <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
                     {t("Label.title")}
@@ -346,7 +337,7 @@ export default function TimeOption({
         )}
 
         {activeOption?.includes("theme") && optionSection === "theme" && (
-          <div className="grid gap-4" id="theme">
+          <div className="w-full grid gap-4" id="theme">
             <div className="space-y-2">
               <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
                 {t("Theme.title")}
@@ -355,27 +346,49 @@ export default function TimeOption({
                 {t("Theme.desc")}
               </p>
             </div>
-            <div className="flex gap-1">
-              <Button
-                variant="outline"
-                className="bg-white text-black text-[clamp(0.6rem,3vmin,0.8rem)] h-[clamp(1.7rem,5vmin,2rem)]"
-                onClick={() => setTheme("light")}
-              >
-                {t("Theme.light")}
-              </Button>
-              <Button
-                variant="outline"
-                className="bg-black text-white text-[clamp(0.6rem,3vmin,0.8rem)] h-[clamp(1.7rem,5vmin,2rem)]"
-                onClick={() => setTheme("dark")}
-              >
-                {t("Theme.dark")}
-              </Button>
-            </div>
+            <RadioGroup
+              className="grid grid-cols-3"
+              value={theme}
+              onValueChange={(e) => setTheme(e)}
+            >
+              <div>
+                <RadioGroupItem
+                  id="light"
+                  value="light"
+                  className="peer sr-only"
+                />
+                <FieldLabel
+                  htmlFor="light"
+                  className="w-full flex flex-col items-center rounded-md py-2 cursor-pointer border border-solid border-primary opacity-20 peer-data-[state=checked]:opacity-100"
+                >
+                  <IoSunny className="text-[clamp(1rem,5vmin,2rem)]" />
+                  <span className="text-[clamp(0.5rem,5vmin,0.8rem)]">
+                    {t("Theme.light")}
+                  </span>
+                </FieldLabel>
+              </div>
+              <div>
+                <RadioGroupItem
+                  id="dark"
+                  value="dark"
+                  className="peer sr-only"
+                />
+                <FieldLabel
+                  htmlFor="dark"
+                  className="w-full flex flex-col items-center rounded-md py-2 cursor-pointer border border-solid border-primary opacity-20 peer-data-[state=checked]:opacity-100"
+                >
+                  <IoMoon className="text-[clamp(1rem,5vmin,2rem)]" />
+                  <span className="text-[clamp(0.5rem,5vmin,0.8rem)]">
+                    {t("Theme.dark")}
+                  </span>
+                </FieldLabel>
+              </div>
+            </RadioGroup>
           </div>
         )}
 
         {activeOption?.includes("color") && optionSection === "color" && (
-          <div className="grid gap-4" id="color">
+          <div className="w-full grid gap-4" id="color">
             <div className="space-y-2">
               <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
                 {t("Color.title")}
@@ -408,7 +421,7 @@ export default function TimeOption({
 
         {optionSection === "info" && (
           <>
-            <div className="grid gap-4" id="lang">
+            <div className="w-full grid gap-4" id="lang">
               <div className="space-y-2">
                 <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
                   {t("Info.Lang.title")}
@@ -417,7 +430,7 @@ export default function TimeOption({
               </div>
             </div>
 
-            <div className="grid gap-4 mt-7" id="copyright">
+            <div className="w-full grid gap-4 mt-7" id="copyright">
               <div className="space-y-2">
                 <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
                   {t("Info.Copyright.title")}
@@ -434,14 +447,14 @@ export default function TimeOption({
           <Button
             size="sm"
             variant="destructive"
-            className="fixed z-50 bottom-2 right-5 bg-red-500 h-[clamp(1.8rem,5vmin,2rem)] px-[clamp(1rem,3vmin,1.5rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
+            className="min-w-[50px] w-full max-w-[20%] sticky z-50 bottom-0 bg-red-500 py-[clamp(0.4rem,0.8vmin,1rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
             onClick={handleApply}
           >
             {t("Save")}
           </Button>
         )}
-      </PopoverContent>
-    </Popover>
+      </DialogContent>
+    </Dialog>
   );
 }
 
