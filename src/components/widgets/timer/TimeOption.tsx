@@ -28,7 +28,7 @@ import {
   FieldTitle,
 } from "@/components/ui/field";
 import { FaMoon, FaSun } from "react-icons/fa";
-import { IoMoon, IoSunny } from "react-icons/io5";
+import { IoClose, IoCloseCircle, IoMoon, IoSunny } from "react-icons/io5";
 
 type ApplyTimePayload = {
   hour: number;
@@ -180,6 +180,8 @@ export default function TimeOption({
     scroll-pt-16
     "
         onOpenAutoFocus={(e) => e.preventDefault()}
+        showOverlay={false}
+        showClose={false}
       >
         <VisuallyHidden>
           <DialogHeader>
@@ -443,22 +445,28 @@ export default function TimeOption({
           </>
         )}
 
-        {optionSection === "time" && (
+        <div
+          className={`w-full flex justify-end gap-1 ${optionSection === "time" || optionSection === "color" ? "sticky bottom-0" : "fixed bottom-[clamp(0.6rem,3vmin,1rem)]"} z-50`}
+        >
+          {optionSection === "time" && (
+            <Button
+              size="sm"
+              variant="destructive"
+              className="min-w-[50px] w-full max-w-[15%] bg-notion-blue-text text-[clamp(0.6rem,3vmin,0.8rem)] h-[clamp(1.5rem,6vmin,2rem)]"
+              onClick={handleApply}
+            >
+              {t("Save")}
+            </Button>
+          )}
           <Button
             size="sm"
-            variant="destructive"
-            className="min-w-[50px] w-full max-w-[20%] sticky z-50 bottom-0 bg-red-500 py-[clamp(0.4rem,0.8vmin,1rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
-            onClick={handleApply}
+            className="min-w-[50px] w-full max-w-[15%] bg-notion-red-text text-[clamp(0.6rem,3vmin,0.8rem)] h-[clamp(1.5rem,6vmin,2rem)]"
+            onClick={() => setOpen(false)}
           >
-            {t("Save")}
+            {t("Close")}
           </Button>
-        )}
+        </div>
       </DialogContent>
     </Dialog>
   );
 }
-
-/**********
- * 노션에서 위젯에 마우스 올리면 우측 상단에 노션 옵션 탭이 떠서 스크롤 탭이 가려지는 문제 발생
- * 다른 방법으로 스크롤 탭 노출 시켜야함
- */

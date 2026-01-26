@@ -41,6 +41,7 @@
     "Lang": {
       "title": "Lang"
     },
-    "Save": "save"
+    "Save": "save",
+    "Close": "close"
   }
 }
