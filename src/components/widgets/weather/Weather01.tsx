@@ -233,7 +233,7 @@ const Weather01 = () => {
 
     try {
       const result = await axios.get(
-        `/api/geocoding?address=${encodeURIComponent(addressQuery)}`
+        `/api/geocoding?address=${encodeURIComponent(addressQuery)}`,
       );
       const data = result.data;
       setGeocoding({
@@ -320,7 +320,7 @@ const Weather01 = () => {
   ];
 
   const normalizeReverseGeocodingResults = (
-    results: LocationReverseResult[]
+    results: LocationReverseResult[],
   ): LocationState => {
     const next: LocationState = {
       legalcode: { region: {} },
@@ -351,7 +351,7 @@ const Weather01 = () => {
     const getWeatherData = async () => {
       try {
         const result = await axios.get<WeatherData>(
-          `/api/weather?lat=${geocoding.lat}&lon=${geocoding.lon}`
+          `/api/weather?lat=${geocoding.lat}&lon=${geocoding.lon}`,
         );
         const data = result.data;
         setWeatherState({
@@ -390,7 +390,7 @@ const Weather01 = () => {
     const getWeatherForecast5Data = async () => {
       try {
         const result = await axios.get(
-          `/api/weatherForecast5?lat=${geocoding.lat}&lon=${geocoding.lon}`
+          `/api/weatherForecast5?lat=${geocoding.lat}&lon=${geocoding.lon}`,
         );
         const data = result.data;
         setForecastState(data);
@@ -412,7 +412,7 @@ const Weather01 = () => {
     const getReverseGeocodingData = async () => {
       try {
         const result = await axios.get(
-          `/api/reverseGeocoding?lat=${geocoding.lat}&lon=${geocoding.lon}`
+          `/api/reverseGeocoding?lat=${geocoding.lat}&lon=${geocoding.lon}`,
         );
         const data = result.data;
         setRevGeocoding(normalizeReverseGeocodingResults(data.results ?? []));
@@ -468,7 +468,7 @@ const Weather01 = () => {
                     </h2>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button size="2xs">
+                        <Button>
                           <FaRotate />
                         </Button>
                       </AlertDialogTrigger>
