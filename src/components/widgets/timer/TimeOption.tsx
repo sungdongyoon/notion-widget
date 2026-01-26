@@ -361,7 +361,7 @@ export default function TimeOption({
                 />
                 <FieldLabel
                   htmlFor="light"
-                  className="w-full flex flex-col items-center rounded-md py-2 cursor-pointer border border-solid border-primary opacity-20 peer-data-[state=checked]:opacity-100"
+                  className="w-full flex flex-col items-center rounded-md py-2 cursor-pointer border border-solid border-primary opacity-20 peer-data-[state=checked]:opacity-100 hover:scale-105 transition-all"
                 >
                   <IoSunny className="text-[clamp(1rem,5vmin,2rem)]" />
                   <span className="text-[clamp(0.5rem,5vmin,0.8rem)]">
@@ -377,7 +377,7 @@ export default function TimeOption({
                 />
                 <FieldLabel
                   htmlFor="dark"
-                  className="w-full flex flex-col items-center rounded-md py-2 cursor-pointer border border-solid border-primary opacity-20 peer-data-[state=checked]:opacity-100"
+                  className="w-full flex flex-col items-center rounded-md py-2 cursor-pointer border border-solid border-primary opacity-20 peer-data-[state=checked]:opacity-100 hover:scale-105 transition-all"
                 >
                   <IoMoon className="text-[clamp(1rem,5vmin,2rem)]" />
                   <span className="text-[clamp(0.5rem,5vmin,0.8rem)]">
@@ -451,8 +451,8 @@ export default function TimeOption({
           {optionSection === "time" && (
             <Button
               size="sm"
-              variant="destructive"
-              className="min-w-[50px] w-full max-w-[15%] bg-notion-blue-text text-[clamp(0.6rem,3vmin,0.8rem)] h-[clamp(1.5rem,6vmin,2rem)]"
+              variant="default"
+              className="min-w-[50px] w-full max-w-[15%] bg-notion-blue-text text-[clamp(0.6rem,3vmin,0.8rem)] h-[clamp(1.5rem,6vmin,2rem)] hover:bg-notion-blue-text/80"
               onClick={handleApply}
             >
               {t("Save")}
@@ -460,7 +460,8 @@ export default function TimeOption({
           )}
           <Button
             size="sm"
-            className="min-w-[50px] w-full max-w-[15%] bg-notion-red-text text-[clamp(0.6rem,3vmin,0.8rem)] h-[clamp(1.5rem,6vmin,2rem)]"
+            variant="default"
+            className="min-w-[50px] w-full max-w-[15%] bg-notion-red-text text-[clamp(0.6rem,3vmin,0.8rem)] h-[clamp(1.5rem,6vmin,2rem)] hover:bg-notion-red-text/80"
             onClick={() => setOpen(false)}
           >
             {t("Close")}
