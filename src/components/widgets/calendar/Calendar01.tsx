@@ -9,12 +9,14 @@ const Calendar01 = () => {
   console.log("date", date);
   return (
     <div className="widget_container bg-red-100" data-variant="calendar01">
-      <Calendar
-        mode="single"
-        selected={date}
-        onSelect={setDate}
-        className="h-full aspect-square"
-      />
+      <div style={{ width: "min(100%, 100%)", aspectRatio: "1/1" }}>
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={setDate}
+          className="w-full h-full"
+        />
+      </div>
     </div>
   );
 };
