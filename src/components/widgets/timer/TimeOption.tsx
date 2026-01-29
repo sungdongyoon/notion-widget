@@ -197,6 +197,7 @@ export default function TimeOption({
         onOpenAutoFocus={(e) => e.preventDefault()}
         showOverlay={false}
         showClose={false}
+        portal={false}
       >
         <VisuallyHidden>
           <DialogHeader>
@@ -247,7 +248,7 @@ export default function TimeOption({
           </Tabs>
         </div>
         {optionSection === "time" && (
-          <div className="w-full overflow-y-scroll">
+          <>
             <div className="w-full grid gap-4 scroll-mt-3" id="time">
               <div className="space-y-2">
                 <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
@@ -362,7 +363,7 @@ export default function TimeOption({
                 </div>
               </div>
             )}
-          </div>
+          </>
         )}
 
         {activeOption?.includes("theme") && optionSection === "theme" && (
