@@ -60,6 +60,28 @@ const COLOR_OPTIONS = [
 // label 최대 길이
 const LABEL_MAX_LENGTH = 10;
 
+// 노션 웹 / 모바일 구분
+const isNotionMobileApp = () => {
+  if (typeof navigator === "undefined") return false;
+  const ua = navigator.userAgent;
+
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(ua);
+
+  // Android WebView 흔한 패턴
+  const isAndroidWebView = /Android/i.test(ua) && /\bwv\b/i.test(ua);
+
+  // iOS WebView 흔한 패턴 (Safari가 없거나, standalone/webview 느낌)
+  const isIOS = /iPhone|iPad|iPod/i.test(ua);
+  const isIOSSafari = /Safari/i.test(ua) && !/CriOS|FxiOS/i.test(ua);
+  const isIOSWebViewLike = isIOS && !isIOSSafari; // Safari 아닌 iOS 브라우저/웹뷰
+
+  // Notion 표기가 있는 경우를 보조 신호로
+  const hasNotion = /Notion/i.test(ua);
+
+  // "모바일 앱" 쪽에 가중치
+  return isMobile && (isAndroidWebView || isIOSWebViewLike) && hasNotion;
+};
+
 export default function TimeOption({
   value,
   onApply,
@@ -122,10 +144,7 @@ export default function TimeOption({
   };
 
   // mobile 환경
-  const isMobile =
-    typeof navigator !== "undefined" &&
-    /Notion/i.test(navigator.userAgent) &&
-    window.innerWidth < 768;
+  const isNotionApp = typeof window !== "undefined" && isNotionMobileApp();
 
   // 시간, 라벨 저장
   const handleApply = () => {
@@ -196,7 +215,7 @@ export default function TimeOption({
       <DialogContent
         className={cn(
           "w-[clamp(10rem,93vw,22rem)] aspect-square overflow-auto flex flex-col items-end gap-3 p-[clamp(0.6rem,3vmin,1rem)] scroll-pt-16",
-          isMobile && "w-[150px] h-[150px]",
+          isNotionApp && "w-[150px] h-[150px]",
         )}
         onOpenAutoFocus={(e) => e.preventDefault()}
         showOverlay={false}
