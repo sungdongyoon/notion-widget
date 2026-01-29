@@ -187,7 +187,7 @@ export default function TimeOption({
         </button>
       </DialogTrigger>
       <DialogContent
-        className="w-[clamp(6rem,90vw,22rem)]
+        className="w-[clamp(10rem,80vw,22rem)]
     aspect-square
     overflow-auto
     flex flex-col items-end gap-3
