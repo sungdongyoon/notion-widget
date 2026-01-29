@@ -9,7 +9,7 @@ const Calendar01 = () => {
   console.log("date", date);
   return (
     <div className="widget_container bg-red-100" data-variant="calendar01">
-      <div style={{ width: "min(100%, 100%)", aspectRatio: "1/1" }}>
+      <div className="max-w-[100dvh] w-full aspect-square">
         <Calendar
           mode="single"
           selected={date}
