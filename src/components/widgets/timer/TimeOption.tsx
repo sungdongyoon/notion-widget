@@ -193,7 +193,6 @@ export default function TimeOption({
     flex flex-col items-end gap-3
     p-[clamp(0.6rem,3vmin,1rem)]
     scroll-pt-16
-    max-h-[200px]
     "
         onOpenAutoFocus={(e) => e.preventDefault()}
         showOverlay={false}

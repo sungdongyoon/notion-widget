@@ -425,26 +425,28 @@ const Timer01 = () => {
             >
               {!running ? <FaPlay /> : <FaPause />}
             </button>
-            <TimeOption
-              value={{
-                time: initialTime,
-                label: timerLabel,
-                color: timerColor,
-              }}
-              onApply={applyTime}
-              applyColor={applyColor}
-              applyLabel={applyLabel}
-              disabled={running}
-              activeOption={[
-                "hour",
-                "minute",
-                "second",
-                "theme",
-                "color",
-                "label",
-              ]}
-              style={`text-[clamp(1rem,6vmin,3rem)] text-notion-${timerColor}-text`}
-            />
+            <div id="widget-root">
+              <TimeOption
+                value={{
+                  time: initialTime,
+                  label: timerLabel,
+                  color: timerColor,
+                }}
+                onApply={applyTime}
+                applyColor={applyColor}
+                applyLabel={applyLabel}
+                disabled={running}
+                activeOption={[
+                  "hour",
+                  "minute",
+                  "second",
+                  "theme",
+                  "color",
+                  "label",
+                ]}
+                style={`text-[clamp(1rem,6vmin,3rem)] text-notion-${timerColor}-text`}
+              />
+            </div>
           </div>
         </div>
       </div>
