@@ -17,8 +17,8 @@
       "second": "second"
     },
     "Label": {
-      "title": "Label",
-      "desc": "Please enter a label to display on the timer."
+      "title": "Name",
+      "desc": "Please enter a name to display on the timer."
     },
     "Theme": {
       "title": "Theme",

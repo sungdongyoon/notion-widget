@@ -113,7 +113,7 @@ const Timer01 = () => {
   // 메인 컬러 상태
   const [timerColor, setTimerColor] = useState<string>("default");
   // 라벨
-  const [timerLabel, setTimerLabel] = useState<string>("Timer Label");
+  const [timerLabel, setTimerLabel] = useState<string>("기본 타이머");
 
   // 마감시간 ref
   const deadlineRef = useRef<number | null>(null);
