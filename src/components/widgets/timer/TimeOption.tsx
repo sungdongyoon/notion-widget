@@ -22,6 +22,7 @@ import { FaGear } from "react-icons/fa6";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { FieldLabel } from "@/components/ui/field";
 import { IoMoon, IoSunny } from "react-icons/io5";
+import { cn } from "@/lib/utils";
 
 type ApplyTimePayload = {
   hour: number;
@@ -120,6 +121,12 @@ export default function TimeOption({
     if (only2Digits(v)) setTime({ ...time, second: v });
   };
 
+  // mobile 환경
+  const isMobile =
+    typeof navigator !== "undefined" &&
+    /Notion/i.test(navigator.userAgent) &&
+    window.innerWidth < 768;
+
   // 시간, 라벨 저장
   const handleApply = () => {
     onApply?.({
@@ -187,15 +194,10 @@ export default function TimeOption({
         </button>
       </DialogTrigger>
       <DialogContent
-        className="
-    aspect-square
-    overflow-auto
-    flex flex-col items-end gap-3
-    p-[clamp(0.6rem,3vmin,1rem)]
-    w-[150px]
-    h-[150px]
-    scroll-pt-16
-    "
+        className={cn(
+          "w-[clamp(10rem,93vw,22rem)] aspect-square overflow-auto flex flex-col items-end gap-3 p-[clamp(0.6rem,3vmin,1rem)] scroll-pt-16",
+          isMobile && "w-[150px] h-[150px]",
+        )}
         onOpenAutoFocus={(e) => e.preventDefault()}
         showOverlay={false}
         showClose={false}
