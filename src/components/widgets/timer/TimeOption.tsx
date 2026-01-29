@@ -189,7 +189,7 @@ export default function TimeOption({
       <DialogContent
         className="w-[clamp(10rem,95vw,22rem)]
     aspect-square
-    overflow-auto
+    overflow-scroll
     flex flex-col items-end gap-3
     p-[clamp(0.6rem,3vmin,1rem)]
     scroll-pt-16
