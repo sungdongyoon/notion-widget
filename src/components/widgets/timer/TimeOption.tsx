@@ -20,15 +20,8 @@ import { useEffect, useState } from "react";
 
 import { FaGear } from "react-icons/fa6";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Field,
-  FieldContent,
-  FieldDescription,
-  FieldLabel,
-  FieldTitle,
-} from "@/components/ui/field";
-import { FaMoon, FaSun } from "react-icons/fa";
-import { IoClose, IoCloseCircle, IoMoon, IoSunny } from "react-icons/io5";
+import { FieldLabel } from "@/components/ui/field";
+import { IoMoon, IoSunny } from "react-icons/io5";
 
 type ApplyTimePayload = {
   hour: number;
@@ -40,6 +33,7 @@ type TimeOptionProps = {
   value: {
     time: number;
     label?: string;
+    color: string;
   };
   onApply?: (payload: ApplyTimePayload) => void;
   applyColor?: (payload: string) => void;
@@ -82,9 +76,15 @@ export default function TimeOption({
   // 테마 변경 함수
   const { theme, setTheme } = useTheme();
 
-  const [hour, setHour] = useState<string>(String(initH));
-  const [minute, setMinute] = useState<string>(String(initM));
-  const [second, setSecond] = useState<string>(String(initS));
+  const [time, setTime] = useState<{
+    hour: string;
+    minute: string;
+    second: string;
+  }>({
+    hour: String(initH),
+    minute: String(initM),
+    second: String(initS),
+  });
 
   const [open, setOpen] = useState<boolean>(false);
   const [timerLabel, setTimerLabel] = useState<{
@@ -109,27 +109,40 @@ export default function TimeOption({
 
   const onHourChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value;
-    if (only2Digits(v)) setHour(v);
+    if (only2Digits(v)) setTime({ ...time, hour: v });
   };
   const onMinuteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value;
-    if (only2Digits(v)) setMinute(v);
+    if (only2Digits(v)) setTime({ ...time, minute: v });
   };
   const onSecondChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value;
-    if (only2Digits(v)) setSecond(v);
+    if (only2Digits(v)) setTime({ ...time, second: v });
   };
 
   // 시간, 라벨 저장
   const handleApply = () => {
     onApply?.({
-      hour: Number(hour || 0),
-      minute: Number(minute || 0),
-      second: Number(second || 0),
+      hour: Number(time.hour || 0),
+      minute: Number(time.minute || 0),
+      second: Number(time.second || 0),
     });
 
     applyLabel?.(timerLabel.label);
 
+    setOpen(false);
+  };
+
+  // 닫기 함수
+  const closeOption = () => {
+    const nextLabel = value.label ?? "";
+
+    setTime({
+      hour: String(initH),
+      minute: String(initM),
+      second: String(initS),
+    });
+    setTimerLabel({ label: nextLabel, length: nextLabel.length });
     setOpen(false);
   };
 
@@ -154,9 +167,11 @@ export default function TimeOption({
 
   // 시간 세팅
   useEffect(() => {
-    setHour(String(initH));
-    setMinute(String(initM));
-    setSecond(String(initS));
+    setTime({
+      hour: String(initH),
+      minute: String(initM),
+      second: String(initS),
+    });
   }, [value.time]);
 
   return (
@@ -255,9 +270,11 @@ export default function TimeOption({
                       id="hour"
                       type="text"
                       inputMode="numeric"
-                      value={hour}
+                      value={time.hour}
                       onChange={onHourChange}
-                      onBlur={() => setHour(onBlurClamp(hour, 23))}
+                      onBlur={() =>
+                        setTime({ ...time, hour: onBlurClamp(time.hour, 23) })
+                      }
                       className="col-span-2 h-[clamp(1.5rem,5vmin,2rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
                     />
                   </div>
@@ -274,9 +291,14 @@ export default function TimeOption({
                       id="minute"
                       type="text"
                       inputMode="numeric"
-                      value={minute}
+                      value={time.minute}
                       onChange={onMinuteChange}
-                      onBlur={() => setMinute(onBlurClamp(minute, 59))}
+                      onBlur={() =>
+                        setTime({
+                          ...time,
+                          minute: onBlurClamp(time.minute, 59),
+                        })
+                      }
                       className="col-span-2 h-[clamp(1.5rem,5vmin,2rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
                     />
                   </div>
@@ -293,9 +315,14 @@ export default function TimeOption({
                       id="second"
                       type="text"
                       inputMode="numeric"
-                      value={second}
+                      value={time.second}
                       onChange={onSecondChange}
-                      onBlur={() => setSecond(onBlurClamp(second, 59))}
+                      onBlur={() =>
+                        setTime({
+                          ...time,
+                          second: onBlurClamp(time.second, 59),
+                        })
+                      }
                       className="col-span-2 h-[clamp(1.5rem,5vmin,2rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
                     />
                   </div>
@@ -399,7 +426,7 @@ export default function TimeOption({
                 {t("Color.desc")}
               </p>
             </div>
-            <div className="grid gap-2 grid-cols-3">
+            {/* <div className="grid gap-2 grid-cols-3">
               {COLOR_OPTIONS.map(({ id, label }) => {
                 return (
                   <button
@@ -417,7 +444,33 @@ export default function TimeOption({
                   </button>
                 );
               })}
-            </div>
+            </div> */}
+
+            <RadioGroup className="grid grid-cols-3" value={value.color}>
+              {COLOR_OPTIONS.map(({ id, label }) => {
+                return (
+                  <div key={id}>
+                    <RadioGroupItem
+                      id={id}
+                      value={id}
+                      className="peer sr-only"
+                      onClick={() => applyColor?.(id)}
+                    />
+                    <FieldLabel
+                      htmlFor={id}
+                      className="relative w-full flex items-center rounded-md py-2 cursor-pointer aspect-square border border-solid border-notion-gray-text opacity-30 peer-data-[state=checked]:opacity-100 hover:scale-105 transition-all"
+                    >
+                      <Image
+                        src={`/image/timer/color/${theme}-${id}.png`}
+                        fill
+                        alt={`${label} 아이콘`}
+                        className="rounded-lg"
+                      />
+                    </FieldLabel>
+                  </div>
+                );
+              })}
+            </RadioGroup>
           </div>
         )}
 
@@ -462,7 +515,7 @@ export default function TimeOption({
             size="sm"
             variant="default"
             className="min-w-[50px] w-full max-w-[15%] bg-notion-red-text text-[clamp(0.6rem,3vmin,0.8rem)] h-[clamp(1.5rem,6vmin,2rem)] hover:bg-notion-red-text/80"
-            onClick={() => setOpen(false)}
+            onClick={closeOption}
           >
             {t("Close")}
           </Button>

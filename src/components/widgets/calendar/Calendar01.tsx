@@ -8,12 +8,12 @@ const Calendar01 = () => {
 
   console.log("date", date);
   return (
-    <div className="widget_container" data-variant="calendar01">
+    <div className="widget_container bg-red-100" data-variant="calendar01">
       <Calendar
         mode="single"
         selected={date}
         onSelect={setDate}
-        className="border border-solid"
+        className="h-full aspect-square"
       />
     </div>
   );

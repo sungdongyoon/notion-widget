@@ -360,7 +360,7 @@ const Timer01 = () => {
       setTimerColor(state.color ?? "default");
       setTimerLabel(state.label ?? "Timer Label");
       deadlineRef.current =
-        state.mode === "running" ? state.deadline ?? null : null;
+        state.mode === "running" ? (state.deadline ?? null) : null;
     };
 
     return () => {
@@ -389,7 +389,7 @@ const Timer01 = () => {
               style={{
                 ["--remain" as string]: `${Math.max(
                   0,
-                  Math.min(100, remainTimePercent)
+                  Math.min(100, remainTimePercent),
                 )}%`,
                 ["--timer-color" as string]: `hsl(var(--notion-${timerColor}-text))`,
               }}
@@ -426,7 +426,11 @@ const Timer01 = () => {
               {!running ? <FaPlay /> : <FaPause />}
             </button>
             <TimeOption
-              value={{ time: initialTime, label: timerLabel }}
+              value={{
+                time: initialTime,
+                label: timerLabel,
+                color: timerColor,
+              }}
               onApply={applyTime}
               applyColor={applyColor}
               applyLabel={applyLabel}

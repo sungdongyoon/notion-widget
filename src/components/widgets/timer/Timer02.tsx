@@ -274,7 +274,7 @@ const Timer02 = () => {
       setRunning(state.mode === "running");
       setTimerColor(state.color ?? "default");
       deadlineRef.current =
-        state.mode === "running" ? state.deadline ?? null : null;
+        state.mode === "running" ? (state.deadline ?? null) : null;
     };
 
     return () => {
@@ -294,7 +294,7 @@ const Timer02 = () => {
             style={{
               ["--remain" as string]: `${Math.max(
                 0,
-                Math.min(100, remainTimePercent)
+                Math.min(100, remainTimePercent),
               )}%`,
             }}
           >
@@ -342,7 +342,7 @@ const Timer02 = () => {
                 </div>
                 <div className="absolute bottom-[0] left-1/2 -translate-x-1/2">
                   <TimeOption
-                    value={{ time: time }}
+                    value={{ time: time, color: timerColor }}
                     onApply={applyTime}
                     disabled={running}
                     activeOption={["minute", "second", "theme", "color"]}
