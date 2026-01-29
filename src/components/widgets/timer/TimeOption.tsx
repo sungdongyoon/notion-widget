@@ -187,17 +187,19 @@ export default function TimeOption({
         </button>
       </DialogTrigger>
       <DialogContent
-        className="w-[clamp(10rem,95vw,22rem)]
+        className="
     aspect-square
     overflow-auto
     flex flex-col items-end gap-3
     p-[clamp(0.6rem,3vmin,1rem)]
+    w-[150px]
+    h-[150px]
     scroll-pt-16
     "
         onOpenAutoFocus={(e) => e.preventDefault()}
         showOverlay={false}
         showClose={false}
-        portal={false}
+        portal={true}
       >
         <VisuallyHidden>
           <DialogHeader>
