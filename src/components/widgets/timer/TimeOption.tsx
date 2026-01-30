@@ -16,7 +16,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 import { FaGear } from "react-icons/fa6";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -32,16 +32,19 @@ type ApplyTimePayload = {
 
 type TimeOptionProps = {
   value: {
-    time: number;
-    label?: string;
-    color: string;
+    time: number; // 시간 값
+    label?: string; // 타이머 이름 값
+    color: string; // 타이머 색상 값
   };
-  onApply?: (payload: ApplyTimePayload) => void;
-  applyColor?: (payload: string) => void;
-  applyLabel?: (payload: string) => void;
-  disabled?: boolean;
-  style?: string;
-  activeOption?: ("hour" | "minute" | "second" | "color" | "theme" | "label")[];
+  onApply?: (payload: ApplyTimePayload) => void; // 시간 적용 함수
+  applyColor?: (payload: string) => void; // 색상 적용 함수
+  applyLabel?: (payload: string) => void; // 이름 적용 함수
+  disabled?: boolean; // disabled 값
+  style?: string; // inline style 값
+  isTimeOption?: boolean; // 컴포넌트 활성화 여부
+  setIsTimeOption?: (payload: boolean) => void; // 컴포넌트 활성화 함수
+  triggerVisible?: boolean; // 트리거 버튼 visible 여부
+  activeOption?: ("hour" | "minute" | "second" | "color" | "theme" | "label")[]; // 옵션 종류
 };
 
 // 색상 배열
@@ -68,11 +71,17 @@ export default function TimeOption({
   disabled,
   style,
   activeOption,
+  isTimeOption = false,
+  setIsTimeOption,
+  triggerVisible = true,
 }: TimeOptionProps) {
   const totalSec = Math.floor((Number(value.time) || 0) / 1000);
   const initH = Math.floor(totalSec / 3600);
   const initM = Math.floor((totalSec % 3600) / 60);
   const initS = totalSec % 60;
+
+  // 트리거 버튼 wrapper
+  const TriggerWrapper = triggerVisible ? Fragment : VisuallyHidden;
 
   // 테마 변경 함수
   const { theme, setTheme } = useTheme();
@@ -87,7 +96,7 @@ export default function TimeOption({
     second: String(initS),
   });
 
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(isTimeOption);
   const [timerLabel, setTimerLabel] = useState<{
     label: string;
     length: number;
@@ -134,6 +143,7 @@ export default function TimeOption({
 
     applyLabel?.(timerLabel.label);
 
+    setIsTimeOption?.(false);
     setOpen(false);
   };
 
@@ -147,6 +157,8 @@ export default function TimeOption({
       second: String(initS),
     });
     setTimerLabel({ label: nextLabel, length: nextLabel.length });
+
+    setIsTimeOption?.(false);
     setOpen(false);
   };
 
@@ -178,18 +190,28 @@ export default function TimeOption({
     });
   }, [value.time]);
 
+  // isTimeOption 제어
+  useEffect(() => {
+    setOpen(isTimeOption);
+  }, [isTimeOption]);
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <button
-          className={`${style} ${
-            disabled ? "cursor-not-allowed opacity-30" : "cursor-pointer"
-          }`}
-          disabled={disabled}
-        >
-          <FaGear />
-        </button>
-      </DialogTrigger>
+    <Dialog
+      open={open}
+      onOpenChange={triggerVisible ? setOpen : setIsTimeOption}
+    >
+      <TriggerWrapper>
+        <DialogTrigger asChild>
+          <button
+            className={`${style} ${
+              disabled ? "cursor-not-allowed opacity-30" : "cursor-pointer"
+            }`}
+            disabled={disabled}
+          >
+            <FaGear />
+          </button>
+        </DialogTrigger>
+      </TriggerWrapper>
       <DialogContent
         className={`w-[clamp(10rem,95vw,22rem)]
     overflow-auto

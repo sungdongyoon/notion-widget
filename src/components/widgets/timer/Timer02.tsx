@@ -7,6 +7,7 @@ import BreakPointView from "@/components/BreakPointView";
 import {
   FaArrowRotateLeft,
   FaCirclePlay,
+  FaGear,
   FaRegCirclePlay,
 } from "react-icons/fa6";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -54,6 +55,16 @@ const Timer02 = () => {
   const [timerColor, setTimerColor] = useState<string>("default");
   // mobile 환경 구분
   const isMobile = useIsMobile();
+  // timeoption 상태
+  const [isTimeOption, setIsTimeOption] = useState<boolean>(false);
+  // TimeOption 트리거 별도로 작동
+  // const [customTrigger, setCustomTrigger] = useState<{
+  //   activeTimeOption: boolean; // TimeOption 컴포넌트 활성화 여부
+  //   visibleTrigger: false; // TimeOption 컴포넌트 기본 트리거 버튼은 비활성화 해야함
+  // }>({
+  //   activeTimeOption: false,
+  //   visibleTrigger: false,
+  // });
 
   // 마감시간 ref
   const deadlineRef = useRef<number | null>(null);
@@ -344,19 +355,33 @@ const Timer02 = () => {
                   </p>
                 </div>
                 <div className="absolute bottom-[0] left-1/2 -translate-x-1/2">
-                  <TimeOption
-                    value={{ time: time, color: timerColor }}
-                    onApply={applyTime}
+                  <button
+                    className={`text-[clamp(0.6rem,5vmin,1.2rem)] text-notion-${timerColor}-text timer-02-setting-btn hover:opacity-80 transition-[1] ${
+                      running
+                        ? "cursor-not-allowed opacity-30"
+                        : "cursor-pointer"
+                    }`}
+                    onClick={() => setIsTimeOption(true)}
                     disabled={running}
-                    activeOption={["minute", "second", "theme", "color"]}
-                    applyColor={applyColor}
-                    style={`text-[clamp(0.6rem,5vmin,1.2rem)] text-notion-${timerColor}-text timer-02-setting-btn hover:opacity-80 transition-[1]`}
-                  />
+                  >
+                    <FaGear />
+                  </button>
                 </div>
               </>
             )}
           </div>
         </div>
+        <TimeOption
+          value={{ time: time, color: timerColor }}
+          onApply={applyTime}
+          disabled={running}
+          activeOption={["minute", "second", "theme", "color"]}
+          applyColor={applyColor}
+          isTimeOption={isTimeOption}
+          setIsTimeOption={setIsTimeOption}
+          triggerVisible={false}
+          style={`text-[clamp(0.6rem,5vmin,1.2rem)] text-notion-${timerColor}-text timer-02-setting-btn hover:opacity-80 transition-[1]`}
+        />
       </div>
     </div>
   );
