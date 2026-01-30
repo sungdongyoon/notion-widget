@@ -196,7 +196,7 @@ export default function TimeOption({
     flex flex-col items-end gap-3
     p-[clamp(0.6rem,3vmin,1rem)]
     scroll-pt-16
-    ${isMobile ? "max-h-[50%] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" : "aspect-square"}
+    ${isMobile ? "max-h-[90%] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" : "aspect-square"}
     `}
         onOpenAutoFocus={(e) => e.preventDefault()}
         showOverlay={false}

@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaPause, FaPlay, FaRedo } from "react-icons/fa";
 import TimeOption from "./TimeOption";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 // ===== 타입 =====
 type ApplyTimeProps = {
@@ -114,6 +115,8 @@ const Timer01 = () => {
   const [timerColor, setTimerColor] = useState<string>("default");
   // 라벨
   const [timerLabel, setTimerLabel] = useState<string>("기본 타이머");
+  // mobile 환경 구분
+  const isMobile = useIsMobile();
 
   // 마감시간 ref
   const deadlineRef = useRef<number | null>(null);
@@ -375,7 +378,7 @@ const Timer01 = () => {
       <div
         className={`bg-notion-${
           timerColor === "default" ? "gray" : timerColor
-        }-bg flex flex-col items-center justify-between p-[clamp(1.3rem,10vmin,3rem)] aspect-square`}
+        }-bg flex flex-col items-center justify-between p-[clamp(1.3rem,10vmin,3rem)] aspect-square ${isMobile && "relative"}`}
         style={{
           width: "min(100vw,100vh)",
           height: "min(100vw,100vh)",

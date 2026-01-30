@@ -9,6 +9,7 @@ import {
   FaCirclePlay,
   FaRegCirclePlay,
 } from "react-icons/fa6";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 // ===== 타입 =====
 type ApplyTimeProps = {
@@ -51,6 +52,8 @@ const Timer02 = () => {
   const [running, setRunning] = useState<boolean>(false);
   // 메인 컬러 상태
   const [timerColor, setTimerColor] = useState<string>("default");
+  // mobile 환경 구분
+  const isMobile = useIsMobile();
 
   // 마감시간 ref
   const deadlineRef = useRef<number | null>(null);
@@ -286,7 +289,7 @@ const Timer02 = () => {
   return (
     <div className="widget_container" data-variant="timer02">
       <div
-        className={`bg-notion-${timerColor}-text relative max-w-[500px] min-w-[150px] w-full aspect-[1/1] flex flex-col items-center justify-between rounded-[50%]`}
+        className={`bg-notion-${timerColor}-text relative max-w-[500px] min-w-[150px] w-full aspect-[1/1] flex flex-col items-center justify-between rounded-[50%] ${isMobile && "relative"}`}
       >
         <div className="w-full flex-[2] flex justify-center items-center relative">
           <div
