@@ -22,6 +22,7 @@ import { FaGear } from "react-icons/fa6";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { FieldLabel } from "@/components/ui/field";
 import { IoMoon, IoSunny } from "react-icons/io5";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 type ApplyTimePayload = {
   hour: number;
@@ -98,6 +99,9 @@ export default function TimeOption({
   const [optionSection, setOptionSection] = useState<string>("time");
 
   const t = useTranslations("TimeOption");
+
+  // mobile 환경 구분
+  const isMobile = useIsMobile();
 
   const labelPercent = (timerLabel.length / LABEL_MAX_LENGTH) * 100;
 
@@ -252,6 +256,7 @@ export default function TimeOption({
               <div className="space-y-2">
                 <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
                   {t("Time.title")}
+                  {`${isMobile}`}
                 </h4>
                 <p className="text-muted-foreground text-[clamp(0.6rem,3vmin,0.8rem)]">
                   {t("Time.desc")}
