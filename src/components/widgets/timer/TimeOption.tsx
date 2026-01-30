@@ -191,13 +191,14 @@ export default function TimeOption({
         </button>
       </DialogTrigger>
       <DialogContent
-        className="w-[clamp(10rem,95vw,22rem)]
+        className={`w-[clamp(10rem,95vw,22rem)]
     aspect-square
     overflow-auto
     flex flex-col items-end gap-3
     p-[clamp(0.6rem,3vmin,1rem)]
     scroll-pt-16
-    "
+    ${isMobile && "max-w-[250px]"}
+    `}
         onOpenAutoFocus={(e) => e.preventDefault()}
         showOverlay={false}
         showClose={false}
@@ -256,7 +257,6 @@ export default function TimeOption({
               <div className="space-y-2">
                 <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
                   {t("Time.title")}
-                  {`${isMobile}`}
                 </h4>
                 <p className="text-muted-foreground text-[clamp(0.6rem,3vmin,0.8rem)]">
                   {t("Time.desc")}
