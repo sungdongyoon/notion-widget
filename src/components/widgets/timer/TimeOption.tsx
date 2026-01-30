@@ -192,12 +192,11 @@ export default function TimeOption({
       </DialogTrigger>
       <DialogContent
         className={`w-[clamp(10rem,95vw,22rem)]
-    aspect-square
     overflow-auto
     flex flex-col items-end gap-3
     p-[clamp(0.6rem,3vmin,1rem)]
     scroll-pt-16
-    ${isMobile && "max-w-[250px] max-h-[250px] overflow-y-scroll"}
+    ${isMobile ? "max-h-[40%]" : "aspect-square"}
     `}
         onOpenAutoFocus={(e) => e.preventDefault()}
         showOverlay={false}
