@@ -512,16 +512,26 @@ export default function TimeOption({
               </div>
             </div>
             <div className="w-full grid gap-4 mt-7" id="test">
-              <div className="space-y-2 relative w-[30px] h-[30px]">
-                <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
-                  테스트
-                </h4>
-                <Image
-                  src={`/image/timer/color/${theme}-orange.png`}
-                  fill
-                  alt={`테스트 아이콘`}
-                  className="rounded-lg w-full"
-                />
+              <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
+                테스트
+              </h4>
+              <div className="space-y-2">
+                <div className="relative w-[30px] h-[30px]">
+                  <Image
+                    src={`/image/timer/color/dark-orange.png`}
+                    fill
+                    alt={`테스트 아이콘`}
+                    className="rounded-lg w-full"
+                  />
+                </div>
+                <div className="relative w-[30px] h-[30px]">
+                  <Image
+                    src={`/image/quotes/quotes_bg1.jpg`}
+                    fill
+                    alt={`테스트 아이콘`}
+                    className="rounded-lg w-full"
+                  />
+                </div>
               </div>
             </div>
             <div className="w-full grid gap-4 mt-7" id="copyright">
