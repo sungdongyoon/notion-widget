@@ -453,7 +453,7 @@ export default function TimeOption({
                 {t("Color.desc")}
               </p>
             </div>
-            {/* <div className="grid gap-2 grid-cols-3">
+            <div className="grid gap-2 grid-cols-3">
               {COLOR_OPTIONS.map(({ id, label }) => {
                 return (
                   <button
@@ -471,7 +471,7 @@ export default function TimeOption({
                   </button>
                 );
               })}
-            </div> */}
+            </div>
 
             <RadioGroup className="grid grid-cols-3" value={value.color}>
               {COLOR_OPTIONS.map(({ id, label }) => {
@@ -511,7 +511,19 @@ export default function TimeOption({
                 <LangToggle className="text-[clamp(0.6rem,3vmin,1rem)] w-[40px] h-7 bg-notion-default-bg rounded-none rounded-tl-md rounded-br-md py-1 px-2 2xs:w-[60px] 2xs:h-9 2xs:py-2 2xs:px-3" />
               </div>
             </div>
-
+            <div className="w-full grid gap-4 mt-7" id="test">
+              <div className="space-y-2 relative w-[30px] h-[30px]">
+                <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
+                  테스트
+                </h4>
+                <Image
+                  src={`/image/timer/color/${theme}-orange.png`}
+                  fill
+                  alt={`테스트 아이콘`}
+                  className="rounded-lg w-full"
+                />
+              </div>
+            </div>
             <div className="w-full grid gap-4 mt-7" id="copyright">
               <div className="space-y-2">
                 <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
