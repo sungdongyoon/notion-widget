@@ -14,9 +14,9 @@ const Calendar01 = () => {
         mode="single"
         selected={date}
         onSelect={setDate}
-        className="w-full h-full bg-blue-50 max-w-[100dvh] aspect-square"
+        className="w-full h-full border border-solid max-w-[100dvh] aspect-square"
         classNames={{
-          months: "calendar_months",
+          months: "calendar_months w-full h-full",
           month: "calendar_month",
           month_caption: "calendar_month_caption",
           nav: "calendar_nav",
@@ -27,8 +27,8 @@ const Calendar01 = () => {
           weekdays: "calendar_weekdays",
           weekday: "calendar_weekday text-[clamp(0.6rem,3vmin,1rem)]",
           week: "calendar_week",
-          day: "calendar_day bg-red-100 text-[clamp(0.4rem,3vmin,1rem)]",
-          today: "calendar_today bg-blue-100",
+          day: "calendar_day text-[clamp(0.4rem,3vmin,1rem)]",
+          today: "calendar_today",
         }}
       />
     </div>
