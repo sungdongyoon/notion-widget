@@ -8,6 +8,7 @@
 @use "./components/quotes" as *;
 @use "./components/weather" as *;
 @use "./components/timer" as *;
+@use "./components/calendar" as *;
 
 @tailwind base;
 @tailwind components;

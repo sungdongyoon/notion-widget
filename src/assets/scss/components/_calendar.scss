@@ -1,0 +1,75 @@
+// shadcn ui Calender 기본 레이어
+@layer components {
+  .calendar_months {
+    @apply relative flex flex-col gap-4 md:flex-row;
+  }
+  .calendar_month {
+    @apply flex w-full flex-col gap-4;
+  }
+  .calendar_nav {
+    @apply absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1;
+  }
+  .calendar_button_previous {
+    @apply h-[--cell-size] w-[--cell-size] select-none p-0 aria-disabled:opacity-50;
+  }
+  .calendar_button_next {
+    @apply h-[--cell-size] w-[--cell-size] select-none p-0 aria-disabled:opacity-50;
+  }
+  .calendar_month_caption {
+    @apply flex h-[--cell-size] w-full items-center justify-center px-[--cell-size];
+  }
+  .calendar_dropdowns {
+    @apply flex h-[--cell-size] w-full items-center justify-center gap-1.5 text-sm font-medium;
+  }
+  .calendar_dropdown_root {
+    @apply has-focus:border-ring border-input shadow-xs has-focus:ring-ring/50 has-focus:ring-[3px] relative rounded-md border;
+  }
+  .calendar_dropdown {
+    @apply bg-popover absolute inset-0 opacity-0;
+  }
+  .calendar_caption_label {
+    @apply select-none font-medium;
+  }
+  .calendar_table {
+    @apply w-full border-collapse;
+  }
+  .calendar_weekdays {
+    @apply flex;
+  }
+  .calendar_weekday {
+    @apply text-muted-foreground flex-1 select-none rounded-md text-[0.8rem] font-normal;
+  }
+  .calendar_week {
+    @apply mt-2 flex w-full;
+  }
+  .calendar_week_number_header {
+    @apply w-[--cell-size] select-none;
+  }
+  .calendar_week_number {
+    @apply text-muted-foreground select-none text-[0.8rem];
+  }
+  .calendar_day {
+    @apply relative aspect-square h-full w-full select-none p-0 text-center [&:first-child[data-selected=true]_button]:rounded-l-md [&:last-child[data-selected=true]_button]:rounded-r-md;
+  }
+  .calendar_range_start {
+    @apply bg-accent rounded-l-md;
+  }
+  .calendar_range_middle {
+    @apply rounded-none;
+  }
+  .calendar_range_end {
+    @apply bg-accent rounded-r-md;
+  }
+  .calendar_today {
+    @apply bg-accent text-accent-foreground rounded-md data-[selected=true]:rounded-none;
+  }
+  .calendar_outside {
+    @apply text-muted-foreground aria-selected:text-muted-foreground;
+  }
+  .calendar_disabled {
+    @apply text-muted-foreground opacity-50;
+  }
+  .calendar_hidden {
+    @apply invisible;
+  }
+}
