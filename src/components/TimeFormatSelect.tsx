@@ -13,6 +13,7 @@ import {
 import { useTranslations } from "next-intl";
 import { loadState, saveState } from "@/utils/storage";
 import { PersistState } from "@/components/widgets/timer/types";
+import { useRouter } from "next/navigation";
 
 const TimeFormatSelect = ({
   className,
@@ -25,6 +26,7 @@ const TimeFormatSelect = ({
   const [value, setValue] = useState<"hourFormat" | "minuteFormat">(
     "hourFormat",
   );
+  const router = useRouter();
 
   const storageKey = useMemo(() => widgetType, [widgetType]);
 
@@ -46,6 +48,7 @@ const TimeFormatSelect = ({
         const next = v as "hourFormat" | "minuteFormat";
         setValue(next);
         upsertTimeFormat(next);
+        window.location.reload();
       }}
     >
       <SelectTrigger className={className}>
@@ -54,11 +57,19 @@ const TimeFormatSelect = ({
 
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>{t("Info.TimeFormat.select")}</SelectLabel>
-          <SelectItem value="hourFormat">
+          <SelectLabel className="text-[clamp(0.6rem,3vmin,0.8rem)]">
+            {t("Info.TimeFormat.select")}
+          </SelectLabel>
+          <SelectItem
+            value="hourFormat"
+            className="text-[clamp(0.6rem,3vmin,0.8rem)]"
+          >
             {t("Info.TimeFormat.hourOption")}
           </SelectItem>
-          <SelectItem value="minuteFormat">
+          <SelectItem
+            value="minuteFormat"
+            className="text-[clamp(0.6rem,3vmin,0.8rem)]"
+          >
             {t("Info.TimeFormat.minuteOption")}
           </SelectItem>
         </SelectGroup>

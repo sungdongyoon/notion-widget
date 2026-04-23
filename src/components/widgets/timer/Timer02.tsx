@@ -20,6 +20,8 @@ const Timer02 = () => {
   const [running, setRunning] = useState<boolean>(false);
   // 메인 컬러 상태
   const [timerColor, setTimerColor] = useState<string>("default");
+  // 시간 형태
+  const [timeFormat, setTimeFormat] = useState<string>("hourFormat");
   // mobile 환경 구분
   const isMobile = useIsMobile();
   // timeoption 상태
@@ -37,8 +39,14 @@ const Timer02 = () => {
     running || (!running && time < initialTime && time > 0); // 진행 ui 노출 여부
 
   // 시, 분, 초
-  const hour = String(Math.floor(time / (1000 * 60 * 60))).padStart(2, "0");
-  const minute = String(Math.floor((time / (1000 * 60)) % 60)).padStart(2, "0");
+  const hour =
+    timeFormat === "hourFormat"
+      ? String(Math.floor(time / (1000 * 60 * 60))).padStart(2, "0")
+      : "00";
+  const minute =
+    timeFormat === "hourFormat"
+      ? String(Math.floor(time / (1000 * 60)) % 60).padStart(2, "0")
+      : String(Math.floor(time / (1000 * 60))).padStart(2, "0");
   const second = String(Math.floor((time / 1000) % 60)).padStart(2, "0");
 
   // 남은 시간 비율
@@ -188,6 +196,7 @@ const Timer02 = () => {
   // 마운트 시 복원
   useEffect(() => {
     const state = loadState<PersistState>(STORAGE_KEY);
+    console.log("state", state);
 
     if (!state) {
       saveState({
@@ -234,6 +243,12 @@ const Timer02 = () => {
       deadlineRef.current = null;
       setTime(state.remainMs);
       setRunning(false);
+    }
+
+    if (state.timeFormat === "hourFormat") {
+      setTimeFormat("hourFormat");
+    } else if (state.timeFormat === "minuteFormat") {
+      setTimeFormat("minuteFormat");
     }
   }, []);
 
@@ -283,6 +298,7 @@ const Timer02 = () => {
                 className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-notion-${timerColor}-text timer-02-bg border-[10px] border-solid border-timer-02-clock-bg w-[40%] min-w-[100px] aspect-square flex flex-col gap-2 justify-center items-center p-5`}
               >
                 <div className="text-[clamp(0.9rem,4vmin,1.5rem)] text-timer-02-ring-text font-bold">
+                  <span>{hour}:</span>
                   <span>{minute}</span>:<span>{second}</span>
                 </div>
                 <div className="w-full flex justify-center gap-[clamp(0.6rem,2.5vmin,1rem)]">
@@ -317,6 +333,7 @@ const Timer02 = () => {
                   <p
                     className={`text-notion-${timerColor}-text -timer-02-timer-text text-[clamp(0.8rem,6vmin,2rem)] font-bold`}
                   >
+                    <span>{hour}:</span>
                     <span>{minute}</span>:<span>{second}</span>
                   </p>
                 </div>
@@ -341,13 +358,14 @@ const Timer02 = () => {
           value={{ time: time, color: timerColor }}
           onApply={applyTime}
           disabled={running}
-          activeOption={["minute", "second", "theme", "color"]}
+          activeOption={["hour", "minute", "second", "theme", "color"]}
           applyColor={applyColor}
           isTimeOption={isTimeOption}
           setIsTimeOption={setIsTimeOption}
           triggerVisible={false}
           style={`text-[clamp(0.6rem,5vmin,1.2rem)] text-notion-${timerColor}-text timer-02-setting-btn hover:opacity-80 transition-[1]`}
           widgetType={STORAGE_KEY}
+          timeFormat={timeFormat}
         />
       </div>
     </div>

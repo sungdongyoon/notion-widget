@@ -42,6 +42,7 @@ interface TimeOptionProps {
   triggerVisible?: boolean; // 트리거 버튼 visible 여부
   activeOption?: ("hour" | "minute" | "second" | "color" | "theme" | "label")[]; // 옵션 종류
   widgetType: string;
+  timeFormat: string;
 }
 
 // 색상 배열
@@ -72,10 +73,14 @@ export default function TimeOption({
   setIsTimeOption,
   triggerVisible = true,
   widgetType,
+  timeFormat,
 }: TimeOptionProps) {
   const totalSec = Math.floor((Number(value.time) || 0) / 1000);
-  const initH = Math.floor(totalSec / 3600);
-  const initM = Math.floor((totalSec % 3600) / 60);
+  const initH = timeFormat === "hourFormat" ? Math.floor(totalSec / 3600) : 0;
+  const initM =
+    timeFormat === "hourFormat"
+      ? Math.floor((totalSec % 3600) / 60)
+      : Math.floor(totalSec / 60);
   const initS = totalSec % 60;
 
   // 트리거 버튼 wrapper
@@ -186,6 +191,8 @@ export default function TimeOption({
       minute: String(initM),
       second: String(initS),
     });
+
+    console.log("init", initH, initM, initS);
   }, [value.time]);
 
   // isTimeOption 제어
@@ -498,7 +505,7 @@ export default function TimeOption({
                 </h4>
                 <TimeFormatSelect
                   widgetType={widgetType}
-                  className="text-[clamp(0.6rem,3vmin,1rem)] w-[40px] h-7 bg-notion-default-bg rounded-none rounded-tl-md rounded-br-md py-1 px-2 2xs:w-[60px] 2xs:h-9 2xs:py-2 2xs:px-3"
+                  className="text-[clamp(0.6rem,3vmin,0.8rem)] w-[80px] h-7 bg-notion-default-bg rounded-none rounded-tl-md rounded-br-md py-1 px-2 2xs:w-[100px] 2xs:h-9 2xs:py-2 2xs:px-3"
                 />
               </div>
             </div>

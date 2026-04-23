@@ -22,6 +22,8 @@ const Timer01 = () => {
   const [timerColor, setTimerColor] = useState<string>("default");
   // 라벨
   const [timerLabel, setTimerLabel] = useState<string>("기본 타이머");
+  // 시간 형태
+  const [timeFormat, setTimeFormat] = useState<string>("hourFormat");
   // mobile 환경 구분
   const isMobile = useIsMobile();
 
@@ -31,8 +33,14 @@ const Timer01 = () => {
   const channelRef = useRef<BroadcastChannel | null>(null);
 
   // 시, 분, 초
-  const hour = String(Math.floor(time / (1000 * 60 * 60))).padStart(2, "0");
-  const minute = String(Math.floor(time / (1000 * 60)) % 60).padStart(2, "0");
+  const hour =
+    timeFormat === "hourFormat"
+      ? String(Math.floor(time / (1000 * 60 * 60))).padStart(2, "0")
+      : "00";
+  const minute =
+    timeFormat === "hourFormat"
+      ? String(Math.floor(time / (1000 * 60)) % 60).padStart(2, "0")
+      : String(Math.floor(time / (1000 * 60))).padStart(2, "0");
   const second = String(Math.floor((time / 1000) % 60)).padStart(2, "0");
 
   // 남은 시간 비율
@@ -259,6 +267,12 @@ const Timer01 = () => {
       setTime(state.remainMs);
       setRunning(false);
     }
+
+    if (state.timeFormat === "hourFormat") {
+      setTimeFormat("hourFormat");
+    } else if (state.timeFormat === "minuteFormat") {
+      setTimeFormat("minuteFormat");
+    }
   }, []);
 
   // 탭 별 동기화
@@ -363,6 +377,7 @@ const Timer01 = () => {
                 "label",
               ]}
               widgetType={STORAGE_KEY}
+              timeFormat={timeFormat}
               style={`text-[clamp(1rem,6vmin,3rem)] text-notion-${timerColor}-text`}
             />
           </div>
