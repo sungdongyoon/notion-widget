@@ -1,47 +1,14 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { FaPlayCircle, FaPlay, FaPause } from "react-icons/fa";
+import { FaPlayCircle, FaPause } from "react-icons/fa";
 import TimeOption from "./TimeOption";
-import BreakPointView from "@/components/BreakPointView";
-import {
-  FaArrowRotateLeft,
-  FaCirclePlay,
-  FaGear,
-  FaRegCirclePlay,
-} from "react-icons/fa6";
+import { FaArrowRotateLeft, FaCirclePlay, FaGear } from "react-icons/fa6";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { ApplyTimeProps, PersistState } from "./types";
+import { loadState } from "@/utils/storage";
+import { DEFAULT_INITIAL, INTERVAL } from "@/constants/timer";
 
-// ===== 타입 =====
-type ApplyTimeProps = {
-  hour: number;
-  minute: number;
-  second: number;
-};
-
-type PersistState =
-  | {
-      mode: "running";
-      deadline: number;
-      remainMs?: number;
-      initialMs: number;
-      color?: string;
-    }
-  | {
-      mode: "paused";
-      remainMs: number;
-      initialMs: number;
-      color?: string;
-    }
-  | {
-      mode: "stopped";
-      remainMs: number;
-      initialMs: number;
-      color?: string;
-    };
-
-const DEFAULT_INITIAL = 60 * 1000; // 초기 시간
-const INTERVAL = 10; // INTERVAL 밀리초 마다 시간 줄어듦
 const STORAGE_KEY = "timer02_state"; // 로컬 스토리지 키 값
 
 const Timer02 = () => {
@@ -57,14 +24,6 @@ const Timer02 = () => {
   const isMobile = useIsMobile();
   // timeoption 상태
   const [isTimeOption, setIsTimeOption] = useState<boolean>(false);
-  // TimeOption 트리거 별도로 작동
-  // const [customTrigger, setCustomTrigger] = useState<{
-  //   activeTimeOption: boolean; // TimeOption 컴포넌트 활성화 여부
-  //   visibleTrigger: false; // TimeOption 컴포넌트 기본 트리거 버튼은 비활성화 해야함
-  // }>({
-  //   activeTimeOption: false,
-  //   visibleTrigger: false,
-  // });
 
   // 마감시간 ref
   const deadlineRef = useRef<number | null>(null);
@@ -93,17 +52,6 @@ const Timer02 = () => {
     } catch {}
   };
 
-  // 로컬 스토리지 상태 불러오기
-  const loadState = () => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-
-      return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
-    }
-  };
-
   // 타이머 시작 함수
   const startTime = (): void => {
     if (time <= 0) return;
@@ -113,13 +61,14 @@ const Timer02 = () => {
 
     setRunning(true);
 
-    const currentState = loadState();
+    const currentState = loadState<PersistState>(STORAGE_KEY);
     saveState({
       mode: "running",
       deadline,
       remainMs: initialTime,
       initialMs: initialTime,
       color: currentState?.color,
+      timeFormat: currentState?.timeFormat ?? "hourFormat",
     });
   };
 
@@ -127,28 +76,31 @@ const Timer02 = () => {
   const pauseTime = (): void => {
     setRunning(false);
 
-    const currentState = loadState();
+    const currentState = loadState<PersistState>(STORAGE_KEY);
     saveState({
       mode: "paused",
       remainMs: time,
       initialMs: initialTime,
       color: currentState?.color,
+      timeFormat: currentState?.timeFormat ?? "hourFormat",
     });
   };
 
   // 타이머 리셋 함수
   const resetTime = (): void => {
-    const state = loadState();
+    const state = loadState<PersistState>(STORAGE_KEY);
     setRunning(false);
     deadlineRef.current = null;
 
-    setInitialTime(state.initialMs);
-    setTime(state.initialMs);
+    const nextInitial = state?.initialMs ?? DEFAULT_INITIAL;
+    setInitialTime(nextInitial);
+    setTime(nextInitial);
     saveState({
       mode: "stopped",
-      remainMs: state.initialMs,
-      initialMs: state.initialMs,
+      remainMs: nextInitial,
+      initialMs: nextInitial,
       color: state?.color,
+      timeFormat: state?.timeFormat ?? "hourFormat",
     });
   };
 
@@ -161,12 +113,13 @@ const Timer02 = () => {
     setRunning(false);
     setInitialTime(ms);
     setTime(ms);
-    const currentState = loadState();
+    const currentState = loadState<PersistState>(STORAGE_KEY);
     saveState({
       mode: "stopped",
       remainMs: ms,
       initialMs: ms,
       color: currentState?.color,
+      timeFormat: currentState?.timeFormat ?? "hourFormat",
     });
   };
 
@@ -174,7 +127,7 @@ const Timer02 = () => {
   const applyColor = (color: string): void => {
     setTimerColor(color);
     // 기존 state를 불러와서 color만 업데이트
-    const currentState = loadState();
+    const currentState = loadState<PersistState>(STORAGE_KEY);
     if (currentState) {
       saveState({
         ...currentState,
@@ -187,6 +140,7 @@ const Timer02 = () => {
         remainMs: time,
         initialMs: initialTime,
         color,
+        timeFormat: "hourFormat",
       });
     }
   };
@@ -205,12 +159,13 @@ const Timer02 = () => {
         deadlineRef.current = null;
         setTime(initialTime);
 
-        const state = loadState();
+        const state = loadState<PersistState>(STORAGE_KEY);
         saveState({
           mode: "stopped",
           remainMs: initialTime,
           initialMs: initialTime,
           color: state?.color,
+          timeFormat: state?.timeFormat ?? "hourFormat",
         });
 
         return;
@@ -232,13 +187,21 @@ const Timer02 = () => {
 
   // 마운트 시 복원
   useEffect(() => {
-    const state = loadState();
+    const state = loadState<PersistState>(STORAGE_KEY);
 
-    if (!state) return;
+    if (!state) {
+      saveState({
+        mode: "stopped",
+        remainMs: DEFAULT_INITIAL,
+        initialMs: DEFAULT_INITIAL,
+        color: "default",
+        timeFormat: "hourFormat",
+      });
+      return;
+    }
 
-    const remain = state?.deadline
-      ? Math.max(0, state.deadline - Date.now())
-      : 0;
+    const remain =
+      state.mode === "running" ? Math.max(0, state.deadline - Date.now()) : 0;
 
     // 초기 상태 복원
     setInitialTime(state.initialMs);
@@ -248,21 +211,24 @@ const Timer02 = () => {
       setTimerColor(state.color);
     }
 
-    // running 상태인데 시간이 다 지났다면 stopped로 변경
-    if (state.mode === "running" && remain === 0) {
-      saveState({
-        mode: "stopped",
-        remainMs: state.initialMs,
-        initialMs: state.initialMs,
-        color: state.color,
-      });
-      setRunning(false);
-      setTime(state.initialMs);
-    } else if (state.mode === "running" && remain > 0) {
-      // running 상태일 때 남은 시간을 정확히 계산하여 업데이트
-      deadlineRef.current = state.deadline;
-      setTime(remain);
-      setRunning(true);
+    if (state.mode === "running") {
+      // running 상태인데 시간이 다 지났다면 stopped로 변경
+      if (remain === 0) {
+        saveState({
+          mode: "stopped",
+          remainMs: state.initialMs,
+          initialMs: state.initialMs,
+          color: state.color,
+          timeFormat: state?.timeFormat ?? "hourFormat",
+        });
+        setRunning(false);
+        setTime(state.initialMs);
+      } else {
+        // running 상태일 때 남은 시간을 정확히 계산하여 업데이트
+        deadlineRef.current = state.deadline;
+        setTime(remain);
+        setRunning(true);
+      }
     } else {
       // paused 또는 stopped 상태
       deadlineRef.current = null;
@@ -381,6 +347,7 @@ const Timer02 = () => {
           setIsTimeOption={setIsTimeOption}
           triggerVisible={false}
           style={`text-[clamp(0.6rem,5vmin,1.2rem)] text-notion-${timerColor}-text timer-02-setting-btn hover:opacity-80 transition-[1]`}
+          widgetType={STORAGE_KEY}
         />
       </div>
     </div>

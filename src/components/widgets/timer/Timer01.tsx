@@ -4,104 +4,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { FaPause, FaPlay, FaRedo } from "react-icons/fa";
 import TimeOption from "./TimeOption";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { ApplyTimeProps, PersistState } from "./types";
+import { loadState } from "@/utils/storage";
+import { DEFAULT_INITIAL, INTERVAL } from "@/constants/timer";
 
-// ===== 타입 =====
-type ApplyTimeProps = {
-  hour: number;
-  minute: number;
-  second: number;
-};
-
-type PersistState =
-  | {
-      mode: "running";
-      deadline: number;
-      remainMs?: number;
-      initialMs: number;
-      color?: string;
-      label?: string;
-    }
-  | {
-      mode: "paused";
-      remainMs: number;
-      initialMs: number;
-      color?: string;
-      label?: string;
-    }
-  | {
-      mode: "stopped";
-      remainMs: number;
-      initialMs: number;
-      color?: string;
-      label?: string;
-    };
-
-const DEFAULT_INITIAL = 60 * 1000; // 초기 시간
-const INTERVAL = 10; // INTERVAL 밀리초 마다 시간 줄어듦
 const STORAGE_KEY = "timer01_state"; // 로컬 스토리지 키 값
-
-// 초기 상태를 로컬 스토리지에서 불러오는 함수 (클라이언트에서만 실행)
-const getInitialState = () => {
-  // 서버 사이드에서는 기본값 반환
-  if (typeof window === "undefined") {
-    return {
-      initialTime: DEFAULT_INITIAL,
-      time: DEFAULT_INITIAL,
-      running: false,
-      color: "default",
-      label: "Timer Label",
-    };
-  }
-
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const state = JSON.parse(raw);
-      const remain = state?.deadline
-        ? Math.max(0, state.deadline - Date.now())
-        : 0;
-
-      // running 상태인데 시간이 다 지났다면 stopped로 처리
-      if (state.mode === "running" && remain === 0) {
-        return {
-          initialTime: state.initialMs,
-          time: state.initialMs,
-          running: false,
-          color: state.color || "default",
-          label: state.label || "Timer Label",
-        };
-      }
-
-      if (state.mode === "running" && remain > 0) {
-        return {
-          initialTime: state.initialMs,
-          time: remain,
-          running: true,
-          color: state.color || "default",
-          label: state.label || "Timer Label",
-        };
-      }
-
-      return {
-        initialTime: state.initialMs,
-        time: state.remainMs,
-        running: false,
-        color: state.color || "default",
-        label: state.label || "Timer Label",
-      };
-    }
-  } catch {
-    // 에러 발생 시 기본값 반환
-  }
-
-  return {
-    initialTime: DEFAULT_INITIAL,
-    time: DEFAULT_INITIAL,
-    running: false,
-    color: "default",
-    label: "Timer Label",
-  };
-};
 
 const Timer01 = () => {
   // 서버와 클라이언트의 초기 렌더링을 동일하게 하기 위해 기본값 사용
@@ -139,17 +46,6 @@ const Timer01 = () => {
     } catch {}
   };
 
-  // 로컬 스토리지 상태 불러오기
-  const loadState = () => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-
-      return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
-    }
-  };
-
   // 타이머 시작 함수
   const startTime = (): void => {
     if (time <= 0) return;
@@ -159,7 +55,7 @@ const Timer01 = () => {
 
     setRunning(true);
 
-    const currentState = loadState();
+    const currentState = loadState<PersistState>(STORAGE_KEY);
     saveState({
       mode: "running",
       deadline,
@@ -167,36 +63,40 @@ const Timer01 = () => {
       initialMs: initialTime,
       color: currentState?.color,
       label: currentState?.label,
+      timeFormat: currentState?.timeFormat ?? "hourFormat",
     });
   };
 
   // 타이머 일시정지 함수
   const pauseTime = (): void => {
     setRunning(false);
-    const currentState = loadState();
+    const currentState = loadState<PersistState>(STORAGE_KEY);
     saveState({
       mode: "paused",
       remainMs: time,
       initialMs: initialTime,
       color: currentState?.color,
       label: currentState?.label,
+      timeFormat: currentState?.timeFormat ?? "hourFormat",
     });
   };
 
   // 타이머 리셋 함수
   const resetTime = (): void => {
-    const state = loadState();
+    const state = loadState<PersistState>(STORAGE_KEY);
     setRunning(false);
     deadlineRef.current = null;
 
-    setInitialTime(state.initialMs);
-    setTime(state.initialMs);
+    const nextInitial = state?.initialMs ?? DEFAULT_INITIAL;
+    setInitialTime(nextInitial);
+    setTime(nextInitial);
     saveState({
       mode: "stopped",
-      remainMs: state.initialMs,
-      initialMs: state.initialMs,
+      remainMs: nextInitial,
+      initialMs: nextInitial,
       color: state?.color,
       label: state?.label,
+      timeFormat: state?.timeFormat ?? "hourFormat",
     });
   };
 
@@ -209,13 +109,14 @@ const Timer01 = () => {
     setRunning(false);
     setInitialTime(ms);
     setTime(ms);
-    const currentState = loadState();
+    const currentState = loadState<PersistState>(STORAGE_KEY);
     saveState({
       mode: "stopped",
       remainMs: ms,
       initialMs: ms,
       color: currentState?.color,
       label: currentState?.label,
+      timeFormat: currentState?.timeFormat ?? "hourFormat",
     });
   };
 
@@ -223,7 +124,7 @@ const Timer01 = () => {
   const applyColor = (color: string): void => {
     setTimerColor(color);
     // 기존 state를 불러와서 color만 업데이트
-    const currentState = loadState();
+    const currentState = loadState<PersistState>(STORAGE_KEY);
     if (currentState) {
       saveState({
         ...currentState,
@@ -236,6 +137,7 @@ const Timer01 = () => {
         remainMs: time,
         initialMs: initialTime,
         color,
+        timeFormat: "hourFormat",
       });
     }
   };
@@ -244,7 +146,7 @@ const Timer01 = () => {
   const applyLabel = (label: string): void => {
     setTimerLabel(label);
     // 기존 state를 불러와서 label만 업데이트
-    const currentState = loadState();
+    const currentState = loadState<PersistState>(STORAGE_KEY);
     if (currentState) {
       saveState({
         ...currentState,
@@ -257,6 +159,7 @@ const Timer01 = () => {
         remainMs: time,
         initialMs: initialTime,
         label,
+        timeFormat: "hourFormat",
       });
     }
   };
@@ -275,13 +178,14 @@ const Timer01 = () => {
         deadlineRef.current = null;
         setTime(initialTime);
 
-        const state = loadState();
+        const state = loadState<PersistState>(STORAGE_KEY);
         saveState({
           mode: "stopped",
           remainMs: initialTime,
           initialMs: initialTime,
           color: state?.color,
           label: state?.label,
+          timeFormat: state?.timeFormat ?? "hourFormat",
         });
         return;
       }
@@ -302,13 +206,22 @@ const Timer01 = () => {
 
   // 클라이언트 마운트 후 로컬 스토리지에서 상태 복원
   useEffect(() => {
-    const state = loadState();
+    const state = loadState<PersistState>(STORAGE_KEY);
 
-    if (!state) return;
+    if (!state) {
+      saveState({
+        mode: "stopped",
+        remainMs: DEFAULT_INITIAL,
+        initialMs: DEFAULT_INITIAL,
+        color: "default",
+        label: "기본 타이머",
+        timeFormat: "hourFormat",
+      });
+      return;
+    }
 
-    const remain = state?.deadline
-      ? Math.max(0, state.deadline - Date.now())
-      : 0;
+    const remain =
+      state.mode === "running" ? Math.max(0, state.deadline - Date.now()) : 0;
 
     // 초기 상태 복원
     setInitialTime(state.initialMs);
@@ -321,22 +234,25 @@ const Timer01 = () => {
       setTimerLabel(state.label);
     }
 
-    // running 상태인데 시간이 다 지났다면 stopped로 변경
-    if (state.mode === "running" && remain === 0) {
-      saveState({
-        mode: "stopped",
-        remainMs: state.initialMs,
-        initialMs: state.initialMs,
-        color: state.color,
-        label: state.label,
-      });
-      setRunning(false);
-      setTime(state.initialMs);
-    } else if (state.mode === "running" && remain > 0) {
-      // running 상태일 때 남은 시간을 정확히 계산하여 업데이트
-      deadlineRef.current = state.deadline;
-      setTime(remain);
-      setRunning(true);
+    if (state.mode === "running") {
+      // running 상태인데 시간이 다 지났다면 stopped로 변경
+      if (remain === 0) {
+        saveState({
+          mode: "stopped",
+          remainMs: state.initialMs,
+          initialMs: state.initialMs,
+          color: state.color,
+          label: state.label,
+          timeFormat: state?.timeFormat ?? "hourFormat",
+        });
+        setRunning(false);
+        setTime(state.initialMs);
+      } else {
+        // running 상태일 때 남은 시간을 정확히 계산하여 업데이트
+        deadlineRef.current = state.deadline;
+        setTime(remain);
+        setRunning(true);
+      }
     } else {
       // paused 또는 stopped 상태
       deadlineRef.current = null;
@@ -446,6 +362,7 @@ const Timer01 = () => {
                 "color",
                 "label",
               ]}
+              widgetType={STORAGE_KEY}
               style={`text-[clamp(1rem,6vmin,3rem)] text-notion-${timerColor}-text`}
             />
           </div>

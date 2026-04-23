@@ -1,7 +1,4 @@
 {
-  "Test": {
-    "test": "테스트"
-  },
   "TimeOption": {
     "Tab": {
       "time": "시간",
@@ -33,6 +30,11 @@
     "Info": {
       "Lang": {
         "title": "언어"
+      },
+      "TimeFormat": {
+        "select": "시간 형식",
+        "hourOption": "시간 기준",
+        "minuteOption": "분 기준"
       },
       "Copyright": {
         "title": "저작권"

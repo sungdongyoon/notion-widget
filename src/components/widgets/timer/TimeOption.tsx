@@ -23,20 +23,16 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { FieldLabel } from "@/components/ui/field";
 import { IoMoon, IoSunny } from "react-icons/io5";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { ApplyTimeProps } from "./types";
+import TimeFormatSelect from "@/components/TimeFormatSelect";
 
-type ApplyTimePayload = {
-  hour: number;
-  minute: number;
-  second: number;
-};
-
-type TimeOptionProps = {
+interface TimeOptionProps {
   value: {
     time: number; // 시간 값
     label?: string; // 타이머 이름 값
     color: string; // 타이머 색상 값
   };
-  onApply?: (payload: ApplyTimePayload) => void; // 시간 적용 함수
+  onApply?: (payload: ApplyTimeProps) => void; // 시간 적용 함수
   applyColor?: (payload: string) => void; // 색상 적용 함수
   applyLabel?: (payload: string) => void; // 이름 적용 함수
   disabled?: boolean; // disabled 값
@@ -45,7 +41,8 @@ type TimeOptionProps = {
   setIsTimeOption?: (payload: boolean) => void; // 컴포넌트 활성화 함수
   triggerVisible?: boolean; // 트리거 버튼 visible 여부
   activeOption?: ("hour" | "minute" | "second" | "color" | "theme" | "label")[]; // 옵션 종류
-};
+  widgetType: string;
+}
 
 // 색상 배열
 const COLOR_OPTIONS = [
@@ -74,6 +71,7 @@ export default function TimeOption({
   isTimeOption = false,
   setIsTimeOption,
   triggerVisible = true,
+  widgetType,
 }: TimeOptionProps) {
   const totalSec = Math.floor((Number(value.time) || 0) / 1000);
   const initH = Math.floor(totalSec / 3600);
@@ -323,7 +321,7 @@ export default function TimeOption({
                       onBlur={() =>
                         setTime({
                           ...time,
-                          minute: onBlurClamp(time.minute, 59),
+                          minute: onBlurClamp(time.minute, 90),
                         })
                       }
                       className="col-span-2 h-[clamp(1.5rem,5vmin,2rem)] text-[clamp(0.6rem,3vmin,0.8rem)]"
@@ -453,25 +451,6 @@ export default function TimeOption({
                 {t("Color.desc")}
               </p>
             </div>
-            {/* <div className="grid gap-2 grid-cols-3">
-              {COLOR_OPTIONS.map(({ id, label }) => {
-                return (
-                  <button
-                    key={id}
-                    type="button"
-                    onClick={() => applyColor?.(id)}
-                    className="relative aspect-square border rounded-lg hover:scale-105 transition-all"
-                  >
-                    <Image
-                      src={`/image/timer/color/${theme}-${id}.png`}
-                      fill
-                      alt={`${label} 아이콘`}
-                      className="rounded-lg"
-                    />
-                  </button>
-                );
-              })}
-            </div> */}
 
             <RadioGroup className="grid grid-cols-3" value={value.color}>
               {COLOR_OPTIONS.map(({ id, label }) => {
@@ -509,6 +488,18 @@ export default function TimeOption({
                   {t("Info.Lang.title")}
                 </h4>
                 <LangToggle className="text-[clamp(0.6rem,3vmin,1rem)] w-[40px] h-7 bg-notion-default-bg rounded-none rounded-tl-md rounded-br-md py-1 px-2 2xs:w-[60px] 2xs:h-9 2xs:py-2 2xs:px-3" />
+              </div>
+            </div>
+
+            <div className="w-full grid gap-4" id="lang">
+              <div className="space-y-2">
+                <h4 className="leading-none font-medium text-[clamp(0.8rem,3vmin,1rem)]">
+                  {t("Info.TimeFormat.select")}
+                </h4>
+                <TimeFormatSelect
+                  widgetType={widgetType}
+                  className="text-[clamp(0.6rem,3vmin,1rem)] w-[40px] h-7 bg-notion-default-bg rounded-none rounded-tl-md rounded-br-md py-1 px-2 2xs:w-[60px] 2xs:h-9 2xs:py-2 2xs:px-3"
+                />
               </div>
             </div>
 
